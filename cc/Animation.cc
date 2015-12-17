@@ -21,3 +21,9 @@ void Animation::setImages(vector<string> images) {
 void Animation::setActiveImage(string* activeImage) {
     this->activeImage = activeImage;
 }
+
+
+/* operators */
+bool Animation::operator==(const Animation &a) const {
+    return (a.images == this->images);
+}

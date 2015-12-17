@@ -21,6 +21,9 @@ public:
     void setImages(vector<string> images);
     void setActiveImage(string* activeImage);
 
+    /* operators */
+    bool operator==(const Animation &a) const;
+
 };
 
 #endif /* ANIMATION_H */
