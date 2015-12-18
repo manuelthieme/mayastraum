@@ -21,3 +21,9 @@ void Hitbox::setPoints(vector<Point> points) {
 void Hitbox::setEdges(vector<Edge> edges) {
     this->edges = edges;
 }
+
+/* operators */
+bool Hitbox::operator==(const Hitbox &h) const {
+    return this->edges == h.edges
+        && this->points == h.points;
+}

@@ -20,3 +20,9 @@ void Point::setX(float x) {
 void Point::setY(float y) {
     this->y = y;
 }
+
+/* operators */
+bool Point::operator==(const Point &p) const {
+    return this->x == p.x
+        && this->y == p.y;
+}

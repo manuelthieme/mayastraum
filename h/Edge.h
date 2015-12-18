@@ -18,6 +18,9 @@ public:
     /* setter */
     void setBegin(Point begin);
     void setEnd(Point end);
+
+    /* operators */
+    bool operator==(const Edge &e) const;
 };
 
 #endif /* EDGE_H */

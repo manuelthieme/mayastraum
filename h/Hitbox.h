@@ -21,6 +21,9 @@ public:
     /* setter */
     void setEdges(vector<Edge> edges);
     void setPoints(vector<Point> points);
+
+    /* operators */
+    bool operator==(const Hitbox &h) const;
 };
 
 #endif /* HITBOX_H */

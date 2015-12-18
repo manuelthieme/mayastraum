@@ -21,3 +21,10 @@ void Edge::setBegin(Point begin) {
 void Edge::setEnd(Point end) {
     this->end = end;
 }
+
+
+/* operators */
+bool Edge::operator==(const Edge &e) const{
+    return this->begin == e.begin
+        && this->end == e.end;
+}

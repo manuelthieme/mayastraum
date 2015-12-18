@@ -50,5 +50,5 @@ bool ScreenObject::setActiveAnimation(Animation a) {
 bool ScreenObject::operator==(const ScreenObject &s) const {
     return this->m_position == s.m_position
         && this->m_hitbox == s.m_hitbox
-        && this->m_animations = s.m_animations;
+        && this->m_animations == s.m_animations;
 }

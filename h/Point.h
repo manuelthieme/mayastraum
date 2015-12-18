@@ -17,6 +17,9 @@ public:
     /* setter */
     void setX(float x);
     void setY(float Y);
+
+    /* operators */
+    bool operator==(const Point &h) const;
 };
 
 #endif /* EDGE_H */
