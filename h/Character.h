@@ -8,7 +8,7 @@ class Character : public ScreenObject {
 
 public:
     /* constructor */
-    Character(Point position, Hitbox hitbox, vector<Animation> animations);
+    Character(Point position, Point size, Point pivot, Hitbox hitbox, vector<Animation> animations);
 
     /* getter */
     bool running() const;

@@ -1,29 +1,31 @@
 #include "../h/Animation.h"
 
 /* constructor */
-Animation::Animation() {
+Animation::Animation(vector<string> images) : m_images(images) {
+    if (this->m_images.size() > 0)
+        this->m_activeImage = &(this->m_images[0]);
 }
 
 /* getter */
-vector<string> Animation::Images() const {
-    return this->images;
+vector<string> Animation::images() const {
+    return this->m_images;
 }
 
-string* Animation::ActiveImage() const {
-    return this->activeImage;
+string Animation::activeImage() const {
+    return *this->m_activeImage;
 }
 
 /* setter */
 void Animation::setImages(vector<string> images) {
-    this->images = images;
+    this->m_images = images;
 }
 
 void Animation::setActiveImage(string* activeImage) {
-    this->activeImage = activeImage;
+    this->m_activeImage = activeImage;
 }
 
 
 /* operators */
 bool Animation::operator==(const Animation &a) const {
-    return (a.images == this->images);
+    return (a.m_images == this->m_images);
 }

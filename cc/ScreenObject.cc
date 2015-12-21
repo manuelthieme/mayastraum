@@ -1,7 +1,7 @@
 #include "../h/ScreenObject.h"
 
 /* constructor */
-ScreenObject::ScreenObject(Point position, Hitbox hitbox, vector<Animation> animations) : m_position(position), m_hitbox(hitbox), m_animations(animations) {
+ScreenObject::ScreenObject(Point position, Point size, Point pivot, Hitbox hitbox, vector<Animation> animations) : m_position(position), m_size(size), m_pivot(pivot), m_hitbox(hitbox), m_animations(animations) {
     if (this->m_animations.size() > 0)
         this->m_activeAnimation = &(this->m_animations[0]);
 }
@@ -11,18 +11,40 @@ Point ScreenObject::position() const {
     return this->m_position;
 }
 
+Point ScreenObject::size() const {
+    return this->m_size;
+}
+
+#if 0
+Point ScreenObject::renderSize() const {
+
+}
+#endif
+
+Point ScreenObject::pivot() const {
+    return this->m_pivot;
+}
+
 Hitbox ScreenObject::hitbox() const {
     return this->m_hitbox;
 }
 
-Animation* ScreenObject::activeAnimation() const {
-    return this->m_activeAnimation;
+Animation ScreenObject::activeAnimation() const {
+    return *this->m_activeAnimation;
 }
 
 
 /* setter */
 void ScreenObject::setPosition(Point p) {
     this->m_position = p;
+}
+
+void ScreenObject::setSize(Point p) {
+    this->m_size = p;
+}
+
+void ScreenObject::setPivot(Point p) {
+    this->m_pivot = p;
 }
 
 void ScreenObject::setHitbox(Hitbox h) {

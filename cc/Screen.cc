@@ -1,13 +1,16 @@
 #include "../h/Screen.h"
 
 /* constructor */
-
-Screen::Screen(vector<ScreenObject> objects) : m_objects(objects) {
+Screen::Screen(vector<ScreenObject> objects, string backgroundPath) : m_objects(objects), m_backgroundPath(backgroundPath) {
 }
 
 /* getter */
 vector<ScreenObject> Screen::objects() const {
     return this->m_objects;
+}
+
+string Screen::backgroundPath() const {
+    return this->m_backgroundPath;
 }
 
 /* setter */

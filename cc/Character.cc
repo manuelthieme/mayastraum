@@ -2,7 +2,7 @@
 
 /* constructor */
 
-Character::Character(Point position, Hitbox hitbox, vector<Animation> animations) : ScreenObject(position, hitbox, animations) {
+Character::Character(Point position, Point size, Point pivot, Hitbox hitbox, vector<Animation> animations) : ScreenObject(position, size, pivot, hitbox, animations) {
     this->m_running = false;
 }
 
