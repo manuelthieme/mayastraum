@@ -1,6 +1,7 @@
 #ifndef EDGE_H
 #define EDGE_H
 
+#include <iostream>
 #include "Point.h"
 
 class Edge {
@@ -21,6 +22,7 @@ public:
 
     /* operators */
     bool operator==(const Edge &e) const;
+    friend ostream& operator<<(ostream &output, const Edge &e);
 };
 
 #endif /* EDGE_H */

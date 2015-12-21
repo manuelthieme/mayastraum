@@ -70,8 +70,32 @@ void Game::drawDebug() {
             SDL_RenderDrawRect(this->m_renderer, &rect);
         }
         if (this->m_inputStates["debug_pivot"]) {
-            SDL_RenderDrawLine(this->m_renderer, o.position().x() - 9, o.position().y() - 9, o.position().x() + 9, o.position().y() + 9);
-            SDL_RenderDrawLine(this->m_renderer, o.position().x() + 9, o.position().y() - 9, o.position().x() - 9, o.position().y() + 9);
+            int size = 3;
+            SDL_SetRenderDrawColor(this->m_renderer, 255, 0, 0, 0);
+            SDL_RenderDrawLine(this->m_renderer, o.position().x() - size, o.position().y() - size, o.position().x() + size, o.position().y() + size);
+            SDL_RenderDrawLine(this->m_renderer, o.position().x() + size, o.position().y() - size, o.position().x() - size, o.position().y() + size);
+            SDL_SetRenderDrawColor(this->m_renderer, 0, 0, 0, 0);
+        }
+        if (this->m_inputStates["debug_hitbox"]) {
+            for (auto e: o.hitbox().edges()) {
+                SDL_RenderDrawLine(
+                        this->m_renderer,
+                        o.position().x() + e.begin().x(),
+                        o.position().y() + e.begin().y(),
+                        o.position().x() + e.end().x(),
+                        o.position().y() + e.end().y());
+            }
+        }
+    }
+
+    if (this->m_inputStates["debug_screen_hitbox"]) {
+        for (auto e: this->m_activeScreen->hitbox().edges()) {
+            SDL_RenderDrawLine(
+                    this->m_renderer,
+                    e.begin().x(),
+                    e.begin().y(),
+                    e.end().x(),
+                    e.end().y());
         }
     }
 #if 0
@@ -163,36 +187,70 @@ bool Game::run() {
             case SDL_KEYDOWN:
                 switch (event.key.keysym.scancode) {
                     case SDL_SCANCODE_ESCAPE:
+                        cout << "Quit" << endl;
                         return false;
                         break;
                     case SDL_SCANCODE_D:
-                        if (this->m_inputStates["debug"])
+                        if (this->m_inputStates["debug"]) {
                             this->m_inputStates["debug"] = false;
-                        else
+                            cout << "Debug Mode off" << endl;
+                        } else {
                             this->m_inputStates["debug"] = true;
+                            cout << "Debug Mode on" << endl;
+                        }
                         break;
                     case SDL_SCANCODE_B:
                         if (this->m_inputStates["debug"]) {
-                            if (this->m_inputStates["debug_bounding"])
+                            if (this->m_inputStates["debug_bounding"]) {
                                 this->m_inputStates["debug_bounding"] = false;
-                            else
+                                cout << "Hiding Bounding boxes" << endl;
+                            } else {
                                 this->m_inputStates["debug_bounding"] = true;
+                                cout << "Showing Bounding boxes" << endl;
+                            }
                         }
                         break;
                     case SDL_SCANCODE_P:
                         if (this->m_inputStates["debug"]) {
-                            if (this->m_inputStates["debug_pivot"])
+                            if (this->m_inputStates["debug_pivot"]) {
                                 this->m_inputStates["debug_pivot"] = false;
-                            else
+                                cout << "Hiding Pivot points" << endl;
+                            } else {
                                 this->m_inputStates["debug_pivot"] = true;
+                                cout << "Showing Pivot points" << endl;
+                            }
                         }
                         break;
+                    case SDL_SCANCODE_H:
+                        if (this->m_inputStates["debug"]) {
+                            if (this->m_inputStates["debug_hitbox"]) {
+                                this->m_inputStates["debug_hitbox"] = false;
+                                cout << "Hiding Hitboxes" << endl;
+                            } else {
+                                this->m_inputStates["debug_hitbox"] = true;
+                                cout << "Showing Hitboxes" << endl;
+                            }
+                        }
+                        break;
+                    case SDL_SCANCODE_S:
+                        if (this->m_inputStates["debug"]) {
+                            if (this->m_inputStates["debug_screen_hitbox"]) {
+                                this->m_inputStates["debug_screen_hitbox"] = false;
+                                cout << "Hiding Screen Hitbox" << endl;
+                            } else {
+                                this->m_inputStates["debug_screen_hitbox"] = true;
+                                cout << "Showing Screen Hitbox" << endl;
+                            }
+                        }
+                        break;
+
                     default:
                         break;
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT) {
+                    cout << Point(event.motion.x, event.motion.y) << endl;
                 //	cout << "Mousebuttonevent incoming" << endl;
 #if 0
                     this->screen->getPlayer()->startRunning();
@@ -201,7 +259,7 @@ bool Game::run() {
                 }
                 break;
             case SDL_QUIT:
-                //cout << "quit" << endl;
+                cout << "Quit" << endl;
                 return false;
                 break;
         }

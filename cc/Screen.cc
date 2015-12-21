@@ -13,9 +13,17 @@ string Screen::backgroundPath() const {
     return this->m_backgroundPath;
 }
 
+Hitbox Screen::hitbox() const {
+    return this->m_hitbox;
+}
+
 /* setter */
 void Screen::addScreenObject(ScreenObject screenObject) {
     this->m_objects.push_back(screenObject);
+}
+
+void Screen::setHitbox(Hitbox h) {
+    this->m_hitbox = h;
 }
 
 /* operators */

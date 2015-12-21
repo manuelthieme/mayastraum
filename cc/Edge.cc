@@ -1,5 +1,6 @@
 #include "../h/Edge.h"
 
+using namespace std;
 /* constructor */
 Edge::Edge(Point begin, Point end) : m_begin(begin), m_end(end) {
 }
@@ -28,3 +29,11 @@ bool Edge::operator==(const Edge &e) const{
     return this->m_begin == e.m_begin
         && this->m_end == e.m_end;
 }
+
+ostream& operator<<(ostream &output, const Edge &e) {
+    Point b = e.begin();
+    Point end = e.end();
+    output << b << "---" << end;
+    return output;
+}
+
