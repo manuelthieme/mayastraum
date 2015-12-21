@@ -7,16 +7,16 @@
 
 using namespace std;
 class Hitbox {
-    vector<Edge> edges;
-    vector<Point> points;
+    vector<Edge> m_edges;
+    vector<Point> m_points;
 
 public:
     /* constructor */
     Hitbox();
 
     /* getter */
-    vector<Edge> Edges() const;
-    vector<Point> Points() const;
+    vector<Edge> edges() const;
+    vector<Point> points() const;
 
     /* setter */
     void setEdges(vector<Edge> edges);

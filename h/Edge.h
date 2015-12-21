@@ -4,16 +4,16 @@
 #include "Point.h"
 
 class Edge {
-    Point begin;
-    Point end;
+    Point m_begin;
+    Point m_end;
 
 public:
     /* constructor */
     Edge(Point begin, Point end);
 
     /* getter */
-    Point Begin() const;
-    Point End() const;
+    Point begin() const;
+    Point end() const;
 
     /* setter */
     void setBegin(Point begin);

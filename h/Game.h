@@ -6,6 +6,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "Screen.h"
 #include "Character.h"
@@ -20,10 +21,13 @@ class Game {
 	SDL_Event* m_mainEvent;
 	SDL_Window* m_window;
 	SDL_Renderer* m_renderer;
+    TTF_Font* m_font;
 	map<string, SDL_Texture*> m_textures;
+    map<string, bool> m_inputStates;
 
     void init();
     void render();
+    void drawDebug();
     void clear();
     void drawScreenObject(ScreenObject screenObject);
 	void drawBackground();
