@@ -3,26 +3,29 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 #include "ScreenObject.h"
+#include "Character.h"
 #include "Hitbox.h"
 
 class Screen {
-    vector<ScreenObject> m_objects;
+    vector<shared_ptr<ScreenObject>> m_objects;
     string m_backgroundPath;
     Hitbox m_hitbox;
 
 public:
     /* constructor */
-    Screen(vector<ScreenObject> objects, string backgroundPath);
+    Screen(vector<shared_ptr<ScreenObject>> objects, string backgroundPath);
 
     /* getter */
-    vector<ScreenObject> objects() const;
+    vector<shared_ptr<ScreenObject>> objects() const;
     string backgroundPath() const;
     Hitbox hitbox() const;
 
     /* setter */
-    void addScreenObject(ScreenObject screenObject);
+    shared_ptr<ScreenObject> addScreenObject(shared_ptr<ScreenObject> screenObject);
+    shared_ptr<Character> addPlayer(shared_ptr<Character> c);
     void setHitbox(Hitbox h);
 
     /* operators */

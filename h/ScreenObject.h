@@ -1,6 +1,7 @@
 #ifndef SCREENOBJECT_H
 #define SCREENOBJECT_H
 
+#include <memory>
 #include <vector>
 
 #include "Animation.h"
@@ -13,12 +14,14 @@ class ScreenObject {
     Point m_size;
     Point m_pivot;
     Hitbox m_hitbox;
-    vector<Animation> m_animations;
-    Animation* m_activeAnimation;
+    shared_ptr<Animation> m_activeAnimation;
+
+protected:
+    vector<shared_ptr<Animation>> m_animations;
 
 public:
     /* constructor */
-    ScreenObject(Point position, Point size, Point pivot, Hitbox hitbox, vector<Animation> animations);
+    ScreenObject(Point position, Point size, Point pivot, Hitbox hitbox, vector<shared_ptr<Animation>> animations);
 
     /* getter */
     Point position() const;
@@ -26,15 +29,15 @@ public:
     Point renderSize() const;
     Point pivot() const;
     Hitbox hitbox() const;
-    Animation activeAnimation() const;
+    shared_ptr<Animation> activeAnimation() const;
 
     /* setter */
     void setPosition(Point p);
     void setSize(Point p);
     void setPivot(Point p);
     void setHitbox(Hitbox h);
-    void addAnimation(Animation a);
-    bool setActiveAnimation(Animation a);
+    shared_ptr<Animation> addAnimation(shared_ptr<Animation> a);
+    bool setActiveAnimation(shared_ptr<Animation> a);
 
     /* operators */
     bool operator==(const ScreenObject &s) const;

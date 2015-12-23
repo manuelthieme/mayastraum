@@ -1,5 +1,6 @@
 #include "../h/Animation.h"
 
+using namespace std;
 /* constructor */
 Animation::Animation(vector<string> images) : m_images(images) {
     if (this->m_images.size() > 0)
@@ -28,4 +29,13 @@ void Animation::setActiveImage(string* activeImage) {
 /* operators */
 bool Animation::operator==(const Animation &a) const {
     return (a.m_images == this->m_images);
+}
+
+ostream& operator<<(ostream &output, const Animation &a) {
+    output << "Animation:" << endl;
+    for (auto i: a.images())
+        output << "\t" << i << endl;
+    output << endl;
+
+    return output;
 }

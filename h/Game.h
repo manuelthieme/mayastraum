@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <memory>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -12,11 +13,11 @@
 #include "Character.h"
 
 class Game {
-    vector<Screen> m_screens;
-    Screen* m_activeScreen;
+    vector<shared_ptr<Screen>> m_screens;
+    shared_ptr<Screen> m_activeScreen;
     float m_width;
     float m_height;
-    Character* m_player;
+    shared_ptr<Character> m_player;
 
 	SDL_Event* m_mainEvent;
 	SDL_Window* m_window;
@@ -29,22 +30,22 @@ class Game {
     void render();
     void drawDebug();
     void clear();
-    void drawScreenObject(ScreenObject screenObject);
+    void drawScreenObject(shared_ptr<ScreenObject> screenObject);
 	void drawBackground();
     void present();
 	SDL_Texture* getTextureFromPath(string texturePath);
 
 public:
     /* constructor */
-    Game(vector<Screen> screens, float width, float height, Character* player);
+    Game(vector<shared_ptr<Screen>> screens, float width, float height, Character* player);
     ~Game();
 
     /* getter */
 
     /* setter */
-    void addScreen(Screen screen);
-    bool setActiveScreen(Screen screen);
-    void setPlayer(Character* player);
+    shared_ptr<Screen> addScreen(shared_ptr<Screen> screen);
+    bool setActiveScreen(shared_ptr<Screen> screen);
+    void setPlayer(shared_ptr<Character> player);
 
     /* misc */
     bool run();

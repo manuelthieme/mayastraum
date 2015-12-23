@@ -1,9 +1,9 @@
 #include "../h/Game.h"
 
 /* constructor */
-Game::Game(vector<Screen> screens, float width, float height, Character* player) : m_screens(screens), m_width(width), m_height(height), m_player(player) {
+Game::Game(vector<shared_ptr<Screen>> screens, float width, float height, Character* player) : m_screens(screens), m_width(width), m_height(height), m_player(player) {
     if (this->m_screens.size() > 0)
-        this->m_activeScreen = &(this->m_screens[0]);
+        this->m_activeScreen = this->m_screens[0];
 
     this->init();
 }
@@ -12,15 +12,16 @@ Game::Game(vector<Screen> screens, float width, float height, Character* player)
 
 
 /* setter */
-void Game::addScreen(Screen screen) {
+shared_ptr<Screen> Game::addScreen(shared_ptr<Screen> screen) {
     this->m_screens.push_back(screen);
+    return this->m_screens.back();
 }
 
-bool Game::setActiveScreen(Screen screen) {
+bool Game::setActiveScreen(shared_ptr<Screen> screen) {
     bool success = false;
     for (auto s: this->m_screens)
         if (s == screen) {
-            this->m_activeScreen = &s;
+            this->m_activeScreen = s;
             success = true;
             break;
         }
@@ -28,7 +29,7 @@ bool Game::setActiveScreen(Screen screen) {
     return success;
 }
 
-void Game::setPlayer(Character* player) {
+void Game::setPlayer(shared_ptr<Character> player) {
     this->m_player = player;
 }
 
@@ -62,28 +63,28 @@ void Game::drawDebug() {
     for (auto o: this->m_activeScreen->objects()) {
         if (this->m_inputStates["debug_bounding"]) {
             SDL_Rect rect = {
-                int(o.position().x() - o.size().width() * o.pivot().x()),
-                int(o.position().y() - o.size().height() * o.pivot().y()),
-                int(o.size().width()),
-                int(o.size().height())
+                int(o->position().x() - o->size().width() * o->pivot().x()),
+                int(o->position().y() - o->size().height() * o->pivot().y()),
+                int(o->size().width()),
+                int(o->size().height())
             };
             SDL_RenderDrawRect(this->m_renderer, &rect);
         }
         if (this->m_inputStates["debug_pivot"]) {
             int size = 3;
             SDL_SetRenderDrawColor(this->m_renderer, 255, 0, 0, 0);
-            SDL_RenderDrawLine(this->m_renderer, o.position().x() - size, o.position().y() - size, o.position().x() + size, o.position().y() + size);
-            SDL_RenderDrawLine(this->m_renderer, o.position().x() + size, o.position().y() - size, o.position().x() - size, o.position().y() + size);
+            SDL_RenderDrawLine(this->m_renderer, o->position().x() - size, o->position().y() - size, o->position().x() + size, o->position().y() + size);
+            SDL_RenderDrawLine(this->m_renderer, o->position().x() + size, o->position().y() - size, o->position().x() - size, o->position().y() + size);
             SDL_SetRenderDrawColor(this->m_renderer, 0, 0, 0, 0);
         }
         if (this->m_inputStates["debug_hitbox"]) {
-            for (auto e: o.hitbox().edges()) {
+            for (auto e: o->hitbox().edges()) {
                 SDL_RenderDrawLine(
                         this->m_renderer,
-                        o.position().x() + e.begin().x(),
-                        o.position().y() + e.begin().y(),
-                        o.position().x() + e.end().x(),
-                        o.position().y() + e.end().y());
+                        o->position().x() + e.begin().x(),
+                        o->position().y() + e.begin().y(),
+                        o->position().x() + e.end().x(),
+                        o->position().y() + e.end().y());
             }
         }
     }
@@ -120,17 +121,17 @@ void Game::clear() {
 	SDL_RenderClear(this->m_renderer);
 }
 
-void Game::drawScreenObject(ScreenObject screenObject) {
+void Game::drawScreenObject(shared_ptr<ScreenObject> screenObject) {
 	SDL_Rect rect = {
-		int(screenObject.position().x() - screenObject.size().width() * screenObject.pivot().x()),
-		int(screenObject.position().y() - screenObject.size().height() * screenObject.pivot().y()),
-		int(screenObject.size().width()),
-		int(screenObject.size().height())
+		int(screenObject->position().x() - screenObject->size().width() * screenObject->pivot().x()),
+		int(screenObject->position().y() - screenObject->size().height() * screenObject->pivot().y()),
+		int(screenObject->size().width()),
+		int(screenObject->size().height())
     };
 #if 0
 	screenObject->activeAnimation()->tick();
 #endif
-	SDL_RenderCopy(this->m_renderer, this->getTextureFromPath(screenObject.activeAnimation().activeImage()), NULL, &rect);
+	SDL_RenderCopy(this->m_renderer, this->getTextureFromPath(screenObject->activeAnimation()->activeImage()), NULL, &rect);
 }
 
 void Game::present() {

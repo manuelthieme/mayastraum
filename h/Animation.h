@@ -1,6 +1,7 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -23,6 +24,7 @@ public:
 
     /* operators */
     bool operator==(const Animation &a) const;
+    friend ostream& operator<<(ostream &output, const Animation &a);
 
 };
 

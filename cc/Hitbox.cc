@@ -51,14 +51,12 @@ void Hitbox::calculateEdges() {
     Point before(0, 0);
     bool first = false;
     for (auto p: this->m_points) {
-        cout << p << endl;
         if (!first) {
             first = true;
             before = p;
             continue;
         }
         Edge e(before, p);
-        cout << e << endl;
         this->m_edges.push_back(e);
         before = p;
     }

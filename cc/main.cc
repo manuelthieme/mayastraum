@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <memory>
 
 #include "../h/Game.h"
 
@@ -9,15 +10,25 @@ int main(void) {
     images_a1.push_back("sprites/tree1.png");
     vector<string> images_a2;
     images_a2.push_back("sprites/mower.png");
+    vector<string> images_a3;
+    images_a3.push_back("characters/strichmann.png");
+    vector<string> images_a4;
+    images_a4.push_back("characters/strichmann.png");
+    images_a4.push_back("characters/strichmann2.png");
+    images_a4.push_back("characters/strichmann3.png");
+
 
     Animation a1(images_a1);
     Animation a2(images_a2);
+    Animation a3(images_a3);
+    Animation a4(images_a4);
 
-    vector<Animation> animations1;
-    animations1.push_back(a1);
-
-    vector<Animation> animations2;
-    animations2.push_back(a2);
+    vector<shared_ptr<Animation>> animations1;
+    animations1.push_back(shared_ptr<Animation>(new Animation(a1)));
+    vector<shared_ptr<Animation>> animations2;
+    animations2.push_back(shared_ptr<Animation>(new Animation(a2)));
+    vector<shared_ptr<Animation>> animations3;
+    animations3.push_back(shared_ptr<Animation>(new Animation(a3)));
 
     Hitbox h1;
     h1.addPoint(Point(-50, -25));
@@ -61,13 +72,25 @@ int main(void) {
             animations2
         );
 
-    Screen screen({}, "screens/garden.png");
-    screen.addScreenObject(tree);
-    screen.addScreenObject(mower);
+    Character player(
+            Point(100, 500),
+            Point(100, 200),
+            Point(0.4, 0.95),
+            Hitbox(),
+            animations3
+        );
+
+    player.addRunningAnimation(shared_ptr<Animation>(new Animation(a4)));
+
+    vector<shared_ptr<ScreenObject>> objects;
+    objects.push_back(shared_ptr<ScreenObject>(new ScreenObject(tree)));
+    objects.push_back(shared_ptr<ScreenObject>(new ScreenObject(mower)));
+    Screen screen(objects, "screens/garden.png");
+    shared_ptr<Character> p = screen.addPlayer(shared_ptr<Character>(new Character(player)));
     screen.setHitbox(hs);
 
-    vector<Screen> screens;
-    screens.push_back(screen);
+    vector<shared_ptr<Screen>> screens;
+    screens.push_back(shared_ptr<Screen>(new Screen(screen)));
 
     Game game(
             screens,
@@ -75,6 +98,7 @@ int main(void) {
             800,
             NULL
         );
+    //game.setPlayer(p);
 
     while(game.run())
         ; /** void */

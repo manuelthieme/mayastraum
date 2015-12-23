@@ -1,9 +1,9 @@
 #include "../h/ScreenObject.h"
 
 /* constructor */
-ScreenObject::ScreenObject(Point position, Point size, Point pivot, Hitbox hitbox, vector<Animation> animations) : m_position(position), m_size(size), m_pivot(pivot), m_hitbox(hitbox), m_animations(animations) {
+ScreenObject::ScreenObject(Point position, Point size, Point pivot, Hitbox hitbox, vector<shared_ptr<Animation>> animations) : m_position(position), m_size(size), m_pivot(pivot), m_hitbox(hitbox), m_animations(animations) {
     if (this->m_animations.size() > 0)
-        this->m_activeAnimation = &(this->m_animations[0]);
+        this->m_activeAnimation = this->m_animations[0];
 }
 
 /* getter */
@@ -29,8 +29,8 @@ Hitbox ScreenObject::hitbox() const {
     return this->m_hitbox;
 }
 
-Animation ScreenObject::activeAnimation() const {
-    return *this->m_activeAnimation;
+shared_ptr<Animation> ScreenObject::activeAnimation() const {
+    return this->m_activeAnimation;
 }
 
 
@@ -51,15 +51,16 @@ void ScreenObject::setHitbox(Hitbox h) {
     this->m_hitbox = h;
 }
 
-void ScreenObject::addAnimation(Animation a) {
+shared_ptr<Animation> ScreenObject::addAnimation(shared_ptr<Animation> a) {
     this->m_animations.push_back(a);
+    return this->m_animations.back();
 }
 
-bool ScreenObject::setActiveAnimation(Animation a) {
+bool ScreenObject::setActiveAnimation(shared_ptr<Animation> a) {
     bool success = false;
     for (auto animation: this->m_animations)
         if (animation == a) {
-            this->m_activeAnimation = &animation;
+            this->m_activeAnimation = animation;
             success = true;
             break;
         }
