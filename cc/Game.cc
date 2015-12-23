@@ -128,9 +128,7 @@ void Game::drawScreenObject(shared_ptr<ScreenObject> screenObject) {
 		int(screenObject->size().width()),
 		int(screenObject->size().height())
     };
-#if 0
-	screenObject->activeAnimation()->tick();
-#endif
+	screenObject->tick(this->tick++);
 	SDL_RenderCopy(this->m_renderer, this->getTextureFromPath(screenObject->activeAnimation()->activeImage()), NULL, &rect);
 }
 
@@ -244,7 +242,11 @@ bool Game::run() {
                             }
                         }
                         break;
-
+                    case SDL_SCANCODE_R:
+                        if (this->m_player->running())
+                            this->m_player->stopRunning();
+                        else
+                            this->m_player->startRunning();
                     default:
                         break;
                 }

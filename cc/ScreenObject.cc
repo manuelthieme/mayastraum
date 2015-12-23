@@ -75,3 +75,9 @@ bool ScreenObject::operator==(const ScreenObject &s) const {
         && this->m_hitbox == s.m_hitbox
         && this->m_animations == s.m_animations;
 }
+
+/* misc */
+void ScreenObject::tick(int t) {
+    //cout << t << endl;
+    this->m_activeAnimation->tick(t);
+}

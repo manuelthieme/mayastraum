@@ -35,6 +35,8 @@ class Game {
     void present();
 	SDL_Texture* getTextureFromPath(string texturePath);
 
+    int tick;
+
 public:
     /* constructor */
     Game(vector<shared_ptr<Screen>> screens, float width, float height, Character* player);

@@ -14,14 +14,14 @@ int main(void) {
     images_a3.push_back("characters/strichmann.png");
     vector<string> images_a4;
     images_a4.push_back("characters/strichmann.png");
+    images_a4.push_back("characters/strichmann1.png");
     images_a4.push_back("characters/strichmann2.png");
-    images_a4.push_back("characters/strichmann3.png");
 
 
-    Animation a1(images_a1);
-    Animation a2(images_a2);
-    Animation a3(images_a3);
-    Animation a4(images_a4);
+    Animation a1(images_a1, -1);
+    Animation a2(images_a2, -1);
+    Animation a3(images_a3, -1);
+    Animation a4(images_a4, 25);
 
     vector<shared_ptr<Animation>> animations1;
     animations1.push_back(shared_ptr<Animation>(new Animation(a1)));
@@ -98,7 +98,7 @@ int main(void) {
             800,
             NULL
         );
-    //game.setPlayer(p);
+    game.setPlayer(p);
 
     while(game.run())
         ; /** void */

@@ -20,6 +20,10 @@ public:
     /* setter */
     void setRunning(bool running);
     shared_ptr<Animation> addRunningAnimation(shared_ptr<Animation> a);
+
+    /* misc */
+    void startRunning();
+    void stopRunning();
 };
 
 #endif /* CHARACTER_H */

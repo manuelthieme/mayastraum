@@ -8,11 +8,13 @@
 using namespace std;
 class Animation {
     vector<string> m_images;
-    string* m_activeImage;
+    int m_activeImage;
+
+    int m_speed;
 
 public:
     /* constructor */
-    Animation(vector<string> images);
+    Animation(vector<string> images, int speed);
 
     /* getter */
     vector<string> images() const;
@@ -20,11 +22,15 @@ public:
 
     /* setter */
     void setImages(vector<string> images);
-    void setActiveImage(string* activeImage);
+    bool setActiveImage(string activeImage);
+    bool setActiveImage(int i);
 
     /* operators */
     bool operator==(const Animation &a) const;
     friend ostream& operator<<(ostream &output, const Animation &a);
+
+    /* misc */
+    void tick(int t);
 
 };
 

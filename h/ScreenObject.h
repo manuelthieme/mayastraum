@@ -1,6 +1,7 @@
 #ifndef SCREENOBJECT_H
 #define SCREENOBJECT_H
 
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -14,9 +15,9 @@ class ScreenObject {
     Point m_size;
     Point m_pivot;
     Hitbox m_hitbox;
-    shared_ptr<Animation> m_activeAnimation;
 
 protected:
+    shared_ptr<Animation> m_activeAnimation;
     vector<shared_ptr<Animation>> m_animations;
 
 public:
@@ -42,6 +43,8 @@ public:
     /* operators */
     bool operator==(const ScreenObject &s) const;
 
+    /* misc */
+    void tick(int t);
 };
 
 #endif /* SCREENOBJECT_H */
