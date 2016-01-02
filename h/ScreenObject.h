@@ -11,12 +11,12 @@
 
 using namespace std;
 class ScreenObject {
-    Point m_position;
     Point m_size;
     Point m_pivot;
     Hitbox m_hitbox;
 
 protected:
+    Point m_position;
     shared_ptr<Animation> m_activeAnimation;
     vector<shared_ptr<Animation>> m_animations;
 

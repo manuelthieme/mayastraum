@@ -1,7 +1,7 @@
 #include "../h/ScreenObject.h"
 
 /* constructor */
-ScreenObject::ScreenObject(Point position, Point size, Point pivot, Hitbox hitbox, vector<shared_ptr<Animation>> animations) : m_position(position), m_size(size), m_pivot(pivot), m_hitbox(hitbox), m_animations(animations) {
+ScreenObject::ScreenObject(Point position, Point size, Point pivot, Hitbox hitbox, vector<shared_ptr<Animation>> animations) : m_size(size), m_pivot(pivot), m_hitbox(hitbox), m_position(position), m_animations(animations) {
     if (this->m_animations.size() > 0)
         this->m_activeAnimation = this->m_animations[0];
 }
@@ -78,6 +78,6 @@ bool ScreenObject::operator==(const ScreenObject &s) const {
 
 /* misc */
 void ScreenObject::tick(int t) {
-    //cout << t << endl;
+    //cout << typeid(this).name() << endl;
     this->m_activeAnimation->tick(t);
 }

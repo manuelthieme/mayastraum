@@ -1,5 +1,6 @@
 #include "../h/Game.h"
 
+using namespace std;
 /* constructor */
 Game::Game(vector<shared_ptr<Screen>> screens, float width, float height, Character* player) : m_screens(screens), m_width(width), m_height(height), m_player(player) {
     if (this->m_screens.size() > 0)
@@ -122,13 +123,16 @@ void Game::clear() {
 }
 
 void Game::drawScreenObject(shared_ptr<ScreenObject> screenObject) {
+    if (typeid(*screenObject) == typeid(*this->m_player))
+        cout << "player" << endl;
+    cout << typeid(static_pointer_cast<Character>(screenObject)).name() << endl;
+	static_pointer_cast<Character>(screenObject)->tick(this->tick++);
 	SDL_Rect rect = {
 		int(screenObject->position().x() - screenObject->size().width() * screenObject->pivot().x()),
 		int(screenObject->position().y() - screenObject->size().height() * screenObject->pivot().y()),
 		int(screenObject->size().width()),
 		int(screenObject->size().height())
     };
-	screenObject->tick(this->tick++);
 	SDL_RenderCopy(this->m_renderer, this->getTextureFromPath(screenObject->activeAnimation()->activeImage()), NULL, &rect);
 }
 
@@ -255,10 +259,8 @@ bool Game::run() {
                 if(event.button.button == SDL_BUTTON_LEFT) {
                     cout << Point(event.motion.x, event.motion.y) << endl;
                 //	cout << "Mousebuttonevent incoming" << endl;
-#if 0
-                    this->screen->getPlayer()->startRunning();
-                    this->screen->getPlayer()->setTarget(float(event.motion.x), float(event.motion.y));
-#endif
+                    this->m_player->startRunning();
+                    this->m_player->setTarget(Point(float(event.motion.x), float(event.motion.y)));
                 }
                 break;
             case SDL_QUIT:
