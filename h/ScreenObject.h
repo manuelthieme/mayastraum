@@ -44,7 +44,7 @@ public:
     bool operator==(const ScreenObject &s) const;
 
     /* misc */
-    void tick(int t);
+    virtual void tick(int t);
 };
 
 #endif /* SCREENOBJECT_H */

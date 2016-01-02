@@ -45,7 +45,6 @@ void Character::stopRunning() {
 }
 
 void Character::tick(int t) {
-    cout << "tick" << endl;
     if (not this->m_running)
         return;
 
@@ -56,7 +55,6 @@ void Character::tick(int t) {
 
     Point n = this->m_path.front();
     Point distance = this->m_position - n;
-    cout << "dist: " << distance << endl;
     Point fak((distance.x() >= 0) ? 1 : -1, (distance.y() >= 0) ? 1 : -1);
     if (this->m_position == n) {
         this->m_path.pop_front();

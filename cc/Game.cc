@@ -123,10 +123,7 @@ void Game::clear() {
 }
 
 void Game::drawScreenObject(shared_ptr<ScreenObject> screenObject) {
-    if (typeid(*screenObject) == typeid(*this->m_player))
-        cout << "player" << endl;
-    cout << typeid(static_pointer_cast<Character>(screenObject)).name() << endl;
-	static_pointer_cast<Character>(screenObject)->tick(this->tick++);
+	screenObject->tick(this->tick++);
 	SDL_Rect rect = {
 		int(screenObject->position().x() - screenObject->size().width() * screenObject->pivot().x()),
 		int(screenObject->position().y() - screenObject->size().height() * screenObject->pivot().y()),

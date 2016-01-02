@@ -78,6 +78,5 @@ bool ScreenObject::operator==(const ScreenObject &s) const {
 
 /* misc */
 void ScreenObject::tick(int t) {
-    //cout << typeid(this).name() << endl;
     this->m_activeAnimation->tick(t);
 }
