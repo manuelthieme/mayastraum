@@ -1,0 +1,8 @@
+#include "Point.h"
+#include "Edge.h"
+#include "Hitbox.h"
+#include "Animation.h"
+#include "ScreenObject.h"
+#include "Character.h"
+#include "Screen.h"
+#include "Game.h"

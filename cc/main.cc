@@ -2,7 +2,7 @@
 #include <iostream>
 #include <memory>
 
-#include "../h/Game.h"
+#include "../h/includes.h"
 
 using namespace std;
 int main(void) {
@@ -31,10 +31,19 @@ int main(void) {
     animations3.push_back(shared_ptr<Animation>(new Animation(a3)));
 
     Hitbox h1;
-    h1.addPoint(Point(-50, -25));
-    h1.addPoint(Point(-50, 25));
-    h1.addPoint(Point(50, 25));
-    h1.addPoint(Point(50, -25));
+    h1.addPoint(Point(-92, 17));
+    h1.addPoint(Point(-20, 0));
+    h1.addPoint(Point(-5, 53));
+    h1.addPoint(Point(8, 33));
+    h1.addPoint(Point(-1, 10));
+    h1.addPoint(Point(8, -2));
+    h1.addPoint(Point(50, 27));
+    h1.addPoint(Point(71, 20));
+    h1.addPoint(Point(58, 12));
+    h1.addPoint(Point(29, -18));
+    h1.addPoint(Point(11, -46));
+    h1.addPoint(Point(-12, -22));
+    h1.addPoint(Point(-50, -3));
     h1.calculateEdges();
 
     Hitbox h2;
@@ -83,7 +92,8 @@ int main(void) {
     player.addRunningAnimation(shared_ptr<Animation>(new Animation(a4)));
 
     vector<shared_ptr<ScreenObject>> objects;
-    objects.push_back(shared_ptr<ScreenObject>(new ScreenObject(tree)));
+    shared_ptr<ScreenObject> p_tree(new ScreenObject(tree));
+    objects.push_back(p_tree);
     objects.push_back(shared_ptr<ScreenObject>(new ScreenObject(mower)));
     Screen screen(objects, "screens/garden.png");
     shared_ptr<Character> p = screen.addPlayer(shared_ptr<Character>(new Character(player)));

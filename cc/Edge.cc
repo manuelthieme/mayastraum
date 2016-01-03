@@ -1,4 +1,4 @@
-#include "../h/Edge.h"
+#include "../h/includes.h"
 
 using namespace std;
 /* constructor */

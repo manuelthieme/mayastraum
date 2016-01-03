@@ -4,8 +4,10 @@
 #include <memory>
 #include <list>
 
+#if 0
 #include "ScreenObject.h"
 #include "Point.h"
+#endif
 
 class Character : public ScreenObject {
     bool m_running;

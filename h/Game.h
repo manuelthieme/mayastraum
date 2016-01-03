@@ -9,9 +9,6 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "Screen.h"
-#include "Character.h"
-
 class Game {
     vector<shared_ptr<Screen>> m_screens;
     shared_ptr<Screen> m_activeScreen;
@@ -37,6 +34,8 @@ class Game {
 
     int tick;
 
+    shared_ptr<ScreenObject> m_debug;
+
 public:
     /* constructor */
     Game(vector<shared_ptr<Screen>> screens, float width, float height, Character* player);
@@ -48,6 +47,7 @@ public:
     shared_ptr<Screen> addScreen(shared_ptr<Screen> screen);
     bool setActiveScreen(shared_ptr<Screen> screen);
     void setPlayer(shared_ptr<Character> player);
+    void setDebug(shared_ptr<ScreenObject> d);
 
     /* misc */
     bool run();

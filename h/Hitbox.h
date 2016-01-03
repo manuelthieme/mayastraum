@@ -3,8 +3,6 @@
 
 #include <iostream>
 #include <vector>
-#include "Edge.h"
-#include "Point.h"
 
 using namespace std;
 class Hitbox {

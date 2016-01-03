@@ -1,4 +1,4 @@
-#include "../h/Hitbox.h"
+#include "../h/includes.h"
 
 using namespace std;
 /* constructor */
@@ -47,6 +47,8 @@ ostream& operator<<(ostream &output, const Hitbox &h) {
 /* misc */
 
 void Hitbox::calculateEdges() {
+    if (this->m_points.size() < 1)
+        return;
     this->m_edges.clear();
     Point before(0, 0);
     bool first = false;

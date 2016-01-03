@@ -1,4 +1,4 @@
-#include "../h/Game.h"
+#include "../h/includes.h"
 
 using namespace std;
 /* constructor */
@@ -27,6 +27,11 @@ bool Game::setActiveScreen(shared_ptr<Screen> screen) {
             break;
         }
 
+
+    for (auto o: this->m_activeScreen->objects()) {
+        cout << o->renderHitbox(this->m_activeScreen, this->m_height) << endl;
+    }
+
     return success;
 }
 
@@ -34,13 +39,15 @@ void Game::setPlayer(shared_ptr<Character> player) {
     this->m_player = player;
 }
 
+void Game::setDebug(shared_ptr<ScreenObject> d) {
+    this->m_debug = d;
+}
+
 /* misc */
 void Game::render() {
     this->clear();
 	this->drawBackground();
-#if 0
-    this->activeScreen->sortScreenObjects();
-#endif
+    this->m_activeScreen->sortScreenObjects();
 	for (auto object: this->m_activeScreen->objects())
 		this->drawScreenObject(object);
 
@@ -62,15 +69,18 @@ void Game::drawDebug() {
     SDL_FreeSurface(surface);
 
     for (auto o: this->m_activeScreen->objects()) {
+        /* Draw Bounding box */
         if (this->m_inputStates["debug_bounding"]) {
+            Point renderSize = o->renderSize(this->m_activeScreen, this->m_height);
             SDL_Rect rect = {
-                int(o->position().x() - o->size().width() * o->pivot().x()),
-                int(o->position().y() - o->size().height() * o->pivot().y()),
-                int(o->size().width()),
-                int(o->size().height())
+                int(o->position().x() - renderSize.width() * o->pivot().x()),
+                int(o->position().y() - renderSize.height() * o->pivot().y()),
+                int(renderSize.width()),
+                int(renderSize.height())
             };
             SDL_RenderDrawRect(this->m_renderer, &rect);
         }
+        /* draw Pivot Point */
         if (this->m_inputStates["debug_pivot"]) {
             int size = 3;
             SDL_SetRenderDrawColor(this->m_renderer, 255, 0, 0, 0);
@@ -78,8 +88,9 @@ void Game::drawDebug() {
             SDL_RenderDrawLine(this->m_renderer, o->position().x() + size, o->position().y() - size, o->position().x() - size, o->position().y() + size);
             SDL_SetRenderDrawColor(this->m_renderer, 0, 0, 0, 0);
         }
+        /* draw Hitbox */
         if (this->m_inputStates["debug_hitbox"]) {
-            for (auto e: o->hitbox().edges()) {
+            for (auto e: o->renderHitbox(this->m_activeScreen, this->m_height).edges()) {
                 SDL_RenderDrawLine(
                         this->m_renderer,
                         o->position().x() + e.begin().x(),
@@ -124,11 +135,12 @@ void Game::clear() {
 
 void Game::drawScreenObject(shared_ptr<ScreenObject> screenObject) {
 	screenObject->tick(this->tick++);
+    Point renderSize = screenObject->renderSize(this->m_activeScreen, this->m_height);
 	SDL_Rect rect = {
-		int(screenObject->position().x() - screenObject->size().width() * screenObject->pivot().x()),
-		int(screenObject->position().y() - screenObject->size().height() * screenObject->pivot().y()),
-		int(screenObject->size().width()),
-		int(screenObject->size().height())
+		int(screenObject->position().x() - renderSize.width() * screenObject->pivot().x()),
+		int(screenObject->position().y() - renderSize.height() * screenObject->pivot().y()),
+		int(renderSize.width()),
+		int(renderSize.height())
     };
 	SDL_RenderCopy(this->m_renderer, this->getTextureFromPath(screenObject->activeAnimation()->activeImage()), NULL, &rect);
 }
@@ -254,10 +266,14 @@ bool Game::run() {
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT) {
-                    cout << Point(event.motion.x, event.motion.y) << endl;
-                //	cout << "Mousebuttonevent incoming" << endl;
-                    this->m_player->startRunning();
-                    this->m_player->setTarget(Point(float(event.motion.x), float(event.motion.y)));
+                    if (this->m_debug != nullptr) {
+                        float factor = 1 / ((this->m_debug->position().y() / this->m_height) * (1 - this->m_activeScreen->sizeFactor()) + this->m_activeScreen->sizeFactor());
+                        cout << Point(event.motion.x, event.motion.y) << this->m_debug->position() << Point(factor * (this->m_debug->position().x() - event.motion.x), factor * (this->m_debug->position().y() - event.motion.y)) << endl;
+                    }
+                    else {
+                        this->m_player->startRunning();
+                        this->m_player->setTarget(Point(float(event.motion.x), float(event.motion.y)));
+                    }
                 }
                 break;
             case SDL_QUIT:

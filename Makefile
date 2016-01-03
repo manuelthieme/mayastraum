@@ -1,5 +1,5 @@
 TARGET =main
-SOURCES =Game.cc Screen.cc ScreenObject.cc Character.cc Animation.cc Hitbox.cc Edge.cc Point.cc main.cc
+SOURCES =Point.cc Edge.cc Hitbox.cc Animation.cc ScreenObject.cc Character.cc Screen.cc Game.cc main.cc
 OBJECTS =$(SOURCES:.cc=.o)
 DEPS =$(SOURCES:.cc=.d)
 CFLAGS =-Wall -Wextra -Werror -Wmissing-declarations -O3 -std=c++11

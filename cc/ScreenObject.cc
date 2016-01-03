@@ -1,4 +1,4 @@
-#include "../h/ScreenObject.h"
+#include "../h/includes.h"
 
 /* constructor */
 ScreenObject::ScreenObject(Point position, Point size, Point pivot, Hitbox hitbox, vector<shared_ptr<Animation>> animations) : m_size(size), m_pivot(pivot), m_hitbox(hitbox), m_position(position), m_animations(animations) {
@@ -15,11 +15,10 @@ Point ScreenObject::size() const {
     return this->m_size;
 }
 
-#if 0
-Point ScreenObject::renderSize() const {
-
+Point ScreenObject::renderSize(shared_ptr<Screen> s, float gameHeight) const {
+    float factor = (this->m_position.y() / gameHeight) * (1 - s->sizeFactor()) + s->sizeFactor();
+    return Point(this->m_size.width() * factor, this->m_size.height() * factor);
 }
-#endif
 
 Point ScreenObject::pivot() const {
     return this->m_pivot;
@@ -29,6 +28,16 @@ Hitbox ScreenObject::hitbox() const {
     return this->m_hitbox;
 }
 
+Hitbox ScreenObject::renderHitbox(shared_ptr<Screen> s, float gameHeight) const {
+    Hitbox h;
+    float factor = (this->m_position.y() / gameHeight) * (1 - s->sizeFactor()) + s->sizeFactor();
+    for (auto p: this->m_hitbox.points()) {
+        Point tmp(p.width() * factor, p.height() * factor);
+        h.addPoint(tmp);
+    }
+    h.calculateEdges();
+    return h;
+}
 shared_ptr<Animation> ScreenObject::activeAnimation() const {
     return this->m_activeAnimation;
 }
@@ -74,6 +83,10 @@ bool ScreenObject::operator==(const ScreenObject &s) const {
     return this->m_position == s.m_position
         && this->m_hitbox == s.m_hitbox
         && this->m_animations == s.m_animations;
+}
+
+bool ScreenObject::greaterThan(shared_ptr<ScreenObject> a, shared_ptr<ScreenObject> b) {
+    return (a->position().y() < b->position().y());
 }
 
 /* misc */

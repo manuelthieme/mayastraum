@@ -1,4 +1,4 @@
-#include "../h/Animation.h"
+#include "../h/includes.h"
 
 using namespace std;
 /* constructor */

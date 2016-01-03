@@ -2,7 +2,9 @@
 #define EDGE_H
 
 #include <iostream>
+#if 0
 #include "Point.h"
+#endif
 
 class Edge {
     Point m_begin;

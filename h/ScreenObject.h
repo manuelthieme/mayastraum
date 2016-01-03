@@ -5,11 +5,16 @@
 #include <memory>
 #include <vector>
 
+
+#if 0
 #include "Animation.h"
 #include "Point.h"
 #include "Hitbox.h"
+#include "Screen.h"
+#endif
 
 using namespace std;
+class Screen;
 class ScreenObject {
     Point m_size;
     Point m_pivot;
@@ -27,9 +32,10 @@ public:
     /* getter */
     Point position() const;
     Point size() const;
-    Point renderSize() const;
+    Point renderSize(shared_ptr<Screen> s, float gameHeight) const;
     Point pivot() const;
     Hitbox hitbox() const;
+    Hitbox renderHitbox(shared_ptr<Screen> s, float gameHeight) const;
     shared_ptr<Animation> activeAnimation() const;
 
     /* setter */
@@ -42,6 +48,8 @@ public:
 
     /* operators */
     bool operator==(const ScreenObject &s) const;
+    static bool greaterThan(shared_ptr<ScreenObject> a, shared_ptr<ScreenObject> b);
+
 
     /* misc */
     virtual void tick(int t);
