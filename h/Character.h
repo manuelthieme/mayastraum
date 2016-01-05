@@ -14,24 +14,27 @@ class Character : public ScreenObject {
     shared_ptr<Animation> m_runningAnimation;
     Point m_target;
     list<Point> m_path;
+    int m_speed;
 
 public:
     /* constructor */
-    Character(Point position, Point size, Point pivot, Hitbox hitbox, vector<shared_ptr<Animation>> animations);
+    Character(Point position, Point size, Point pivot, Hitbox hitbox, vector<shared_ptr<Animation>> animations, int speed = 10);
 
     /* getter */
     bool running() const;
     shared_ptr<Animation> runningAnimation() const;
+    int speed() const;
 
     /* setter */
     void setRunning(bool running);
     shared_ptr<Animation> addRunningAnimation(shared_ptr<Animation> a);
     void setTarget(Point t);
+    void setSpeed(int s);
 
     /* misc */
     void startRunning();
     void stopRunning();
-    void tick(int t);
+    void tick(int t, shared_ptr<Screen> activeScreen, int gameHeight);
 };
 
 #endif /* CHARACTER_H */

@@ -90,6 +90,6 @@ bool ScreenObject::greaterThan(shared_ptr<ScreenObject> a, shared_ptr<ScreenObje
 }
 
 /* misc */
-void ScreenObject::tick(int t) {
+void ScreenObject::tick(int t, shared_ptr<Screen> activeScreen, int gameHeight) {
     this->m_activeAnimation->tick(t);
 }

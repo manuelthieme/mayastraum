@@ -137,7 +137,7 @@ void Game::clear() {
 }
 
 void Game::drawScreenObject(shared_ptr<ScreenObject> screenObject) {
-	screenObject->tick(this->tick++);
+	screenObject->tick(this->tick++, this->m_activeScreen, this->m_height);
     Point renderSize = screenObject->renderSize(this->m_activeScreen, this->m_height);
 	SDL_Rect rect = {
 		int(screenObject->position().x() - renderSize.width() * screenObject->pivot().x()),

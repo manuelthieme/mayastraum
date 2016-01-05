@@ -52,7 +52,7 @@ public:
 
 
     /* misc */
-    virtual void tick(int t);
+    virtual void tick(int t, shared_ptr<Screen> activeScreen, int gameHeight);
 };
 
 #endif /* SCREENOBJECT_H */

@@ -109,7 +109,8 @@ int main(void) {
             Point(100, 200),
             Point(0.4, 0.95),
             Hitbox(),
-            animations3
+            animations3,
+            3
         );
 
     player.addRunningAnimation(shared_ptr<Animation>(new Animation(a4)));
@@ -134,7 +135,6 @@ int main(void) {
             NULL
         );
     game.setPlayer(p);
-    game.setDebug(p_house);
 
     while(game.run())
         ; /** void */
