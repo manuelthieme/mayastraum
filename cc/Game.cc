@@ -51,6 +51,9 @@ void Game::render() {
 	for (auto object: this->m_activeScreen->objects())
 		this->drawScreenObject(object);
 
+    if (this->m_inputStates["out"])
+        this->m_inputStates["out"] = false;
+
     if (this->m_inputStates["debug"]) this->drawDebug();
 
     this->present();
@@ -142,7 +145,7 @@ void Game::drawScreenObject(shared_ptr<ScreenObject> screenObject) {
 		int(renderSize.width()),
 		int(renderSize.height())
     };
-	SDL_RenderCopy(this->m_renderer, this->getTextureFromPath(screenObject->activeAnimation()->activeImage()), NULL, &rect);
+    SDL_RenderCopy(this->m_renderer, this->getTextureFromPath(screenObject->activeAnimation()->activeImage()), NULL, &rect);
 }
 
 void Game::present() {
@@ -219,6 +222,7 @@ bool Game::run() {
                             } else {
                                 this->m_inputStates["debug_bounding"] = true;
                                 cout << "Showing Bounding boxes" << endl;
+                                this->m_inputStates["out"] = true;
                             }
                         }
                         break;
@@ -230,6 +234,7 @@ bool Game::run() {
                             } else {
                                 this->m_inputStates["debug_pivot"] = true;
                                 cout << "Showing Pivot points" << endl;
+                                this->m_inputStates["out"] = true;
                             }
                         }
                         break;
@@ -241,6 +246,7 @@ bool Game::run() {
                             } else {
                                 this->m_inputStates["debug_hitbox"] = true;
                                 cout << "Showing Hitboxes" << endl;
+                                this->m_inputStates["out"] = true;
                             }
                         }
                         break;

@@ -16,12 +16,15 @@ int main(void) {
     images_a4.push_back("characters/strichmann.png");
     images_a4.push_back("characters/strichmann1.png");
     images_a4.push_back("characters/strichmann2.png");
+    vector<string> images_a5;
+    images_a5.push_back("sprites/house.png");
 
 
     Animation a1(images_a1, -1);
     Animation a2(images_a2, -1);
     Animation a3(images_a3, -1);
     Animation a4(images_a4, 25);
+    Animation a5(images_a5, -1);
 
     vector<shared_ptr<Animation>> animations1;
     animations1.push_back(shared_ptr<Animation>(new Animation(a1)));
@@ -29,6 +32,8 @@ int main(void) {
     animations2.push_back(shared_ptr<Animation>(new Animation(a2)));
     vector<shared_ptr<Animation>> animations3;
     animations3.push_back(shared_ptr<Animation>(new Animation(a3)));
+    vector<shared_ptr<Animation>> animations5;
+    animations5.push_back(shared_ptr<Animation>(new Animation(a5)));
 
     Hitbox h1;
     h1.addPoint(Point(-92, 17));
@@ -66,6 +71,17 @@ int main(void) {
     hs.addPoint(Point(1280, -1));
     hs.calculateEdges();
 
+    Hitbox h5;
+    h5.addPoint(Point(-233, 89));
+    h5.addPoint(Point(-139, 102));
+    h5.addPoint(Point(17, 87));
+    h5.addPoint(Point(94, 96));
+    h5.addPoint(Point(159, 74));
+    h5.addPoint(Point(222, -65));
+    h5.addPoint(Point(238, -71));
+    h5.addPoint(Point(-78, -75));
+    h5.calculateEdges();
+
     ScreenObject tree(
             Point(650, 580),
             Point(300, 699),
@@ -79,6 +95,13 @@ int main(void) {
             Point(0.3, 0.85),
             h2,
             animations2
+        );
+    ScreenObject house(
+            Point(1050, 600),
+            Point(650, 899),
+            Point(0.55, 0.75),
+            h5,
+            animations5
         );
 
     Character player(
@@ -94,6 +117,8 @@ int main(void) {
     vector<shared_ptr<ScreenObject>> objects;
     shared_ptr<ScreenObject> p_tree(new ScreenObject(tree));
     objects.push_back(p_tree);
+    shared_ptr<ScreenObject> p_house(new ScreenObject(house));
+    objects.push_back(p_house);
     objects.push_back(shared_ptr<ScreenObject>(new ScreenObject(mower)));
     Screen screen(objects, "screens/garden.png");
     shared_ptr<Character> p = screen.addPlayer(shared_ptr<Character>(new Character(player)));
@@ -109,6 +134,7 @@ int main(void) {
             NULL
         );
     game.setPlayer(p);
+    game.setDebug(p_house);
 
     while(game.run())
         ; /** void */

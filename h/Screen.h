@@ -20,7 +20,7 @@ class Screen {
 
 public:
     /* constructor */
-    Screen(vector<shared_ptr<ScreenObject>> objects, string backgroundPath);
+    Screen(vector<shared_ptr<ScreenObject>> objects, string backgroundPath, float sizeFactor = 0.5);
 
     /* getter */
     vector<shared_ptr<ScreenObject>> objects() const;

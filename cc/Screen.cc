@@ -2,7 +2,7 @@
 
 using namespace std;
 /* constructor */
-Screen::Screen(vector<shared_ptr<ScreenObject>> objects, string backgroundPath) : m_objects(objects), m_backgroundPath(backgroundPath) {
+Screen::Screen(vector<shared_ptr<ScreenObject>> objects, string backgroundPath, float sizeFactor) : m_objects(objects), m_backgroundPath(backgroundPath), m_sizeFactor(sizeFactor){
 }
 
 /* getter */
