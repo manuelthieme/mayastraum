@@ -63,13 +63,25 @@ Point Point::operator-(const Point &p) const {
 }
 
 bool Point::operator==(const Point &p) const {
-    return this->m_x == p.m_x
-        && this->m_y == p.m_y;
+    return (int)this->m_x == (int)p.m_x
+        && (int)this->m_y == (int)p.m_y;
+}
+
+bool Point::operator!=(const Point &p) const {
+    return (int)this->m_x != (int)p.m_x
+        || (int)this->m_y != (int)p.m_y;
 }
 
 ostream& operator<<(ostream &output, const Point &p) {
     output << "(" << p.x() << " | " << p.y() << ")";
     return output;
+}
+
+Point Point::operator+=(const Point &p) {
+    this->m_x += p.m_x;
+    this->m_y += p.m_y;
+
+    return *this;
 }
 
 /* misc */
@@ -97,4 +109,9 @@ void Point::moveTo(Point to, float speed) {
 
 void Point::calcMagnitude() {
 	this->m_magnitude = sqrt(pow(this->m_x, 2) + pow(this->m_y, 2));
+}
+
+Point Point::middle(Point p) const {
+    Point middle = p + Point((this->m_x - p.m_x) / 2, (this->m_y - p.m_y) / 2);
+    return middle;
 }

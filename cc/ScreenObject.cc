@@ -93,3 +93,37 @@ bool ScreenObject::greaterThan(shared_ptr<ScreenObject> a, shared_ptr<ScreenObje
 void ScreenObject::tick(int t, shared_ptr<Screen> activeScreen, int gameHeight) {
     this->m_activeAnimation->tick(t);
 }
+
+bool ScreenObject::collides(Point p, shared_ptr<Screen> activeScreen, int gameHeight) const {
+    Point offPoint = this->m_hitbox.offPoint();
+    int count = 0;
+    for (auto e: this->renderHitbox(activeScreen, gameHeight).edges())
+        if ((e + this->m_position).intersects(Edge(p, offPoint)))
+            count++;
+
+    if (count % 2)
+        return true;
+
+    return false;
+}
+
+bool ScreenObject::collides(Edge e, shared_ptr<Screen> activeScreen, int gameHeight) const {
+    Hitbox renderHitbox = this->renderHitbox(activeScreen, gameHeight);
+    /* check whether the Edge is a hitbox edge */
+    for (auto edge: renderHitbox.edges())
+        if ((edge + this->m_position) == e)
+            return false;
+
+    /* check whether the Edge intersects one of the hitbox edges */
+    for (auto edge: renderHitbox.edges()) {
+        edge += this->m_position;
+        if (edge.intersects(e))
+            if(this->collides(edge.middle(), activeScreen, gameHeight))
+                return true;
+    }
+    return false;
+}
+
+Point ScreenObject::nearestPoint(Point p) const {
+    return p;
+}

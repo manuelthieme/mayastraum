@@ -39,6 +39,7 @@ public:
 
     /* misc */
     void sortScreenObjects();
+    bool collides(Edge e) const;
 };
 
 #endif /* SCREEN_H */

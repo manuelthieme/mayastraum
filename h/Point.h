@@ -33,11 +33,14 @@ public:
     Point operator+(const Point &p) const;
     Point operator-(const Point &p) const;
 
-    bool operator==(const Point &h) const;
+    bool operator==(const Point &p) const;
+    bool operator!=(const Point &p) const;
     friend ostream& operator<<(ostream &output, const Point &p);
+    Point operator+=(const Point &p);
 
     /* misc */
     void moveTo(Point to, float speed);
+    Point middle(Point p) const;
 };
 
 #endif /* EDGE_H */

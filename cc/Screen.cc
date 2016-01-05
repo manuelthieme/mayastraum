@@ -50,3 +50,11 @@ bool Screen::operator==(const Screen &s) const {
 void Screen::sortScreenObjects() {
     sort(this->m_objects.begin(), this->m_objects.end(), ScreenObject::greaterThan);
 }
+
+bool Screen::collides(Edge e) const {
+    for (auto edge: this->m_hitbox.edges())
+        if (edge.intersects(e))
+                return true;
+
+    return false;
+}

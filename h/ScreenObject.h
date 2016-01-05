@@ -53,6 +53,9 @@ public:
 
     /* misc */
     virtual void tick(int t, shared_ptr<Screen> activeScreen, int gameHeight);
+    bool collides(Point p, shared_ptr<Screen> activeScreen, int gameHeight) const;
+    bool collides(Edge e, shared_ptr<Screen> activeScreen, int gameHeight) const;
+    Point nearestPoint(Point p) const;
 };
 
 #endif /* SCREENOBJECT_H */

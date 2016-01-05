@@ -14,6 +14,21 @@ vector<Edge> Hitbox::edges() const {
     return this->m_edges;
 }
 
+Point Hitbox::offPoint() const {
+    if (this->m_points.size() < 1)
+        return Point(0, 0);
+    Point point = this->m_points.front();
+    for (auto p: this->m_points) {
+        if (p.x() < point.x())
+            point.setX(p.x());
+
+        if (p.y() < point.y())
+            point.setY(p.y());
+
+    }
+    return point + Point(-1, -1);
+}
+
 /* setter */
 void Hitbox::setPoints(vector<Point> points) {
     this->m_points = points;

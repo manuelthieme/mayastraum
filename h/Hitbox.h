@@ -16,6 +16,7 @@ public:
     /* getter */
     vector<Edge> edges() const;
     vector<Point> points() const;
+    Point offPoint() const;
 
     /* setter */
     void setEdges(vector<Edge> edges);

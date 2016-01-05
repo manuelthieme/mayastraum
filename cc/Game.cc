@@ -104,6 +104,7 @@ void Game::drawDebug() {
         }
     }
 
+    /* draw Screen Hitbox */
     if (this->m_inputStates["debug_screen_hitbox"]) {
         for (auto e: this->m_activeScreen->hitbox().edges()) {
             SDL_RenderDrawLine(
@@ -114,10 +115,14 @@ void Game::drawDebug() {
                     e.end().y());
         }
     }
-#if 0
-    for (auto e: this->screen->graph.getEdges())
-        SDL_RenderDrawLine(this->renderer, e.getBegin().getX(), e.getBegin().getY(), e.getEnd().getX(), e.getEnd().getY());
-#endif
+    /* draw pathGraph */
+    if (this->m_inputStates["debug_graph"]) {
+        for (auto e: this->pathGraph(this->m_player->position(), this->m_player->target()).edges()) {
+            SDL_SetRenderDrawColor(this->m_renderer, 100, 100, 100, 0);
+            SDL_RenderDrawLine(this->m_renderer, e.begin().x(), e.begin().y(), e.end().x(), e.end().y());
+            SDL_SetRenderDrawColor(this->m_renderer, 0, 0, 0, 0);
+        }
+    }
 
 }
 
@@ -261,6 +266,17 @@ bool Game::run() {
                             }
                         }
                         break;
+                    case SDL_SCANCODE_G:
+                        if (this->m_inputStates["debug"]) {
+                            if (this->m_inputStates["debug_graph"]) {
+                                this->m_inputStates["debug_graph"] = false;
+                                cout << "Hiding Graph" << endl;
+                            } else {
+                                this->m_inputStates["debug_graph"] = true;
+                                cout << "Showing Graph" << endl;
+                            }
+                        }
+                        break;
                     case SDL_SCANCODE_R:
                         if (this->m_player->running())
                             this->m_player->stopRunning();
@@ -278,7 +294,7 @@ bool Game::run() {
                     }
                     else {
                         this->m_player->startRunning();
-                        this->m_player->setTarget(Point(float(event.motion.x), float(event.motion.y)));
+                        this->m_player->setTarget( /* this->shortestPath(this->m_player, */list<Point>{Point(float(event.motion.x), float(event.motion.y))}/* )*/);
                     }
                 }
                 break;
@@ -293,3 +309,48 @@ bool Game::run() {
     SDL_Delay(10);
     return true;
 }
+
+list<Point> Game::shortestPath(shared_ptr<Character> character, Point target) const {
+    for (auto o: this->m_activeScreen->objects()) {
+        if (o->collides(target, this->m_activeScreen, this->m_height)) {
+            target = o->nearestPoint(target);
+            break;
+        }
+    }
+    Graph pathGraph = this->pathGraph(character->position(), target);
+    list<Point> l;
+    return l;
+}
+Graph Game::pathGraph(Point position, Point target) const {
+    vector<Point> points;
+    for (auto o: this->m_activeScreen->objects())
+        for (auto p: o->renderHitbox(this->m_activeScreen, this->m_height).points())
+        points.push_back(p + o->position());
+
+    for (auto p: this->m_activeScreen->hitbox().points())
+        points.push_back(p);
+
+    //points.push_back(position);
+    //points.push_back(target);
+    Graph g;
+    /* check every possible set of 2 points */
+    for (auto p1: points) {
+        for (auto p2: points) {
+            /* check if the edge, consisting of this 2 Points, collides with a screenObject */
+            bool insert = true;
+            for (auto o: this->m_activeScreen->objects()) {
+                if (o->collides(Edge(p1, p2), this->m_activeScreen, this->m_height)) {
+                    insert = false;
+                    break;
+                }
+            }
+            if (this->m_activeScreen->collides(Edge(p1,p2)))
+                insert = false;
+
+            if (insert)
+                g.addEdge(Edge(p1, p2));
+        }
+    }
+    return g;
+}
+

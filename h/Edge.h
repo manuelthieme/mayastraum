@@ -17,6 +17,7 @@ public:
     /* getter */
     Point begin() const;
     Point end() const;
+    float slope() const;
 
     /* setter */
     void setBegin(Point begin);
@@ -25,6 +26,12 @@ public:
     /* operators */
     bool operator==(const Edge &e) const;
     friend ostream& operator<<(ostream &output, const Edge &e);
+    Edge operator+(const Point &p) const;
+    Edge operator+=(const Point &p);
+
+    /* misc */
+    bool intersects(Edge e) const;
+    Point middle() const;
 };
 
 #endif /* EDGE_H */

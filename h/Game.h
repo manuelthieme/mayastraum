@@ -42,6 +42,7 @@ public:
     ~Game();
 
     /* getter */
+    Graph pathGraph(Point position, Point target) const;
 
     /* setter */
     shared_ptr<Screen> addScreen(shared_ptr<Screen> screen);
@@ -51,6 +52,7 @@ public:
 
     /* misc */
     bool run();
+    list<Point> shortestPath(shared_ptr<Character> character, Point target) const;
 };
 
 #endif /* GAME_H */

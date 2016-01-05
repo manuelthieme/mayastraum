@@ -20,6 +20,10 @@ int Character::speed() const {
     return this->m_speed;
 }
 
+Point Character::target() const {
+    return this->m_target;
+}
+
 
 /* setter */
 void Character::setRunning(bool running) {
@@ -31,9 +35,9 @@ shared_ptr<Animation> Character::addRunningAnimation(shared_ptr<Animation> a) {
     return this->m_runningAnimation;
 }
 
-void Character::setTarget(Point t) {
-    this->m_target = t;
-    this->m_path.push_back(t);
+void Character::setTarget(list<Point> path) {
+    this->m_path = path;
+    this->m_target = this->m_path.back();
 }
 
 void Character::setSpeed(int s) {

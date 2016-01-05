@@ -1,6 +1,7 @@
 #include "Point.h"
 #include "Edge.h"
 #include "Hitbox.h"
+#include "Graph.h"
 #include "Animation.h"
 #include "ScreenObject.h"
 #include "Character.h"

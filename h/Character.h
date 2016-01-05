@@ -24,11 +24,12 @@ public:
     bool running() const;
     shared_ptr<Animation> runningAnimation() const;
     int speed() const;
+    Point target() const;
 
     /* setter */
     void setRunning(bool running);
     shared_ptr<Animation> addRunningAnimation(shared_ptr<Animation> a);
-    void setTarget(Point t);
+    void setTarget(list<Point> path);
     void setSpeed(int s);
 
     /* misc */
