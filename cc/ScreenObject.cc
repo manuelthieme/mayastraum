@@ -118,7 +118,7 @@ bool ScreenObject::collides(Edge e, shared_ptr<Screen> activeScreen, int gameHei
     for (auto edge: renderHitbox.edges()) {
         edge += this->m_position;
         if (edge.intersects(e))
-            if(this->collides(edge.middle(), activeScreen, gameHeight))
+            //if(this->collides(edge.middle(), activeScreen, gameHeight))
                 return true;
     }
     return false;

@@ -326,12 +326,12 @@ Graph Game::pathGraph(Point position, Point target) const {
     for (auto o: this->m_activeScreen->objects())
         for (auto p: o->renderHitbox(this->m_activeScreen, this->m_height).points())
         points.push_back(p + o->position());
-
+#if 0
     for (auto p: this->m_activeScreen->hitbox().points())
         points.push_back(p);
-
-    //points.push_back(position);
-    //points.push_back(target);
+#endif
+    points.push_back(position);
+    points.push_back(target);
     Graph g;
     /* check every possible set of 2 points */
     for (auto p1: points) {
@@ -343,10 +343,15 @@ Graph Game::pathGraph(Point position, Point target) const {
                     insert = false;
                     break;
                 }
+                if (o->collides(Edge(p1, p2).middle(), this->m_activeScreen, this->m_height)) {
+                    insert = false;
+                    break;
+                }
             }
+#if 0
             if (this->m_activeScreen->collides(Edge(p1,p2)))
                 insert = false;
-
+#endif
             if (insert)
                 g.addEdge(Edge(p1, p2));
         }
