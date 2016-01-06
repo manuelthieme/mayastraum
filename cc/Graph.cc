@@ -41,6 +41,7 @@ void Graph::addNode(Point p) {
 
 void Graph::clear() {
     this->m_edges.clear();
+    this->m_nodes.clear();
 }
 
  /* misc */
