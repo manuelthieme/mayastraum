@@ -72,6 +72,14 @@ bool Point::operator!=(const Point &p) const {
         || (int)this->m_y != (int)p.m_y;
 }
 
+bool Point::operator<(const Point &p) const {
+    return (this->magnitude() < p.magnitude());
+}
+
+bool Point::operator>(const Point &p) const {
+    return (this->magnitude() > p.magnitude());
+}
+
 ostream& operator<<(ostream &output, const Point &p) {
     output << "(" << p.x() << " | " << p.y() << ")";
     return output;

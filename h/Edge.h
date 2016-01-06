@@ -18,6 +18,7 @@ public:
     Point begin() const;
     Point end() const;
     float slope() const;
+    float magnitude() const;
 
     /* setter */
     void setBegin(Point begin);

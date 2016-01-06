@@ -18,6 +18,10 @@ float Edge::slope() const {
     return (this->m_begin.y() - this->m_end.y()) / (this->m_begin.x() - this->m_end.x());
 }
 
+float Edge::magnitude() const {
+    return max(this->m_begin.magnitude(), this->m_end.magnitude()) - min(this->m_begin.magnitude(), this->m_end.magnitude());
+}
+
 /* setter */
 void Edge::setBegin(Point begin) {
     this->m_begin = begin;

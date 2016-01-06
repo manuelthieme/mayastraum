@@ -117,7 +117,7 @@ int main(void) {
 
     vector<shared_ptr<ScreenObject>> objects;
     shared_ptr<ScreenObject> p_tree(new ScreenObject(tree));
-    objects.push_back(p_tree);
+    //objects.push_back(p_tree);
     shared_ptr<ScreenObject> p_house(new ScreenObject(house));
     objects.push_back(p_house);
     objects.push_back(shared_ptr<ScreenObject>(new ScreenObject(mower)));

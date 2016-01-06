@@ -13,7 +13,7 @@ class Point {
     void calcMagnitude();
 public:
     /* constructor */
-    Point(float x, float y);
+    Point(float x = 0, float y = 0);
 
     /* getter */
     float x() const;
@@ -32,6 +32,8 @@ public:
     /* operators */
     Point operator+(const Point &p) const;
     Point operator-(const Point &p) const;
+    bool operator<(const Point &p) const;
+    bool operator>(const Point &p) const;
 
     bool operator==(const Point &p) const;
     bool operator!=(const Point &p) const;

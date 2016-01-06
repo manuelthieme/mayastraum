@@ -117,11 +117,27 @@ void Game::drawDebug() {
     }
     /* draw pathGraph */
     if (this->m_inputStates["debug_graph"]) {
-        for (auto e: this->pathGraph(this->m_player->position(), this->m_player->target()).edges()) {
+        for (auto e: this->m_pathGraph.edges()) {
             SDL_SetRenderDrawColor(this->m_renderer, 100, 100, 100, 0);
             SDL_RenderDrawLine(this->m_renderer, e.begin().x(), e.begin().y(), e.end().x(), e.end().y());
             SDL_SetRenderDrawColor(this->m_renderer, 0, 0, 0, 0);
         }
+        bool first = true;
+        Point before;
+        for (auto p: this->m_player->path()) {
+            if (first) {
+                SDL_SetRenderDrawColor(this->m_renderer, 200, 50, 50, 0);
+                SDL_RenderDrawLine(this->m_renderer, this->m_player->position().x(), this->m_player->position().y(), p.x(), p.y());
+                SDL_SetRenderDrawColor(this->m_renderer, 0, 0, 0, 0);
+                before = p;
+                first = false;
+                continue;
+            }
+            SDL_SetRenderDrawColor(this->m_renderer, 200, 50, 50, 0);
+            SDL_RenderDrawLine(this->m_renderer, before.x(), before.y(), p.x(), p.y());
+            SDL_SetRenderDrawColor(this->m_renderer, 0, 0, 0, 0);
+        }
+
     }
 
 }
@@ -294,7 +310,8 @@ bool Game::run() {
                     }
                     else {
                         this->m_player->startRunning();
-                        this->m_player->setTarget( /* this->shortestPath(this->m_player, */list<Point>{Point(float(event.motion.x), float(event.motion.y))}/* )*/);
+                        this->shortestPath(this->m_player, Point(float(event.motion.x), float(event.motion.y)));
+                        this->m_player->setTarget(this->shortestPath(this->m_player, Point(float(event.motion.x), float(event.motion.y))));
                     }
                 }
                 break;
@@ -310,7 +327,7 @@ bool Game::run() {
     return true;
 }
 
-list<Point> Game::shortestPath(shared_ptr<Character> character, Point target) const {
+list<Point> Game::shortestPath(shared_ptr<Character> character, Point target) {
     for (auto o: this->m_activeScreen->objects()) {
         if (o->collides(target, this->m_activeScreen, this->m_height)) {
             target = o->nearestPoint(target);
@@ -318,10 +335,9 @@ list<Point> Game::shortestPath(shared_ptr<Character> character, Point target) co
         }
     }
     Graph pathGraph = this->pathGraph(character->position(), target);
-    list<Point> l;
-    return l;
+    return pathGraph.shortestPath(character->position(), target);
 }
-Graph Game::pathGraph(Point position, Point target) const {
+Graph Game::pathGraph(Point position, Point target) {
     vector<Point> points;
     for (auto o: this->m_activeScreen->objects())
         for (auto p: o->renderHitbox(this->m_activeScreen, this->m_height).points())
@@ -332,18 +348,21 @@ Graph Game::pathGraph(Point position, Point target) const {
 #endif
     points.push_back(position);
     points.push_back(target);
-    Graph g;
+    this->m_pathGraph.clear();
     /* check every possible set of 2 points */
-    for (auto p1: points) {
-        for (auto p2: points) {
+    int count = 0;
+    int inserted = 0;
+    for (auto p1 = points.begin(); p1 != points.end(); ++p1) {
+        for (auto p2 = p1 + 1; p2 != points.end(); ++p2) {
+            ++count;
             /* check if the edge, consisting of this 2 Points, collides with a screenObject */
             bool insert = true;
             for (auto o: this->m_activeScreen->objects()) {
-                if (o->collides(Edge(p1, p2), this->m_activeScreen, this->m_height)) {
+                if (o->collides(Edge(*p1, *p2), this->m_activeScreen, this->m_height)) {
                     insert = false;
                     break;
                 }
-                if (o->collides(Edge(p1, p2).middle(), this->m_activeScreen, this->m_height)) {
+                if (o->collides(Edge(*p1, *p2).middle(), this->m_activeScreen, this->m_height)) {
                     insert = false;
                     break;
                 }
@@ -352,10 +371,13 @@ Graph Game::pathGraph(Point position, Point target) const {
             if (this->m_activeScreen->collides(Edge(p1,p2)))
                 insert = false;
 #endif
-            if (insert)
-                g.addEdge(Edge(p1, p2));
+            if (insert) {
+                ++inserted;
+                this->m_pathGraph.addEdge(Edge(*p1, *p2));
+            }
         }
     }
-    return g;
+    cout << count << " possible edges, " << inserted << " inserted" << endl;
+    return this->m_pathGraph;
 }
 

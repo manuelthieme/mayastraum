@@ -110,9 +110,14 @@ bool ScreenObject::collides(Point p, shared_ptr<Screen> activeScreen, int gameHe
 bool ScreenObject::collides(Edge e, shared_ptr<Screen> activeScreen, int gameHeight) const {
     Hitbox renderHitbox = this->renderHitbox(activeScreen, gameHeight);
     /* check whether the Edge is a hitbox edge */
-    for (auto edge: renderHitbox.edges())
-        if ((edge + this->m_position) == e)
+    cout << e << endl;
+    for (auto edge: renderHitbox.edges()) {
+        cout << "\t" << edge + this->m_position << endl;
+        if ((edge + this->m_position) == e) {
+            cout << "insert" << endl;
             return false;
+        }
+    }
 
     /* check whether the Edge intersects one of the hitbox edges */
     for (auto edge: renderHitbox.edges()) {

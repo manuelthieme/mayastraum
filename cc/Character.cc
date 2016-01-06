@@ -23,6 +23,9 @@ int Character::speed() const {
 Point Character::target() const {
     return this->m_target;
 }
+list<Point> Character::path() const {
+    return this->m_path;
+}
 
 
 /* setter */

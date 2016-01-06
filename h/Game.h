@@ -35,6 +35,7 @@ class Game {
     int tick;
 
     shared_ptr<ScreenObject> m_debug;
+    Graph m_pathGraph;
 
 public:
     /* constructor */
@@ -42,7 +43,7 @@ public:
     ~Game();
 
     /* getter */
-    Graph pathGraph(Point position, Point target) const;
+    Graph pathGraph(Point position, Point target);
 
     /* setter */
     shared_ptr<Screen> addScreen(shared_ptr<Screen> screen);
@@ -52,7 +53,7 @@ public:
 
     /* misc */
     bool run();
-    list<Point> shortestPath(shared_ptr<Character> character, Point target) const;
+    list<Point> shortestPath(shared_ptr<Character> character, Point target);
 };
 
 #endif /* GAME_H */

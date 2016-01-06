@@ -25,6 +25,7 @@ public:
     shared_ptr<Animation> runningAnimation() const;
     int speed() const;
     Point target() const;
+    list<Point> path() const;
 
     /* setter */
     void setRunning(bool running);
