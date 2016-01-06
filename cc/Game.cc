@@ -51,8 +51,6 @@ void Game::render() {
 	for (auto object: this->m_activeScreen->objects())
 		this->drawScreenObject(object);
 
-    if (this->m_inputStates["out"])
-        this->m_inputStates["out"] = false;
 
     if (this->m_inputStates["debug"]) this->drawDebug();
 
@@ -136,9 +134,11 @@ void Game::drawDebug() {
             SDL_SetRenderDrawColor(this->m_renderer, 200, 50, 50, 0);
             SDL_RenderDrawLine(this->m_renderer, before.x(), before.y(), p.x(), p.y());
             SDL_SetRenderDrawColor(this->m_renderer, 0, 0, 0, 0);
+            before = p;
         }
 
     }
+    this->m_inputStates["out"] = false;
 
 }
 
@@ -158,7 +158,8 @@ void Game::clear() {
 }
 
 void Game::drawScreenObject(shared_ptr<ScreenObject> screenObject) {
-	screenObject->tick(this->tick++, this->m_activeScreen, this->m_height);
+	if (not (this->m_inputStates["debug"] and this->m_inputStates["debug_notick"]))
+        screenObject->tick(this->tick++, this->m_activeScreen, this->m_height);
     Point renderSize = screenObject->renderSize(this->m_activeScreen, this->m_height);
 	SDL_Rect rect = {
 		int(screenObject->position().x() - renderSize.width() * screenObject->pivot().x()),
@@ -293,6 +294,18 @@ bool Game::run() {
                             }
                         }
                         break;
+                    case SDL_SCANCODE_N:
+                        if (this->m_inputStates["debug"]) {
+                            if (this->m_inputStates["debug_notick"]) {
+                                this->m_inputStates["debug_notick"] = false;
+                                cout << "Ticking enabled" << endl;
+                            } else {
+                                this->m_inputStates["debug_notick"] = true;
+                                cout << "Ticking disabled" << endl;
+                            }
+                        }
+                        break;
+
                     case SDL_SCANCODE_R:
                         if (this->m_player->running())
                             this->m_player->stopRunning();
@@ -303,15 +316,19 @@ bool Game::run() {
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                if(event.button.button == SDL_BUTTON_LEFT) {
+                if (event.button.button == SDL_BUTTON_LEFT) {
                     if (this->m_debug != nullptr) {
                         float factor = 1 / ((this->m_debug->position().y() / this->m_height) * (1 - this->m_activeScreen->sizeFactor()) + this->m_activeScreen->sizeFactor());
                         cout << Point(event.motion.x, event.motion.y) << this->m_debug->position() << Point(factor * (this->m_debug->position().x() - event.motion.x), factor * (this->m_debug->position().y() - event.motion.y)) << endl;
                     }
                     else {
                         this->m_player->startRunning();
-                        this->shortestPath(this->m_player, Point(float(event.motion.x), float(event.motion.y)));
                         this->m_player->setTarget(this->shortestPath(this->m_player, Point(float(event.motion.x), float(event.motion.y))));
+                        this->m_inputStates["out"] = true;
+                    }
+                } else if (event.button.button == SDL_BUTTON_RIGHT) {
+                    if (this->m_inputStates["debug"] and this->m_inputStates["debug_notick"]) {
+                        this->m_player->setPosition(Point(float(event.motion.x),float(event.motion.y)));
                     }
                 }
                 break;
@@ -337,15 +354,16 @@ list<Point> Game::shortestPath(shared_ptr<Character> character, Point target) {
     Graph pathGraph = this->pathGraph(character->position(), target);
     return pathGraph.shortestPath(character->position(), target);
 }
+
 Graph Game::pathGraph(Point position, Point target) {
     vector<Point> points;
     for (auto o: this->m_activeScreen->objects())
         for (auto p: o->renderHitbox(this->m_activeScreen, this->m_height).points())
-        points.push_back(p + o->position());
-#if 0
+            points.push_back(p + o->position());
+
     for (auto p: this->m_activeScreen->hitbox().points())
         points.push_back(p);
-#endif
+
     points.push_back(position);
     points.push_back(target);
     this->m_pathGraph.clear();
@@ -355,29 +373,53 @@ Graph Game::pathGraph(Point position, Point target) {
     for (auto p1 = points.begin(); p1 != points.end(); ++p1) {
         for (auto p2 = p1 + 1; p2 != points.end(); ++p2) {
             ++count;
+            Edge edge(*p1, *p2);
             /* check if the edge, consisting of this 2 Points, collides with a screenObject */
-            bool insert = true;
+            bool toInsert = true;
+            bool isHitbox = false;
+
+            /* check whether the Edge is a hitbox edge */
             for (auto o: this->m_activeScreen->objects()) {
-                if (o->collides(Edge(*p1, *p2), this->m_activeScreen, this->m_height)) {
-                    insert = false;
-                    break;
+                for (auto e: o->renderHitbox(this->m_activeScreen, this->m_height).edges()) {
+                    if ((e + o->position()) == edge) {
+                        isHitbox = true;
+                        break;
+                    }
                 }
-                if (o->collides(Edge(*p1, *p2).middle(), this->m_activeScreen, this->m_height)) {
-                    insert = false;
+                if (isHitbox)
+                    break;
+            }
+            /* check whether the Edge is a Screen Hitbox Edge */
+            for (auto e: this->m_activeScreen->hitbox().edges()) {
+                if (e == edge) {
+                    isHitbox = true;
                     break;
                 }
             }
-#if 0
-            if (this->m_activeScreen->collides(Edge(p1,p2)))
-                insert = false;
-#endif
-            if (insert) {
+
+            if (not isHitbox) {
+                for (auto o: this->m_activeScreen->objects()) {
+                    if (o->collides(edge, this->m_activeScreen, this->m_height)) {
+                        toInsert = false;
+                    }
+                    if (o->collides(edge.middle(), this->m_activeScreen, this->m_height)) {
+                        toInsert = false;
+                        break;
+                    }
+                }
+                if (this->m_activeScreen->collides(edge))
+                    toInsert = false;
+                if (this->m_activeScreen->collides(edge.middle()))
+                    toInsert = false;
+            }
+
+            if (toInsert) {
                 ++inserted;
-                this->m_pathGraph.addEdge(Edge(*p1, *p2));
+                this->m_pathGraph.addEdge(edge);
             }
         }
     }
-    cout << count << " possible edges, " << inserted << " inserted" << endl;
+    //cout << count << " possible edges, " << inserted << " inserted." << endl;
     return this->m_pathGraph;
 }
 

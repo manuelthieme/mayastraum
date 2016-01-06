@@ -59,7 +59,7 @@ Edge Edge::operator+=(const Point &p) {
 /* misc */
 bool Edge::intersects(Edge e) const {
 
-    Point possible(0, 0);
+    Point intersection(0, 0);
 
     if (this->m_begin.x() == this->m_end.x() and e.m_begin.x() == e.m_end.x()) {
         if (this->m_begin.x() != e.m_begin.x()) {
@@ -71,38 +71,44 @@ bool Edge::intersects(Edge e) const {
     if (this->m_begin.x() == this->m_end.x()) {
         float m = e.slope();
         float n = e.m_begin.y() - e.m_begin.x() * m;
-        possible = Point(this->m_begin.x(), m * this->m_begin.x() + n);
+        intersection = Point(this->m_begin.x(), m * this->m_begin.x() + n);
     } else if (e.m_begin.x() == e.m_end.x()) {
         float m = this->slope();
         float n = this->m_begin.y() - this->m_begin.x() * m;
-        possible = Point(e.m_begin.x(), m * e.m_begin.x() + n);
+        intersection = Point(e.m_begin.x(), m * e.m_begin.x() + n);
+    } else {
+        /* get slopes */
+        float m1 = this->slope();
+        float m2 = e.slope();
+
+        float n1 = this->m_begin.y() - this->m_begin.x() * m1;
+        float n2 = e.m_begin.y() - e.m_begin.x() * m2;
+
+        if (m1 == m2)
+            if (n1 == n2)
+                return true;
+            else
+                return false;
+
+        //cout << *this << endl << e << endl;
+        //cout << "\t" << m1 << "\t" << m2 << endl;
+
+        /* get intersection */
+        float x = (n2 - n1) / (m1 - m2);
+        float y = m1 * x + n1;
+
+        intersection = Point(x, y);
     }
 
-    /* get slopes */
-    float m1 = this->slope();
-    float m2 = e.slope();
-
-    float n1 = this->m_begin.y() - this->m_begin.x() * m1;
-    float n2 = e.m_begin.y() - e.m_begin.x() * m2;
-
-    if (m1 == m2)
-        if (n1 == n2)
-            return true;
-        else
-            return false;
-
-    //cout << *this << endl << e << endl;
-    //cout << "\t" << m1 << "\t" << m2 << endl;
-
-    /* get intersection */
-    float x = (n2 - n1) / (m1 - m2);
-    //float y = m1 * x + n1;
-
-    //Point p(x, y);
+    /* check whether intersection is one of the given EdgePoints */
+    bool isEdgePoint = (intersection.x() == this->m_begin.x() || intersection.x() == this->m_end.x());
 
     /* check whether intersection is in bounds */
-    return min(this->m_begin.x(), this->m_end.x()) < x && x < max(this->m_begin.x(), this->m_end.x())
-        && min(e.m_begin.x(), e.m_end.x()) < x          && x < max(e.m_begin.x(), e.m_end.x());
+    bool inBounds =
+        min(this->m_begin.x(), this->m_end.x()) <= intersection.x() && intersection.x() <= max(this->m_begin.x(), this->m_end.x())
+        && min(e.m_begin.x(), e.m_end.x()) <= intersection.x()      && intersection.x() <= max(e.m_begin.x(), e.m_end.x());
+
+    return (!isEdgePoint && inBounds);
 }
 
 Point Edge::middle() const {

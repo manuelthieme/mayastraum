@@ -40,6 +40,7 @@ public:
     /* misc */
     void sortScreenObjects();
     bool collides(Edge e) const;
+    bool collides(Point p) const;
 };
 
 #endif /* SCREEN_H */

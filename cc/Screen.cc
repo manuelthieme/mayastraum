@@ -58,3 +58,17 @@ bool Screen::collides(Edge e) const {
 
     return false;
 }
+
+bool Screen::collides(Point p) const {
+    Point offPoint = this->m_hitbox.offPoint();
+    int count = 0;
+    for (auto e: this->m_hitbox.edges())
+        if (e.intersects(Edge(p, offPoint)))
+            count++;
+
+    if (count % 2)
+        return true;
+
+    return false;
+}
+
