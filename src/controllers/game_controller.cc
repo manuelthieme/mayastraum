@@ -10,6 +10,7 @@ GameController::GameController(GameModel *game_model, SDL_GUI::InterfaceModel *i
 void GameController::init() {
     this->_debug_style._has_border = true;
     this->_debug_style._border_width = 5;
+    this->_debug_style._border_color = SDL_GUI::RGB(255,0,0,125);
     SDL_GUI::Texture *screen_texture = new SDL_GUI::Texture(this->_game_model->_active_screen->background_path(), this->_interface_model->renderer());
 
     screen_texture->set_width(1920);
