@@ -14,6 +14,7 @@ void GameController::init() {
 
     screen_texture->set_width(1920);
     screen_texture->set_height(1080);
+    screen_texture->add_attribute("screen");
 
     SDL_GUI::TreeNode<SDL_GUI::Drawable> *screen_node = this->_interface_model->find_first_tree_node("main")->add_child(screen_texture);
 
