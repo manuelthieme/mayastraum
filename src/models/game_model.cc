@@ -1,3 +1,17 @@
+#include <models/game_model.h>
+
+
+GameModel::GameModel() {
+    this->init();
+}
+
+void GameModel::init() {
+    /* create dummy screen */
+    Screen *screen = new Screen("screens/garden.png");
+    this->_screens.push_back(screen);
+    this->_active_screen = screen;
+}
+
 #if 0
 #include <includes.h>
 
@@ -47,10 +61,10 @@ void Game::setDebug(shared_ptr<ScreenObject> d) {
 /* misc */
 void Game::render() {
     this->clear();
-	this->drawBackground();
+    this->drawBackground();
     this->m_activeScreen->sortScreenObjects();
-	for (auto object: this->m_activeScreen->objects())
-		this->drawScreenObject(object);
+    for (auto object: this->m_activeScreen->objects())
+        this->drawScreenObject(object);
 
 
     if (this->m_inputStates["debug"]) this->drawDebug();
@@ -144,54 +158,54 @@ void Game::drawDebug() {
 }
 
 void Game::drawBackground() {
-	SDL_Rect rect = {0, 0, int(this->m_width), int(this->m_height)};
-	SDL_RenderCopy(this->m_renderer, this->getTextureFromPath(this->m_activeScreen->backgroundPath()), NULL, &rect);
+    SDL_Rect rect = {0, 0, int(this->m_width), int(this->m_height)};
+    SDL_RenderCopy(this->m_renderer, this->getTextureFromPath(this->m_activeScreen->backgroundPath()), NULL, &rect);
 }
 
 SDL_Texture* Game::getTextureFromPath(string texturePath) {
-	if(!this->m_textures.count(texturePath))
-		this->m_textures.insert(pair<string, SDL_Texture*>(texturePath, IMG_LoadTexture(this->m_renderer, texturePath.c_str())));
-	return this->m_textures.at(texturePath);
+    if(!this->m_textures.count(texturePath))
+        this->m_textures.insert(pair<string, SDL_Texture*>(texturePath, IMG_LoadTexture(this->m_renderer, texturePath.c_str())));
+    return this->m_textures.at(texturePath);
 }
 
 void Game::clear() {
-	SDL_RenderClear(this->m_renderer);
+    SDL_RenderClear(this->m_renderer);
 }
 
 void Game::drawScreenObject(shared_ptr<ScreenObject> screenObject) {
-	if (not (this->m_inputStates["debug"] and this->m_inputStates["debug_notick"]))
+    if (not (this->m_inputStates["debug"] and this->m_inputStates["debug_notick"]))
         screenObject->tick(this->tick++, this->m_activeScreen, this->m_height);
     Point renderSize = screenObject->renderSize(this->m_activeScreen, this->m_height);
-	SDL_Rect rect = {
-		int(screenObject->position().x() - renderSize.width() * screenObject->pivot().x()),
-		int(screenObject->position().y() - renderSize.height() * screenObject->pivot().y()),
-		int(renderSize.width()),
-		int(renderSize.height())
+    SDL_Rect rect = {
+        int(screenObject->position().x() - renderSize.width() * screenObject->pivot().x()),
+        int(screenObject->position().y() - renderSize.height() * screenObject->pivot().y()),
+        int(renderSize.width()),
+        int(renderSize.height())
     };
     SDL_RenderCopy(this->m_renderer, this->getTextureFromPath(screenObject->activeAnimation()->activeImage()), NULL, &rect);
 }
 
 void Game::present() {
-	SDL_RenderPresent(this->m_renderer);
+    SDL_RenderPresent(this->m_renderer);
 }
 
 Game::~Game() {
-	SDL_DestroyWindow(this->m_window);
-	SDL_DestroyRenderer(this->m_renderer);
+    SDL_DestroyWindow(this->m_window);
+    SDL_DestroyRenderer(this->m_renderer);
     TTF_CloseFont(this->m_font);
     TTF_Quit();
-	SDL_Quit();
+    SDL_Quit();
 }
 
 
 void Game::init() {
     this->m_window = NULL;
-	this->m_renderer = NULL;
+    this->m_renderer = NULL;
 
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		cerr << "SDL_Init failed" << endl;
-		return;
-	}
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        cerr << "SDL_Init failed" << endl;
+        return;
+    }
     if (TTF_Init() < 0) {
         cerr << "TTF_Init failed: " << TTF_GetError() << endl;
         return;
@@ -201,20 +215,20 @@ void Game::init() {
         cout << " Failed to load font : " << TTF_GetError() << endl;
         return;
     }
-	this->m_window = SDL_CreateWindow( "Mayas Traum",
-		   	SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, this->m_width,
-			this->m_height, SDL_WINDOW_SHOWN );
-	if (!this->m_window) {
-		cerr << "Window Creation failed" << endl;
-		return;
-	}
-	this->m_renderer = SDL_CreateRenderer(this->m_window, -1,
-			SDL_RENDERER_ACCELERATED);
-	if (!this->m_renderer) {
-		cerr << "Renderer Creation failed" << endl;
-		return;
-	}
-	this->m_mainEvent = new SDL_Event();
+    this->m_window = SDL_CreateWindow( "Mayas Traum",
+            SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, this->m_width,
+            this->m_height, SDL_WINDOW_SHOWN );
+    if (!this->m_window) {
+        cerr << "Window Creation failed" << endl;
+        return;
+    }
+    this->m_renderer = SDL_CreateRenderer(this->m_window, -1,
+            SDL_RENDERER_ACCELERATED);
+    if (!this->m_renderer) {
+        cerr << "Renderer Creation failed" << endl;
+        return;
+    }
+    this->m_mainEvent = new SDL_Event();
 
 }
 

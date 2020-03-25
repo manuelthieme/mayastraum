@@ -1,7 +1,17 @@
 #pragma once
 
-class Screen {
+#include <string>
 
+class Screen {
+    /**
+     * Background Image.
+     */
+    std::string _background_path;
+
+public:
+    Screen(std::string path);
+
+    std::string background_path() const;
 };
 
 #if 0

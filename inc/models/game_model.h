@@ -8,6 +8,7 @@
 #include <models/screen.h>
 
 class GameModel : public SDL_GUI::ModelBase {
+public:
     /**
      * List of Screens in Game.
      */
@@ -22,6 +23,10 @@ class GameModel : public SDL_GUI::ModelBase {
      *  Player Character
      */
     Character *_player;
+
+    void init();
+
+    GameModel();
 };
 
 #if 0

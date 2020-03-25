@@ -3,33 +3,26 @@ ifneq ($(notdir $(CURDIR)),$(BUILD))
 
 .SUFFIXES:
 OBJDIR := $(CURDIR)/build
-DEPDIR := $(CURDIR)/.d
-INCDIR := $(CURDIR)/inc
-SRCDIR := $(CURDIR)/src
-LIBDIR := $(CURDIR)/lib
+export INCDIR := $(CURDIR)/inc
+export SRCDIR := $(CURDIR)/src
+export LIBDIR := $(CURDIR)/lib
+export ROOTDIR := $(CURDIR)
 
 RM     := rm -rf
 MKDIR  := mkdir -p
-TARGET       := main
+export TARGET       := main
 
 SRCSALL      := $(shell find $(CURDIR) -name "*.cc" -o -name "*.h")
 SRCSCCABS    := $(filter %.cc, $(SRCSALL))
 SRCSCC       := $(patsubst $(SRCDIR)/%,%,$(SRCSCCABS))
 
 # create directories
-$(foreach dirname,$(dir $(SRCSCC)),$(shell $(MKDIR) $(DEPDIR)/$(dirname)))
 $(foreach dirname,$(dir $(SRCSCC)),$(shell $(MKDIR) $(OBJDIR)/$(dirname)))
 
 .PHONY: $(all)
-all: lib
+all:
 	+@$(MAKE) --no-print-directory -C $(OBJDIR) -f $(CURDIR)/Makefile \
-	 SRCDIR=$(SRCDIR) INCDIR=$(INCDIR) DEPDIR=$(DEPDIR) ROOTDIR=$(CURDIR) \
-	 LIBDIR=$(LIBDIR) TARGET=$(TARGET) \
 	 $(MAKECMDGOALS)
-
-.PHONY: lib
-lib:
-	$(MAKE) -C $(LIBDIR)/SDL_GUI lib
 
 .PHONY: run
 run: all
@@ -42,7 +35,6 @@ Makefile : ;
 .PHONY: clean
 clean:
 	$(RM) $(OBJDIR)
-	$(RM) $(DEPDIR)
 
 .PHONY: superclean
 superclean: clean
@@ -57,13 +49,16 @@ supersure: superclean sure
 
 else
 
+unexport SRCDIR
+unexport INCDIR
+
 SRCSALL      := $(shell find $(ROOTDIR) -path $(LIBDIR) -prune -o -path $(ROOTDIR)/_old -prune -o -name "*.cc" -o -name "*.h")
 SRCSCCABS    := $(filter %.cc, $(SRCSALL))
 SRCSCC       := $(patsubst $(SRCDIR)/%,%,$(SRCSCCABS))
 SRCHABS      := $(filter %.h, $(SRCSALL))
 SRCSH        := $(patsubst $(INCDIR)/%,%,$(SRCSHABS))
 OBJS         := $(SRCSCC:.cc=.o)
-DEPS         := $(addprefix $(patsubst $(ROOTDIR)/%,%,$(DEPDIR))/,$(SRCSCC:.cc=.d))
+DEPS         := $(SRCSCC:.cc=.d)
 
 CXXFLAGS     := -std=c++2a -Wall -Wextra -Wpedantic -ggdb -O0 `sdl2-config --cflags`
 CXXFLAGS     += -I$(INCDIR) -I$(LIBDIR)
@@ -71,10 +66,11 @@ CXXFLAGS     += -I$(INCDIR) -I$(LIBDIR)
 CXXFLAGSTAGS := -I/home/morion/.vim/tags
 
 LIBS         := -lSDL2 -lSDL2_gfx -lSDL2_ttf -lSDL2_image
+LIBRARIES    := $(LIBDIR)/SDL_GUI/build/SDL_GUI.a
 
 vpath %.h $(dir $(SRCSHABS))
 vpath %.cc $(dir $(SRCSCCABS))
-vpath %.d $(dir $(addprefix $(DEPDIR)/, $(DEPS)))
+vpath %.d $(dir $(DEPS))
 
 .PHONY: all
 all: $(TARGET)
@@ -97,12 +93,17 @@ effective: all
 
 .PHONY: makefile-debug
 makefile-debug:
-	@echo $(SRCSALL)
+	@echo $(LIBRARIES)
 
-$(TARGET): $(OBJS)
-	$(CXX) -o $@ $^ $(LIBDIR)/SDL_GUI/build/SDL_GUI.a $(LIBS)
+$(LIBDIR)/SDL_GUI/build/SDL_GUI.a:
+	$(MAKE) -C $(LIBDIR)/SDL_GUI lib
 
-$(DEPDIR)/%.d: %.cc
+%.o: %.d
+
+$(TARGET): $(OBJS) $(LIBRARIES)
+	$(CXX) -o $@ $^ $(LIBS)
+
+%.d: %.cc
 	$(CXX) $(CXXFLAGS) -MM -o $@ $<
 
 $(ROOTDIR)/tags: $(SRCSCC)

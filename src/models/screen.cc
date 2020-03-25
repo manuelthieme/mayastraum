@@ -1,3 +1,10 @@
+#include <models/screen.h>
+
+Screen::Screen(std::string path) : _background_path(path) {}
+
+std::string Screen::background_path() const {
+    return this->_background_path;
+}
 #if 0
 #include <includes.h>
 
