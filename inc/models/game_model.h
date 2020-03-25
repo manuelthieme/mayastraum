@@ -1,7 +1,9 @@
 #pragma once
 
 #include <vector>
+#include <map>
 
+#include <SDL_GUI/inc/gui/drawable.h>
 #include <SDL_GUI/inc/models/model_base.h>
 
 #include <models/character.h>
@@ -23,6 +25,11 @@ public:
      *  Player Character
      */
     Character *_player;
+
+    /**
+     * Mapping from texture to ScreenObject
+     */
+    std::map<SDL_GUI::Drawable *, ScreenObject *> _model_mapping;
 
     void init();
 

@@ -2,4 +2,8 @@
 
 enum class InputKey {
     QUIT,
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
 };

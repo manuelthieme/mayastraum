@@ -46,7 +46,7 @@ void Application::init_MVCs() {
     GameModel *game_model = new GameModel();
     this->_model_list.push_back(game_model);
 
-    GameController *game_controller = new GameController(game_model, interface_model);
+    GameController *game_controller = new GameController(game_model, interface_model, this->_input_model);
     this->_controller_list.push_back(game_controller);
 
 }

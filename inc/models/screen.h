@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#include <vector>
+
+#include <models/screen_object.h>
 
 class Screen {
     /**
@@ -8,10 +11,19 @@ class Screen {
      */
     std::string _background_path;
 
+    /**
+     * Vector of Screen Objects.
+     */
+    std::vector<ScreenObject *> _screen_objects;
+
 public:
     Screen(std::string path);
 
     std::string background_path() const;
+
+    std::vector<ScreenObject *> screen_objects();
+
+    void add_screen_object(ScreenObject *screen_object);
 };
 
 #if 0
@@ -27,14 +39,6 @@ public:
 #endif
 
 class Screen {
-    /**
-     * Vector of Screen Objects.
-     */
-    vector<shared_ptr<ScreenObject>> m_objects;
-    /**
-     * Background Image.
-     */
-    string m_backgroundPath;
     /**
      * Area not enterable.
      */

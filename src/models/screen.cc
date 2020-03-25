@@ -5,6 +5,14 @@ Screen::Screen(std::string path) : _background_path(path) {}
 std::string Screen::background_path() const {
     return this->_background_path;
 }
+
+std::vector<ScreenObject *> Screen::screen_objects() {
+    return this->_screen_objects;
+}
+
+void Screen::add_screen_object(ScreenObject *screen_object) {
+    this->_screen_objects.push_back(screen_object);
+}
 #if 0
 #include <includes.h>
 

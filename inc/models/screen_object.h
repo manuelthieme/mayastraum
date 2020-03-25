@@ -1,5 +1,18 @@
 #pragma once
 
+#include <string>
+
+#include <SDL_GUI/inc/gui/positionable.h>
+
+class ScreenObject : public SDL_GUI::Positionable {
+    std::string _path;
+    void init();
+public:
+    ScreenObject(std::string path);
+
+    std::string path() const;
+};
+
 #if 0
 #include <iostream>
 #include <memory>

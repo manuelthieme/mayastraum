@@ -1,3 +1,16 @@
+#include <models/screen_object.h>
+ScreenObject::ScreenObject(std::string path): _path(path) {
+    this->init();
+}
+
+void ScreenObject::init() {
+
+}
+
+std::string ScreenObject::path() const {
+    return this->_path;
+}
+
 #if 0
 #include <includes.h>
 

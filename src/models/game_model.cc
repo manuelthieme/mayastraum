@@ -1,5 +1,7 @@
 #include <models/game_model.h>
 
+#include <models/screen_object.h>
+
 
 GameModel::GameModel() {
     this->init();
@@ -10,6 +12,13 @@ void GameModel::init() {
     Screen *screen = new Screen("screens/garden.png");
     this->_screens.push_back(screen);
     this->_active_screen = screen;
+
+    /* create dummy screenobjects */
+    ScreenObject *cabin = new ScreenObject("sprites/house.png");
+    cabin->set_width(764);
+    cabin->set_height(1057);
+    cabin->set_position({1117, 21});
+    this->_active_screen->add_screen_object(cabin);
 }
 
 #if 0
