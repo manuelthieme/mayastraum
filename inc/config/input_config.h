@@ -13,8 +13,11 @@ const std::map<SDL_Scancode, InputKey> keyboard_input_config = {
     {SDL_SCANCODE_J, InputKey::DOWN},
     {SDL_SCANCODE_H, InputKey::LEFT},
     {SDL_SCANCODE_L, InputKey::RIGHT},
+    {SDL_SCANCODE_D, InputKey::TOGGLE_DEBUG},
 };
 
 const std::map<SDL_WindowEventID, InputKey> window_event_config;
 
-const std::map<Uint8, InputKey> mouse_input_config;
+const std::map<Uint8, InputKey> mouse_input_config {
+    {SDL_BUTTON_LEFT, InputKey::CLICK},
+};

@@ -21,8 +21,7 @@ $(foreach dirname,$(dir $(SRCSCC)),$(shell $(MKDIR) $(OBJDIR)/$(dirname)))
 
 .PHONY: $(all)
 all:
-	+@$(MAKE) --no-print-directory -C $(OBJDIR) -f $(CURDIR)/Makefile \
-	 $(MAKECMDGOALS)
+	+@$(MAKE) --no-print-directory -C $(OBJDIR) -f $(CURDIR)/Makefile $(MAKECMDGOALS)
 
 .PHONY: run
 run: all

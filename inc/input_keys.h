@@ -6,4 +6,6 @@ enum class InputKey {
     DOWN,
     LEFT,
     RIGHT,
+    CLICK,
+    TOGGLE_DEBUG,
 };

@@ -13,7 +13,14 @@ class GameController : public SDL_GUI::ControllerBase {
     SDL_GUI::InterfaceModel *_interface_model;
     const SDL_GUI::InputModel<InputKey> *_input_model;
     void init();
-    SDL_GUI::Style _debug_style;
+
+    bool _debug = false;
+    SDL_GUI::Style _debug_hover_style;
+    SDL_GUI::Style _debug_active_style;
+    SDL_GUI::Drawable *_drag;
+    SDL_GUI::Drawable *_debug_active;
+
+    void update_debug();
 public:
     GameController(GameModel *game_model, SDL_GUI::InterfaceModel *interface_model, const SDL_GUI::InputModel<InputKey> *input_model);
 
