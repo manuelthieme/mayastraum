@@ -20,9 +20,8 @@ class GameController : public SDL_GUI::ControllerBase {
     SDL_GUI::Drawable *_drag;
     SDL_GUI::Drawable *_debug_active;
 
+    void toggle_debug();
     void update_debug();
-
-    std::vector<SDL_GUI::Drawable *> construct_debug_information(SDL_GUI::Drawable *drawable) const;
 public:
     GameController(GameModel *game_model, SDL_GUI::InterfaceModel *interface_model, const SDL_GUI::InputModel<InputKey> *input_model);
 

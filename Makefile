@@ -72,6 +72,8 @@ vpath %.cc $(dir $(SRCSCCABS))
 vpath %.d $(dir $(DEPS))
 
 .PHONY: all
+all: CXXFLAGS += -fsanitize=address
+all: LIBS += -fsanitize=address
 all: $(TARGET)
 
 .PHONY: run

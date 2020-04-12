@@ -37,60 +37,30 @@ void GameController::init() {
         object_texture->set_height(screen_object->height());
         object_texture->add_attribute("cabin");
 
-        SDL_GUI::TreeNode<SDL_GUI::Drawable> *texture_node = screen_node->add_child(object_texture);
-
-        std::vector<SDL_GUI::Drawable *> debug_information = this->construct_debug_information(object_texture);
-
-        texture_node->add_children(debug_information);
+        screen_node->add_child(object_texture);
 
         this->_game_model->_model_mapping.insert({object_texture, screen_object});
     }
 
 }
 
-std::vector<SDL_GUI::Drawable *> GameController::construct_debug_information(SDL_GUI::Drawable *drawable) const {
-    std::vector<SDL_GUI::Drawable *> debug_information;
-
-    /* Position Text */
-    std::stringstream position_string;
-    position_string << drawable->position();
-
-    SDL_GUI::Text *position_text = new SDL_GUI::Text(this->_interface_model->font(), position_string.str());
-    //position_text->hide();
-    position_text->set_position({3,3});
-    position_text->add_attribute("debug");
-    position_text->add_recalculation_callback([drawable, position_text](SDL_GUI::Drawable *){
-            std::stringstream position_string;
-            position_string << drawable->position();
-            position_text->set_text(position_string.str());
-        });
-
-    debug_information.push_back(position_text);
-
-    const GameController *controller = this;
-    for (SDL_GUI::Drawable *information_drawable: debug_information) {
-        information_drawable->add_recalculation_callback([controller](SDL_GUI::Drawable *d) {
-                if (controller->_debug) {
-                    d->show();
-                } else {
-                    d->hide();
-                }
-            });
-    }
-
-    return debug_information;
-}
-
-
-
 void GameController::update() {
     if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG)) {
-        this->_debug = not this->_debug;
+        this->toggle_debug();
     }
     if (this->_debug) {
         this->update_debug();
     }
 }
+
+void GameController::toggle_debug() {
+    this->_debug = not this->_debug;
+    bool debug = this->_debug;
+    this->_interface_model->drawable_tree()->map([debug](SDL_GUI::Drawable *drawable) {
+            drawable->set_debug_information_shown(debug);
+        });
+}
+
 void GameController::update_debug() {
     SDL_GUI::Position mouse_position = this->_input_model->mouse_position();
     SDL_GUI::Drawable *hovered = this->_interface_model->find_first_drawable_at_position(mouse_position);
