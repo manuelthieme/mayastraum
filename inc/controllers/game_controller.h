@@ -18,7 +18,9 @@ class GameController : public SDL_GUI::ControllerBase {
     SDL_GUI::Style _debug_hover_style;
     SDL_GUI::Style _debug_active_style;
     SDL_GUI::Drawable *_drag;
+    SDL_GUI::Drawable *_main;
     SDL_GUI::Drawable *_debug_active;
+    SDL_GUI::Drawable *_debug_cursor;
 
     void toggle_debug();
     void update_debug();
