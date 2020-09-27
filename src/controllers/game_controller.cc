@@ -7,7 +7,7 @@
 #include <SDL_GUI/inc/gui/primitives/texture.h>
 #include <SDL_GUI/inc/gui/drawable.h>
 
-GameController::GameController(GameModel *game_model, SDL_GUI::InterfaceModel *interface_model, const SDL_GUI::InputModel<InputKey> *input_model) : _game_model(game_model), _interface_model(interface_model), _input_model(input_model) {
+GameController::GameController(SDL_GUI::ApplicationBase *application, GameModel *game_model, SDL_GUI::InterfaceModel *interface_model, SDL_GUI::InputModel<InputKey> *input_model) : _application(application), _game_model(game_model), _interface_model(interface_model), _input_model(input_model) {
     this->_drag = this->_interface_model->null_drawable();
     this->_debug_active = this->_interface_model->null_drawable();
     this->init();
@@ -57,6 +57,9 @@ void GameController::init() {
 }
 
 void GameController::update() {
+    if (this->_input_model->is_pressed(InputKey::QUIT)) {
+        this->_application->_is_running = false;
+    }
     if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG)) {
         this->toggle_debug();
     }
