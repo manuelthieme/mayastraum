@@ -14,7 +14,9 @@ public:
     GamePlugin(): SDL_GUI::PluginBase("Game Plugin") {}
 
     template <typename ... Ts>
-    void init(SDL_GUI::ApplicationBase *app, std::tuple<Ts...> previous) {
+    void init(SDL_GUI::ApplicationBase *app, std::tuple<Ts...> previous, int argc, char *argv[]) {
+        (void) argc;
+        (void) argv;
         /* Models */
         SDL_GUI::InputModel<InputKey> *input_model = new SDL_GUI::InputModel<InputKey>();
         app->add_model(input_model);
