@@ -3,6 +3,11 @@ ScreenObject::ScreenObject(std::string path): _path(path) {
     this->init();
 }
 
+ScreenObject::ScreenObject(std::string path, SDL_GUI::Position position, int width, int height)
+    : SDL_GUI::Positionable(position, position, width, height), _path(path) {
+    this->init();
+}
+
 void ScreenObject::init() {
 
 }

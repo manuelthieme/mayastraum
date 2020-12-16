@@ -1,21 +1,23 @@
 #pragma once
 
-#if 0
 #include <vector>
 #include <list>
 #include <map>
 #include <set>
+
+#include <util/edge.h>
+#include <util/point.h>
 
 using namespace std;
 class Graph {
     /**
      * List of Edges.
      */
-    vector<Edge> m_edges;
+    vector<Edge> _edges;
     /**
      * List of Points.
      */
-    vector<Point> m_nodes;
+    vector<Point> _nodes;
 
     /**
      * Add a Node if possible.
@@ -36,6 +38,7 @@ public:
      * @return Vector of Edges.
      */
     vector<Edge> edges() const;
+
     /**
      * Get All Edges concerning to a Point.
      * @param p Point which is part of the wanted Edges.
@@ -49,17 +52,18 @@ public:
      * @param es vector of Edges.
      */
     void setEdges(vector<Edge> es);
+
     /**
      * Add Edge if not already in Graph.
      * @param e Edge to add.
      */
     void addEdge(Edge e);
+
     /*
      * Delete all Edges and Nodes.
      */
     void clear();
 
-    /* misc */
     /* Calculate shortest path from source to sink.
      * @param source Source.
      * @param sink Sink.
@@ -67,5 +71,3 @@ public:
      */
     list<Point> shortestPath(Point source, Point sink) const;
 };
-
-#endif

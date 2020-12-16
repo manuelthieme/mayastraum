@@ -6,14 +6,10 @@
 #include <models/screen_object.h>
 
 class Screen {
-    /**
-     * Background Image.
-     */
+    /** Background Image. */
     std::string _background_path;
 
-    /**
-     * Vector of Screen Objects.
-     */
+    /** Vector of Screen Objects. */
     std::vector<ScreenObject *> _screen_objects;
 
 public:

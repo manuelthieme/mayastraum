@@ -1,15 +1,18 @@
-#include <includes.h>
+#include <util/point.h>
 
-using namespace std;
 
 /* constructor */
-Point::Point(float x, float y): m_x(x), m_y(y) {
+Point::Point(float x, float y): _x(x), _y(y) {
+    this->calcMagnitude();
+};
+
+Point::Point(const SDL_GUI::Position &position): _x(position._x), _y(position._y) {
     this->calcMagnitude();
 };
 
 /* getter */
 float Point::x() const {
-    return this->m_x;
+    return this->_x;
 }
 
 float Point::width() const {
@@ -17,7 +20,7 @@ float Point::width() const {
 }
 
 float Point::y() const {
-    return this->m_y;
+    return this->_y;
 }
 
 float Point::height() const {
@@ -25,12 +28,12 @@ float Point::height() const {
 }
 
 float Point::magnitude() const {
-    return this->m_magnitude;
+    return this->_magnitude;
 }
 
 /* setter */
 void Point::setX(float x) {
-    this->m_x = x;
+    this->_x = x;
     this->calcMagnitude();
 }
 
@@ -39,7 +42,7 @@ void Point::setWidth(float width) {
 }
 
 void Point::setY(float y) {
-    this->m_y = y;
+    this->_y = y;
     this->calcMagnitude();
 }
 
@@ -48,28 +51,28 @@ void Point::setHeight(float height) {
 }
 
 void Point::setXY(float x, float y) {
-    this->m_x = x;
-    this->m_y = y;
+    this->_x = x;
+    this->_y = y;
     this->calcMagnitude();
 }
 
 /* operators */
 Point Point::operator+(const Point &p) const {
-    return Point(this->m_x + p.m_x , this->m_y + p.m_y);
+    return Point(this->_x + p._x , this->_y + p._y);
 }
 
 Point Point::operator-(const Point &p) const {
-    return Point(this->m_x - p.m_x , this->m_y - p.m_y);
+    return Point(this->_x - p._x , this->_y - p._y);
 }
 
 bool Point::operator==(const Point &p) const {
-    return (int)this->m_x == (int)p.m_x
-        && (int)this->m_y == (int)p.m_y;
+    return (int)this->_x == (int)p._x
+        && (int)this->_y == (int)p._y;
 }
 
 bool Point::operator!=(const Point &p) const {
-    return (int)this->m_x != (int)p.m_x
-        || (int)this->m_y != (int)p.m_y;
+    return (int)this->_x != (int)p._x
+        || (int)this->_y != (int)p._y;
 }
 
 bool Point::operator<(const Point &p) const {
@@ -86,8 +89,8 @@ ostream& operator<<(ostream &output, const Point &p) {
 }
 
 Point Point::operator+=(const Point &p) {
-    this->m_x += p.m_x;
-    this->m_y += p.m_y;
+    this->_x += p._x;
+    this->_y += p._y;
 
     return *this;
 }
@@ -96,30 +99,30 @@ Point Point::operator+=(const Point &p) {
 void Point::moveTo(Point to, float speed) {
     Point distance = to - *this;
 //  cout << distance.magnitude << " | " << speed << endl;
-    if (distance.m_magnitude <= speed) {
-        this->m_x = to.m_x;
-        this->m_y = to.m_y;
+    if (distance._magnitude <= speed) {
+        this->_x = to._x;
+        this->_y = to._y;
         return;
     }
-    Point fak( (distance.m_x > 0) ? 1 : -1 , (distance.m_y > 0) ? 1 : -1 );
-	if(!distance.m_y)
-		/* Just move in y direction */
-        this->m_y = this->m_y + fak.m_y * speed;
-	else if(!distance.m_x)
-		/* Just move in x direction */
-        this->m_x = this->m_x + fak.m_x * speed;
-	else
-		/* move x and y */
-		this->setXY(this->m_x + (float(distance.m_x) / distance.m_magnitude * speed),
-				    this->m_y + (float(distance.m_y) / distance.m_magnitude * speed));
+    Point fak( (distance._x > 0) ? 1 : -1 , (distance._y > 0) ? 1 : -1 );
+    if(!distance._y)
+        /* Just move in y direction */
+        this->_y = this->_y + fak._y * speed;
+    else if(!distance._x)
+        /* Just move in x direction */
+        this->_x = this->_x + fak._x * speed;
+    else
+        /* move x and y */
+        this->setXY(this->_x + (float(distance._x) / distance._magnitude * speed),
+                    this->_y + (float(distance._y) / distance._magnitude * speed));
 
 }
 
 void Point::calcMagnitude() {
-	this->m_magnitude = sqrt(pow(this->m_x, 2) + pow(this->m_y, 2));
+    this->_magnitude = sqrt(pow(this->_x, 2) + pow(this->_y, 2));
 }
 
 Point Point::middle(Point p) const {
-    Point middle = p + Point((this->m_x - p.m_x) / 2, (this->m_y - p.m_y) / 2);
+    Point middle = p + Point((this->_x - p._x) / 2, (this->_y - p._y) / 2);
     return middle;
 }

@@ -8,6 +8,7 @@
 #include <SDL_GUI/inc/input_keys.h>
 
 #include <input_keys.h>
+#include <models/character.h>
 #include <models/game_model.h>
 
 class GameController : public SDL_GUI::ControllerBase {
@@ -25,6 +26,8 @@ class GameController : public SDL_GUI::ControllerBase {
     SDL_GUI::Drawable *_main;
     SDL_GUI::Drawable *_debug_active;
     SDL_GUI::Drawable *_debug_cursor;
+
+    Character *_character;
 
     void toggle_debug();
     void update_debug();

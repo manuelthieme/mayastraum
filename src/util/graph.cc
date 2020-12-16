@@ -1,15 +1,14 @@
-#if 0
-#include <includes.h>
+#include <util/graph.h>
 #include <limits>
 
 /* getter */
 vector<Edge> Graph::edges() const {
-    return this->m_edges;
+    return this->_edges;
 }
 
 vector<Edge> Graph::edges(const Point p) const {
     vector<Edge> ret;
-    for(auto e: this->m_edges) {
+    for(auto e: this->_edges) {
         if(e.begin() != p && e.end() != p)
             continue;
         ret.push_back(e);
@@ -20,8 +19,8 @@ vector<Edge> Graph::edges(const Point p) const {
 vector<unsigned> Graph::outgoingEdges(unsigned p) const {
     vector<unsigned> ret;
     unsigned i = 0;
-    for (auto e: this->m_edges) {
-        if (e.begin() != this->m_nodes.at(p) && e.end() != this->m_nodes.at(p)) {
+    for (auto e: this->_edges) {
+        if (e.begin() != this->_nodes.at(p) && e.end() != this->_nodes.at(p)) {
             ++i;
             continue;
         }
@@ -34,30 +33,30 @@ vector<unsigned> Graph::outgoingEdges(unsigned p) const {
 
 /* setter */
 void Graph::setEdges(vector<Edge> es) {
-    this->m_edges = es;
+    this->_edges = es;
 }
 
 void Graph::addEdge(Edge e) {
-    for (auto edge: this->m_edges)
+    for (auto edge: this->_edges)
         if (edge == e)
             return;
 
-    this->m_edges.push_back(e);
+    this->_edges.push_back(e);
     this->addNode(e.begin());
     this->addNode(e.end());
 }
 
 void Graph::addNode(Point p) {
-    for (auto n: this->m_nodes)
+    for (auto n: this->_nodes)
         if (p == n)
             return;
 
-    this->m_nodes.push_back(p);
+    this->_nodes.push_back(p);
 }
 
 void Graph::clear() {
-    this->m_edges.clear();
-    this->m_nodes.clear();
+    this->_edges.clear();
+    this->_nodes.clear();
 }
 
  /* misc */
@@ -66,7 +65,7 @@ list<Point> Graph::shortestPath(Point source, Point sink) const {
     signed source_i = -1;
     signed sink_i = -1;
     unsigned i = 0;
-    for (auto n: this->m_nodes) {
+    for (auto n: this->_nodes) {
         if (n == source)
             source_i = i;
 
@@ -92,7 +91,7 @@ list<Point> Graph::dijkstra(Point source, Point sink) const {
     /* check if source and sink are in graph */
     bool sourceIn = false;
     bool sinkIn = false;
-    for (auto n: this->m_nodes) {
+    for (auto n: this->_nodes) {
         if (n == source) {
             sourceIn = true;
             if (sinkIn)
@@ -109,9 +108,9 @@ list<Point> Graph::dijkstra(Point source, Point sink) const {
         return ret;
 
     /* set length to infinite */
-    for (auto n: this->m_nodes) {
+    for (auto n: this->_nodes) {
         Point p;
-        for(auto f: this->m_nodes)
+        for(auto f: this->_nodes)
             if(f == n){
                 p = f;
                 break;
@@ -189,8 +188,8 @@ list<Point> Graph::aStar(int source, int sink) const {
     map<unsigned, float> g_score;
     map<unsigned, float> f_score;
 
-    cout << "size: " << this->m_nodes.size() << endl;;
-    for (unsigned i = 0; i < this->m_nodes.size(); ++i) {
+    cout << "size: " << this->_nodes.size() << endl;;
+    for (unsigned i = 0; i < this->_nodes.size(); ++i) {
         g_score.insert({i, numeric_limits<float>::infinity()});
         f_score.insert({i, numeric_limits<float>::infinity()});
     }
@@ -215,10 +214,10 @@ list<Point> Graph::aStar(int source, int sink) const {
         for (auto e: this->outgoingEdges(current)) {
             cout << "\tentering for loop" << endl;
             Point to;
-            Edge edge = this->m_edges.at(e);
+            Edge edge = this->_edges.at(e);
 
             /* find corresponding node */
-            if (edge.begin() == this->m_nodes.at(current))
+            if (edge.begin() == this->_nodes.at(current))
                 to = edge.end();
             else
                 to = edge.begin();
@@ -251,22 +250,22 @@ list<Point> Graph::aStar(int source, int sink) const {
 }
 
 float Graph::heuristicCostEstimate(int start, int end) const {
-    return Edge(this->m_nodes.at(start), this->m_nodes.at(end)).magnitude();
+    return Edge(this->_nodes.at(start), this->_nodes.at(end)).magnitude();
 }
 
 list<Point> Graph::reconstructPath(map<unsigned, unsigned> predecessor, unsigned sink) const {
     list<Point> ret;
-    ret.push_front(this->m_nodes.at(sink));
+    ret.push_front(this->_nodes.at(sink));
     while (predecessor.find(sink) != predecessor.end()) {
         sink = predecessor.at(sink);
-        ret.push_front(this->m_nodes.at(sink));
+        ret.push_front(this->_nodes.at(sink));
     }
     return ret;
 }
 
 signed Graph::nodeIndex(Point p) const {
     unsigned i = 0;
-    for (auto n: this->m_nodes) {
+    for (auto n: this->_nodes) {
         cout << "comparing " << n << " with " << p << " ... " << endl;
         if (n == p)
             return i;
@@ -276,4 +275,3 @@ signed Graph::nodeIndex(Point p) const {
     }
     return -1;
 }
-#endif

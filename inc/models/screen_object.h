@@ -10,7 +10,11 @@ class ScreenObject : public SDL_GUI::Positionable {
 public:
     ScreenObject(std::string path);
 
+    ScreenObject(std::string path, SDL_GUI::Position position, int width, int height);
+
     std::string path() const;
+
+    virtual void tick() {}
 };
 
 #if 0
@@ -65,7 +69,6 @@ public:
 
 
     /* misc */
-    virtual void tick(int t, shared_ptr<Screen> activeScreen, int gameHeight);
     bool collides(Point p, shared_ptr<Screen> activeScreen, int gameHeight) const;
     bool collides(Edge e, shared_ptr<Screen> activeScreen, int gameHeight) const;
     Point nearestPoint(Point p) const;

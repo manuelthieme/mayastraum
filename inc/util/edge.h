@@ -1,16 +1,18 @@
 #pragma once
-#if 0
+
 #include <iostream>
+
+#include <util/point.h>
 
 class Edge {
     /**
      * First Point of Edge.
      */
-    Point m_begin;
+    Point _begin;
     /**
      * Second Point of Edge.
      */
-    Point m_end;
+    Point _end;
 
 public:
     /* constructor */
@@ -75,5 +77,3 @@ public:
      */
     Point middle() const;
 };
-
-#endif

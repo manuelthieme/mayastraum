@@ -1,86 +1,95 @@
+#include <models/character.h>
 
-#if 0
-#include <includes.h>
-
-using namespace std;
-/* constructor */
-Character::Character(Point position, Point size, Point pivot, Hitbox hitbox, vector<shared_ptr<Animation>> animations, int speed) : ScreenObject(position, size, pivot, hitbox, animations), m_target(position), m_speed(speed) {
-    this->m_running = false;
-    this->m_path.push_back(position);
-}
-
-/* getter */
-bool Character::running() const {
-    return this->m_running;
-}
-
-shared_ptr<Animation> Character::runningAnimation() const {
-    return this->m_runningAnimation;
+Character::Character(std::string path, SDL_GUI::Position position, unsigned width, unsigned height, int speed) : ScreenObject(path, position, width, height), _target(position), _speed(speed) {
+    this->_running = false;
+    this->_path.push_back(position);
 }
 
 int Character::speed() const {
-    return this->m_speed;
+    return this->_speed;
 }
 
 Point Character::target() const {
-    return this->m_target;
+    return this->_target;
 }
+
+bool Character::running() const {
+    return this->_running;
+}
+
 list<Point> Character::path() const {
-    return this->m_path;
+    return this->_path;
 }
 
-
-/* setter */
-void Character::setRunning(bool running) {
-    this->m_running = running;
-}
-
-shared_ptr<Animation> Character::addRunningAnimation(shared_ptr<Animation> a) {
-    this->m_runningAnimation = this->addAnimation(a);
-    return this->m_runningAnimation;
-}
 
 void Character::setTarget(list<Point> path) {
-    this->m_path = path;
-    this->m_target = this->m_path.back();
+    this->_path = path;
+    this->_target = this->_path.back();
 }
 
 void Character::setSpeed(int s) {
-    this->m_speed = s;
+    this->_speed = s;
 }
 
-/* misc */
+void Character::setRunning(bool running) {
+    this->_running = running;
+}
+
+
 void Character::startRunning() {
-    this->m_running = true;
-    this->m_activeAnimation = this->m_runningAnimation;
+    this->_running = true;
+    //this->_activeAnimation = this->_runningAnimation;
 }
 
 void Character::stopRunning() {
-    this->m_running = false;
-    this->m_runningAnimation->setActiveImage(0);
-    this->m_activeAnimation = this->m_animations[0];
+    this->_running = false;
+    //this->_runningAnimation->setActiveImage(0);
+    //this->_activeAnimation = this->_animations[0];
 }
 
-void Character::tick(int t, shared_ptr<Screen> activeScreen, int gameHeight) {
-    if (not this->m_running)
+void Character::tick(int t) {
+    if (not this->_running) {
         return;
+    }
 
-    if (this->m_target == this->m_position or this->m_path.empty()) {
+    Point position = this->_position;
+    if (this->_target == position or this->_path.empty()) {
         this->stopRunning();
         return;
     }
 
-    Point n = this->m_path.front();
-    Point distance = this->m_position - n;
+    Point n = this->_path.front();
+    Point distance = position - n;
     Point fak((distance.x() >= 0) ? 1 : -1, (distance.y() >= 0) ? 1 : -1);
-    if (this->m_position == n) {
-        this->m_path.pop_front();
-        this->tick(t, activeScreen, gameHeight);
+    if (this->_position == n) {
+        this->_path.pop_front();
+        this->tick(t);
         return;
     }
-    float factor = ((float)this->m_position.y() / gameHeight) * (1 - activeScreen->sizeFactor()) + activeScreen->sizeFactor();
-    this->m_position.moveTo(n, this->m_speed * factor);
+    //float factor = ((float)position.y() / gameHeight) * (1 - activeScreen->sizeFactor()) + activeScreen->sizeFactor();
+    position.moveTo(n, this->_speed);
+    this->_position._x = position.x();
+    this->_position._y = position.y();
 
-    ScreenObject::tick(t, activeScreen, gameHeight);
+    //ScreenObject::tick(t, activeScreen, gameHeight);
 }
+
+#if 0
+
+using namespace std;
+
+
+shared_ptr<Animation> Character::runningAnimation() const {
+    return this->_runningAnimation;
+}
+
+
+/* setter */
+shared_ptr<Animation> Character::addRunningAnimation(shared_ptr<Animation> a) {
+    this->_runningAnimation = this->addAnimation(a);
+    return this->_runningAnimation;
+}
+
+
+/* misc */
 #endif
