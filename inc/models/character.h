@@ -27,7 +27,8 @@ public:
      * @param height height
      * @param speed running speed of Character.
      */
-    Character(std::string path, SDL_GUI::Position position, unsigned width, unsigned height, int speed = 10);
+    Character(std::string path, SDL_GUI::Position position, unsigned width, unsigned height, int
+              speed = 10);
 
     /**
      * Get running speed.
@@ -57,31 +58,31 @@ public:
      * Sets The Path and its last Point as Target.
      * @param path List of Points to run until reaching Target.
      */
-    void setTarget(list<Point> path);
+    void set_target(list<Point> path);
 
     /**
      * Set Character Speed.
      * @param s Speed.
      */
-    void setSpeed(int s);
+    void set_speed(int s);
 
     /**
      * Set Running Flag.
      * @param running Running Flag.
      */
-    void setRunning(bool running);
+    void set_running(bool running);
 
     /**
      * Start to run.
      * Sets The Active Animation to the Runing Animation.
      */
-    void startRunning();
+    void start_running();
 
     /**
      * Stop to run.
      * Sets The Active Animation to the First Animation in Animation List. Reset Running Animation.
      */
-    void stopRunning();
+    void stop_running();
 
     /**
      * Do repeating tasks.

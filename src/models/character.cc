@@ -1,6 +1,10 @@
 #include <models/character.h>
 
-Character::Character(std::string path, SDL_GUI::Position position, unsigned width, unsigned height, int speed) : ScreenObject(path, position, width, height), _target(position), _speed(speed) {
+Character::Character(std::string path, SDL_GUI::Position position, unsigned width, unsigned height,
+                     int speed) :
+    ScreenObject(path, position, width, height),
+    _target(position),
+    _speed(speed) {
     this->_running = false;
     this->_path.push_back(position);
 }
@@ -22,26 +26,26 @@ list<Point> Character::path() const {
 }
 
 
-void Character::setTarget(list<Point> path) {
+void Character::set_target(list<Point> path) {
     this->_path = path;
     this->_target = this->_path.back();
 }
 
-void Character::setSpeed(int s) {
+void Character::set_speed(int s) {
     this->_speed = s;
 }
 
-void Character::setRunning(bool running) {
+void Character::set_running(bool running) {
     this->_running = running;
 }
 
 
-void Character::startRunning() {
+void Character::start_running() {
     this->_running = true;
     //this->_activeAnimation = this->_runningAnimation;
 }
 
-void Character::stopRunning() {
+void Character::stop_running() {
     this->_running = false;
     //this->_runningAnimation->setActiveImage(0);
     //this->_activeAnimation = this->_animations[0];
@@ -54,7 +58,7 @@ void Character::tick(int t) {
 
     Point position = this->_position;
     if (this->_target == position or this->_path.empty()) {
-        this->stopRunning();
+        this->stop_running();
         return;
     }
 
@@ -67,9 +71,9 @@ void Character::tick(int t) {
         return;
     }
     //float factor = ((float)position.y() / gameHeight) * (1 - activeScreen->sizeFactor()) + activeScreen->sizeFactor();
-    position.moveTo(n, this->_speed);
-    this->_position._x = position.x();
-    this->_position._y = position.y();
+    position.move_to(n, this->_speed);
+    this->_position.set_x(position.x());
+    this->_position.set_y(position.y());
 
     //ScreenObject::tick(t, activeScreen, gameHeight);
 }

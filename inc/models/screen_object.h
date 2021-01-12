@@ -4,17 +4,38 @@
 
 #include <SDL_GUI/inc/gui/positionable.h>
 
-class ScreenObject : public SDL_GUI::Positionable {
+#include <util/point.h>
+
+class ScreenObject {
+protected:
     std::string _path;
+    Point _position;
+    Point _pivot;
+    unsigned _width;
+    unsigned _height;
+
     void init();
 public:
     ScreenObject(std::string path);
 
-    ScreenObject(std::string path, SDL_GUI::Position position, int width, int height);
+    ScreenObject(std::string path, Point position, unsigned width, unsigned height);
 
     std::string path() const;
 
     virtual void tick() {}
+
+    /* getter */
+    Point position() const;
+    Point pivot() const;
+    unsigned width() const;
+    unsigned height() const;
+
+    /* setter */
+    void set_position(Point position);
+    void set_pivot(Point pivot);
+    void set_width(unsigned width);
+    void set_height(unsigned height);
+    void set_size(unsigned width, unsigned height);
 };
 
 #if 0
@@ -25,7 +46,6 @@ public:
 
 #if 0
 #include "Animation.h"
-#include "Point.h"
 #include "Hitbox.h"
 #include "Screen.h"
 #endif
@@ -34,7 +54,6 @@ using namespace std;
 class Screen;
 class ScreenObject {
     Point m_size;
-    Point m_pivot;
     Hitbox m_hitbox;
 
 protected:
@@ -47,18 +66,13 @@ public:
     ScreenObject(Point position, Point size, Point pivot, Hitbox hitbox, vector<shared_ptr<Animation>> animations);
 
     /* getter */
-    Point position() const;
     Point size() const;
     Point renderSize(shared_ptr<Screen> s, float gameHeight) const;
-    Point pivot() const;
     Hitbox hitbox() const;
     Hitbox renderHitbox(shared_ptr<Screen> s, float gameHeight) const;
     shared_ptr<Animation> activeAnimation() const;
 
     /* setter */
-    void setPosition(Point p);
-    void setSize(Point p);
-    void setPivot(Point p);
     void setHitbox(Hitbox h);
     shared_ptr<Animation> addAnimation(shared_ptr<Animation> a);
     bool setActiveAnimation(shared_ptr<Animation> a);

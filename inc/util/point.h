@@ -17,7 +17,7 @@ class Point {
     float _magnitude;
 
     /** Calculate Magnitude. */
-    void calcMagnitude();
+    void calculate_magnitude();
 public:
     /**
      * Constructor.
@@ -64,34 +64,34 @@ public:
      * Set x-value.
      * @param x x-value.
      */
-    void setX(float x);
+    void set_x(float x);
 
     /**
      * Set width.
      * A Point can also be used as a 2D size. For this case, there are this special setters.
      * @param width width.
      */
-    void setWidth(float width);
+    void set_width(float width);
 
     /**
      * Set y-value.
      * @param y y-value.
      */
-    void setY(float Y);
+    void set_y(float y);
 
     /**
      * Set height.
      * A Point can also be used as a 2D size. For this case, there are this special setters.
      * @param height height.
      */
-    void setHeight(float height);
+    void set_height(float height);
 
     /**
      * Set x- and y-value.
      * @param x x-value.
      * @param y y-value.
      */
-    void setXY(float x, float y);
+    void set_coords(float x, float y);
 
     /* operators */
     Point operator+(const Point &p) const;
@@ -109,7 +109,7 @@ public:
      * @param to Point to move to.
      * @param speed Speed with wich to move.
      */
-    void moveTo(Point to, float speed);
+    void move_to(Point to, float speed);
 
     /**
      * Get middle of two Points.

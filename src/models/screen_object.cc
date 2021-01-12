@@ -3,8 +3,11 @@ ScreenObject::ScreenObject(std::string path): _path(path) {
     this->init();
 }
 
-ScreenObject::ScreenObject(std::string path, SDL_GUI::Position position, int width, int height)
-    : SDL_GUI::Positionable(position, position, width, height), _path(path) {
+ScreenObject::ScreenObject(std::string path, Point position, unsigned width, unsigned height):
+    _path(path),
+    _position(position),
+    _width(width),
+    _height(height) {
     this->init();
 }
 
@@ -14,6 +17,43 @@ void ScreenObject::init() {
 
 std::string ScreenObject::path() const {
     return this->_path;
+}
+
+Point ScreenObject::position() const {
+    return this->_position;
+}
+
+Point ScreenObject::pivot() const {
+    return this->_pivot;
+}
+
+unsigned ScreenObject::width() const {
+    return this->_width;
+}
+
+unsigned ScreenObject::height() const {
+    return this->_height;
+}
+
+void ScreenObject::set_position(Point position) {
+    this->_position = position;
+}
+
+void ScreenObject::set_pivot(Point pivot) {
+    this->_pivot = pivot;
+}
+
+void ScreenObject::set_width(unsigned width) {
+    this->_width = width;
+}
+
+void ScreenObject::set_height(unsigned height) {
+    this->_height = height;
+}
+
+void ScreenObject::set_size(unsigned width, unsigned height) {
+    this->set_width(width);
+    this->set_height(height);
 }
 
 #if 0
@@ -26,9 +66,6 @@ ScreenObject::ScreenObject(Point position, Point size, Point pivot, Hitbox hitbo
 }
 
 /* getter */
-Point ScreenObject::position() const {
-    return this->m_position;
-}
 
 Point ScreenObject::size() const {
     return this->m_size;
@@ -39,9 +76,6 @@ Point ScreenObject::renderSize(shared_ptr<Screen> s, float gameHeight) const {
     return Point(this->m_size.width() * factor, this->m_size.height() * factor);
 }
 
-Point ScreenObject::pivot() const {
-    return this->m_pivot;
-}
 
 Hitbox ScreenObject::hitbox() const {
     return this->m_hitbox;

@@ -3,12 +3,12 @@
 
 /* constructor */
 Point::Point(float x, float y): _x(x), _y(y) {
-    this->calcMagnitude();
-};
+    this->calculate_magnitude();
+}
 
 Point::Point(const SDL_GUI::Position &position): _x(position._x), _y(position._y) {
-    this->calcMagnitude();
-};
+    this->calculate_magnitude();
+}
 
 /* getter */
 float Point::x() const {
@@ -32,28 +32,28 @@ float Point::magnitude() const {
 }
 
 /* setter */
-void Point::setX(float x) {
+void Point::set_x(float x) {
     this->_x = x;
-    this->calcMagnitude();
+    this->calculate_magnitude();
 }
 
-void Point::setWidth(float width) {
-    this->setX(width);
+void Point::set_width(float width) {
+    this->set_x(width);
 }
 
-void Point::setY(float y) {
+void Point::set_y(float y) {
     this->_y = y;
-    this->calcMagnitude();
+    this->calculate_magnitude();
 }
 
-void Point::setHeight(float height) {
-    this->setY(height);
+void Point::set_height(float height) {
+    this->set_y(height);
 }
 
-void Point::setXY(float x, float y) {
+void Point::set_coords(float x, float y) {
     this->_x = x;
     this->_y = y;
-    this->calcMagnitude();
+    this->calculate_magnitude();
 }
 
 /* operators */
@@ -96,7 +96,7 @@ Point Point::operator+=(const Point &p) {
 }
 
 /* misc */
-void Point::moveTo(Point to, float speed) {
+void Point::move_to(Point to, float speed) {
     Point distance = to - *this;
 //  cout << distance.magnitude << " | " << speed << endl;
     if (distance._magnitude <= speed) {
@@ -113,12 +113,12 @@ void Point::moveTo(Point to, float speed) {
         this->_x = this->_x + fak._x * speed;
     else
         /* move x and y */
-        this->setXY(this->_x + (float(distance._x) / distance._magnitude * speed),
-                    this->_y + (float(distance._y) / distance._magnitude * speed));
+        this->set_coords(this->_x + (float(distance._x) / distance._magnitude * speed),
+                         this->_y + (float(distance._y) / distance._magnitude * speed));
 
 }
 
-void Point::calcMagnitude() {
+void Point::calculate_magnitude() {
     this->_magnitude = sqrt(pow(this->_x, 2) + pow(this->_y, 2));
 }
 

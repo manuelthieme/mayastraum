@@ -7,13 +7,14 @@
 #include <SDL_GUI/inc/gui/primitives/texture.h>
 #include <SDL_GUI/inc/gui/drawable.h>
 
+#include <gui/gui_screen_object.h>
+
 
 GameController::GameController(SDL_GUI::ApplicationBase *application, GameModel *game_model, SDL_GUI::InterfaceModel *interface_model, SDL_GUI::InputModel<InputKey> *input_model) : _application(application), _game_model(game_model), _interface_model(interface_model), _input_model(input_model) {
     this->_drag = this->_interface_model->null_drawable();
     this->_debug_active = this->_interface_model->null_drawable();
     this->init();
 }
-
 void GameController::init() {
     /* init debug styles */
     this->_debug_hover_style._has_border = true;
@@ -38,10 +39,8 @@ void GameController::init() {
 
     /* init screenobjects */
     for (ScreenObject *screen_object: this->_game_model->_active_screen->screen_objects()) {
-        SDL_GUI::Texture *object_texture = new SDL_GUI::Texture(screen_object->path(), this->_interface_model->renderer());
-        object_texture->set_position(screen_object->position());
-        object_texture->set_width(screen_object->width());
-        object_texture->set_height(screen_object->height());
+        GuiScreenObject *object_texture = new GuiScreenObject(this->_interface_model->renderer(),
+                                                              screen_object);
         object_texture->add_attribute("cabin");
 
         screen_texture->add_child(object_texture);
@@ -63,29 +62,24 @@ void GameController::init() {
 
     /* init Character */
     this->_character = new Character("characters/strichmann.png", {500, 500}, 150, 180);
+    this->_character->set_pivot({60, 175});
 
-    SDL_GUI::Texture *object_texture = new SDL_GUI::Texture("characters/strichmann.png", this->_interface_model->renderer());
-    object_texture->set_position(this->_character->position());
-    object_texture->set_width(this->_character->width());
-    object_texture->set_height(this->_character->height());
+    GuiScreenObject *object_texture = new GuiScreenObject(this->_interface_model->renderer(),
+                                                          this->_character);
     object_texture->add_attribute("character");
 
     screen_texture->add_child(object_texture);
 
     //this->_game_model->_model_mapping.insert({object_texture, screen_object});
-    Character *character = this->_character;
-    object_texture->add_recalculation_callback([character](SDL_GUI::Drawable *d){
-        d->set_position(character->position());
-    });
 }
 
 void GameController::update() {
     if (this->_input_model->is_pressed(InputKey::QUIT)) {
         this->_application->_is_running = false;
     }
-    if (this->_input_model->is_down(InputKey::CLICK)) {
-        this->_character->setTarget({Point(this->_input_model->mouse_position())});
-        this->_character->startRunning();
+    if (this->_input_model->is_down(InputKey::RIGHT_CLICK)) {
+        this->_character->set_target({Point(this->_input_model->mouse_position())});
+        this->_character->start_running();
     }
 
     if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG)) {
