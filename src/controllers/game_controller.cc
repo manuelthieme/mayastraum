@@ -35,13 +35,24 @@ void GameController::init() {
 
     this->_main = this->_interface_model->find_first_drawable("main");
     this->_main->add_child(screen_texture);
+    const std::map<SDL_GUI::Drawable *, ScreenObject *> *model_mapping =
+        &this->_game_model->_model_mapping;
+    screen_texture->add_recalculation_callback([model_mapping](SDL_GUI::Drawable *d){
+        d->sort_children(
+            [model_mapping](SDL_GUI::Drawable *a, SDL_GUI::Drawable *b){
+                if (not model_mapping->contains(a) or not model_mapping->contains(b)) {
+                    return false;
+                }
+                return model_mapping->at(a)->position().y() < model_mapping->at(b)->position().y();
+            });
+    });
 
 
     /* init screenobjects */
     for (ScreenObject *screen_object: this->_game_model->_active_screen->screen_objects()) {
         GuiScreenObject *object_texture = new GuiScreenObject(this->_interface_model->renderer(),
                                                               screen_object);
-        object_texture->add_attribute("cabin");
+        object_texture->add_attribute(screen_object->_name);
 
         screen_texture->add_child(object_texture);
 
@@ -70,7 +81,7 @@ void GameController::init() {
 
     screen_texture->add_child(object_texture);
 
-    //this->_game_model->_model_mapping.insert({object_texture, screen_object});
+    this->_game_model->_model_mapping.insert({object_texture, this->_character});
 }
 
 void GameController::update() {

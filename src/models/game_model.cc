@@ -15,10 +15,20 @@ void GameModel::init() {
 
     /* create dummy screenobjects */
     ScreenObject *cabin = new ScreenObject("sprites/house.png");
+    cabin->_name = "cabin";
     cabin->set_width(764);
     cabin->set_height(1057);
-    cabin->set_position({1117, 21});
+    cabin->set_position({1500, 700});
+    cabin->set_pivot({383,679});
     this->_active_screen->add_screen_object(cabin);
+
+    ScreenObject *tree = new ScreenObject("sprites/tree1.png");
+    tree->_name = "tree";
+    tree->set_width(338);
+    tree->set_height(789);
+    tree->set_position({875, 750});
+    tree->set_pivot({75,650});
+    this->_active_screen->add_screen_object(tree);
 }
 
 #if 0

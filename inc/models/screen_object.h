@@ -16,6 +16,7 @@ protected:
 
     void init();
 public:
+    std::string _name;
     ScreenObject(std::string path);
 
     ScreenObject(std::string path, Point position, unsigned width, unsigned height);
