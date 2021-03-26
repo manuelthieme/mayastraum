@@ -4,6 +4,7 @@
 
 #include <SDL_GUI/inc/gui/primitives/texture.h>
 
+#include <models/game_model.h>
 #include <models/screen_object.h>
 
 class GuiScreenObject : public SDL_GUI::Texture {
@@ -11,5 +12,6 @@ class GuiScreenObject : public SDL_GUI::Texture {
 
     virtual void update() override;
 public:
-    GuiScreenObject(SDL_Renderer *renderer, const ScreenObject *screen_object);
+    GuiScreenObject(SDL_Renderer *renderer, const ScreenObject *screen_object,
+                    const GameModel *game_model);
 };

@@ -9,4 +9,5 @@ enum class InputKey {
     CLICK,
     RIGHT_CLICK,
     TOGGLE_DEBUG,
+    TOGGLE_DEBUG_PIVOT,
 };

@@ -29,7 +29,8 @@ class GameController : public SDL_GUI::ControllerBase {
 
     Character *_character;
 
-    void toggle_debug();
+    SDL_GUI::Drawable *_debug_rect;
+
     void update_debug();
 public:
     GameController(SDL_GUI::ApplicationBase *application, GameModel *game_model, SDL_GUI::InterfaceModel *interface_model, SDL_GUI::InputModel<InputKey> *inputModel);

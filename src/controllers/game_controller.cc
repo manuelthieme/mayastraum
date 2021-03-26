@@ -53,7 +53,7 @@ void GameController::init() {
     /* init screenobjects */
     for (ScreenObject *screen_object: this->_game_model->_active_screen->screen_objects()) {
         GuiScreenObject *object_texture = new GuiScreenObject(this->_interface_model->renderer(),
-                                                              screen_object);
+                                                              screen_object, this->_game_model);
         object_texture->add_attribute(screen_object->_name);
 
         screen_texture->add_child(object_texture);
@@ -78,12 +78,19 @@ void GameController::init() {
     this->_character->set_pivot({60, 175});
 
     GuiScreenObject *object_texture = new GuiScreenObject(this->_interface_model->renderer(),
-                                                          this->_character);
+                                                          this->_character, this->_game_model);
     object_texture->add_attribute("character");
 
     screen_texture->add_child(object_texture);
 
     this->_game_model->_model_mapping.insert({object_texture, this->_character});
+
+
+    /* add debug rect */
+    this->_debug_rect = new SDL_GUI::Rect({1600, 700}, 320, 380);
+    this->_debug_rect->_default_style._has_background = true;
+    this->_debug_rect->_default_style._color = SDL_GUI::RGB(255, 255, 255, 150);
+    screen_texture->add_child(this->_debug_rect);
 }
 
 void GameController::update() {
@@ -96,7 +103,12 @@ void GameController::update() {
     }
 
     if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG)) {
-        this->toggle_debug();
+        this->_interface_model->toggle_debug_information_drawn();
+        this->_debug = this->_interface_model->debug_information_drawn();
+    }
+
+    if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG_PIVOT)) {
+        this->_game_model->_debugging_pivot = !this->_game_model->_debugging_pivot;
     }
 
 
@@ -107,19 +119,25 @@ void GameController::update() {
     if (this->_debug) {
         this->update_debug();
     }
-}
 
-void GameController::toggle_debug() {
-    this->_debug = not this->_debug;
-    bool debug = this->_debug;
-    this->_interface_model->drawable_root()->map([debug](SDL_GUI::Drawable *drawable) {
-            drawable->set_debug_information_shown(debug);
-        });
+    SDL_GUI::Position mouse_position = this->_input_model->mouse_position();
+    std::vector<SDL_GUI::Drawable *> all_hovered = this->_interface_model->find_drawables_at_position(mouse_position);
+    this->_debug_rect->remove_all_children();
+    int offset = 0;
+    for (SDL_GUI::Drawable *d: all_hovered) {
+        std::vector<std::string> attributes = d->attributes();
+        std::string name = attributes.size() ? attributes[0] : "--noname--";
+        SDL_GUI::Text *t = new SDL_GUI::Text(this->_interface_model->font(), name);
+        t->set_y(offset);
+        this->_debug_rect->add_child(t);
+        offset += t->height();
+    }
 }
 
 void GameController::update_debug() {
     SDL_GUI::Position mouse_position = this->_input_model->mouse_position();
     SDL_GUI::Drawable *hovered = this->_interface_model->find_first_drawable_at_position(mouse_position);
+
 
     if (hovered && hovered != this->_main) {
         if (this->_input_model->is_down(InputKey::CLICK)) {

@@ -31,6 +31,8 @@ public:
      */
     std::map<SDL_GUI::Drawable *, ScreenObject *> _model_mapping;
 
+    bool _debugging_pivot = false;
+
     void init();
 
     GameModel();
