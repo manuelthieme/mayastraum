@@ -27,7 +27,9 @@ void GameController::init() {
 
 
     /* set screen background */
-    SDL_GUI::Texture *screen_texture = new SDL_GUI::Texture(this->_game_model->_active_screen->background_path(), this->_interface_model->renderer());
+    SDL_GUI::Texture *screen_texture = new
+        SDL_GUI::Texture(this->_game_model->_active_screen->background_path(),
+                         this->_interface_model->renderer());
 
     screen_texture->set_width(1920);
     screen_texture->set_height(1080);
