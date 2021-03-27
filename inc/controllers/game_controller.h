@@ -22,7 +22,7 @@ class GameController : public SDL_GUI::ControllerBase {
     bool _debug = false;
     SDL_GUI::Style _debug_hover_style;
     SDL_GUI::Style _debug_active_style;
-    SDL_GUI::Drawable *_drag;
+    ScreenObject *_drag = nullptr;
     SDL_GUI::Drawable *_main;
     SDL_GUI::Drawable *_debug_active;
     SDL_GUI::Drawable *_debug_cursor;

@@ -56,6 +56,10 @@ void ScreenObject::set_size(unsigned width, unsigned height) {
     this->set_height(height);
 }
 
+void ScreenObject::move(Point movement) {
+    this->_position += movement;
+}
+
 #if 0
 #include <includes.h>
 

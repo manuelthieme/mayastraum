@@ -37,6 +37,8 @@ public:
     void set_width(unsigned width);
     void set_height(unsigned height);
     void set_size(unsigned width, unsigned height);
+
+    void move(Point movement);
 };
 
 #if 0

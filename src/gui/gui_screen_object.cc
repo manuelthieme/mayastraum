@@ -6,9 +6,9 @@
 #include <SDL_GUI/inc/gui/primitives/line.h>
 
 
-GuiScreenObject::GuiScreenObject(SDL_Renderer *renderer, const ScreenObject *screen_object,
-                                 const GameModel *game_model) :
-    SDL_GUI::Texture(screen_object->path(), renderer),
+GuiScreenObject::GuiScreenObject(std::string type, SDL_Renderer *renderer,
+                                 const ScreenObject *screen_object, const GameModel *game_model)
+    : SDL_GUI::Texture(type, screen_object->path(), renderer),
     _screen_object(screen_object) {
     this->_width = screen_object->width();
     this->_height = screen_object->height();

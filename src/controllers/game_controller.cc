@@ -7,11 +7,11 @@
 #include <SDL_GUI/inc/gui/primitives/texture.h>
 #include <SDL_GUI/inc/gui/drawable.h>
 
+#include <gui/gui_screen.h>
 #include <gui/gui_screen_object.h>
 
 
 GameController::GameController(SDL_GUI::ApplicationBase *application, GameModel *game_model, SDL_GUI::InterfaceModel *interface_model, SDL_GUI::InputModel<InputKey> *input_model) : _application(application), _game_model(game_model), _interface_model(interface_model), _input_model(input_model) {
-    this->_drag = this->_interface_model->null_drawable();
     this->_debug_active = this->_interface_model->null_drawable();
     this->init();
 }
@@ -27,9 +27,10 @@ void GameController::init() {
 
 
     /* set screen background */
-    SDL_GUI::Texture *screen_texture = new
-        SDL_GUI::Texture(this->_game_model->_active_screen->background_path(),
-                         this->_interface_model->renderer());
+    GuiScreen *screen_texture = new
+        GuiScreen(this->_game_model->_active_screen, this->_interface_model->renderer());
+
+    this->_debug_rect = screen_texture->debug_rect();
 
     screen_texture->set_width(1920);
     screen_texture->set_height(1080);
@@ -84,13 +85,6 @@ void GameController::init() {
     screen_texture->add_child(object_texture);
 
     this->_game_model->_model_mapping.insert({object_texture, this->_character});
-
-
-    /* add debug rect */
-    this->_debug_rect = new SDL_GUI::Rect({1600, 700}, 320, 380);
-    this->_debug_rect->_default_style._has_background = true;
-    this->_debug_rect->_default_style._color = SDL_GUI::RGB(255, 255, 255, 150);
-    screen_texture->add_child(this->_debug_rect);
 }
 
 void GameController::update() {
@@ -119,24 +113,40 @@ void GameController::update() {
     if (this->_debug) {
         this->update_debug();
     }
+}
+
+void GameController::update_debug() {
+    this->_debug_rect->remove_all_children();
 
     SDL_GUI::Position mouse_position = this->_input_model->mouse_position();
-    std::vector<SDL_GUI::Drawable *> all_hovered = this->_interface_model->find_drawables_at_position(mouse_position);
-    this->_debug_rect->remove_all_children();
+    SDL_GUI::Drawable *screen = this->_interface_model->find_first_drawable("screen");
+
+    std::vector<SDL_GUI::Drawable *> all_hovered
+        = this->_interface_model->find_drawables_at_position(mouse_position, screen);
+    SDL_GUI::Drawable *hovered =
+        this->_interface_model->find_first_drawable_at_position(mouse_position, screen);
+
     int offset = 0;
     for (SDL_GUI::Drawable *d: all_hovered) {
         std::vector<std::string> attributes = d->attributes();
         std::string name = attributes.size() ? attributes[0] : "--noname--";
-        SDL_GUI::Text *t = new SDL_GUI::Text(this->_interface_model->font(), name);
+        std::stringstream ss;
+        ss << name << " (" << d->_type << ")";
+        SDL_GUI::Text *t = new SDL_GUI::Text(this->_interface_model->font(), ss.str());
         t->set_y(offset);
         this->_debug_rect->add_child(t);
         offset += t->height();
     }
-}
 
-void GameController::update_debug() {
-    SDL_GUI::Position mouse_position = this->_input_model->mouse_position();
-    SDL_GUI::Drawable *hovered = this->_interface_model->find_first_drawable_at_position(mouse_position);
+    if (this->_debug_active) {
+        std::vector<std::string> attributes = this->_debug_active->attributes();
+        std::string name = attributes.size() ? attributes[0] : "--noname--";
+        std::stringstream ss;
+        ss << name << " (" << this->_debug_active->_type << ")";
+        SDL_GUI::Text *t = new SDL_GUI::Text(this->_interface_model->font(), ss.str());
+        t->set_y(offset + 10);
+        this->_debug_rect->add_child(t);
+    }
 
 
     if (hovered && hovered != this->_main) {
@@ -169,8 +179,11 @@ void GameController::update_debug() {
     if (this->_drag != nullptr) {
         this->_drag->move(this->_input_model->mouse_offset());
     }
-    if (this->_input_model->is_down(InputKey::CLICK) && hovered && hovered != this->_main) {
-        this->_drag = hovered;
+    if (this->_input_model->is_down(InputKey::CLICK)
+        && hovered
+        && hovered != this->_main
+        && this->_game_model->_model_mapping.contains(hovered)) {
+        this->_drag = this->_game_model->_model_mapping.at(hovered);
     }
     if (this->_input_model->is_up(InputKey::CLICK)) {
         this->_drag = nullptr;

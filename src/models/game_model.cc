@@ -26,7 +26,7 @@ void GameModel::init() {
     tree->_name = "tree";
     tree->set_width(338);
     tree->set_height(789);
-    tree->set_position({875, 750});
+    tree->set_position({975, 750});
     tree->set_pivot({75,650});
     this->_active_screen->add_screen_object(tree);
 }

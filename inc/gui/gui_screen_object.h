@@ -11,7 +11,12 @@ class GuiScreenObject : public SDL_GUI::Texture {
     const ScreenObject *_screen_object;
 
     virtual void update() override;
+protected:
+    GuiScreenObject(std::string type, SDL_Renderer *renderer, const ScreenObject *screen_object,
+                    const GameModel *game_model);
 public:
     GuiScreenObject(SDL_Renderer *renderer, const ScreenObject *screen_object,
-                    const GameModel *game_model);
+                    const GameModel *game_model)
+        : GuiScreenObject("ScreenObject", renderer, screen_object, game_model) {}
+
 };
