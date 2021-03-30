@@ -9,7 +9,7 @@ GameModel::GameModel() {
 
 void GameModel::init() {
     /* create dummy screen */
-    Screen *screen = new Screen("screens/garden.png");
+    Screen *screen = new Screen("screens/garden.png", this);
     this->_screens.push_back(screen);
     this->_active_screen = screen;
 

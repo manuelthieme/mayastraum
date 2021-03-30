@@ -1,6 +1,7 @@
 #include <models/screen.h>
 
-Screen::Screen(std::string path) : _background_path(path) {}
+Screen::Screen(std::string path, const GameModel *game_model)
+    : _background_path(path), _game_model(game_model) {}
 
 std::string Screen::background_path() const {
     return this->_background_path;
@@ -8,6 +9,10 @@ std::string Screen::background_path() const {
 
 std::vector<ScreenObject *> Screen::screen_objects() {
     return this->_screen_objects;
+}
+
+const GameModel *Screen::game_model() const {
+    return this->_game_model;
 }
 
 void Screen::add_screen_object(ScreenObject *screen_object) {

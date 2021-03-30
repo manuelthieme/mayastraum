@@ -31,7 +31,11 @@ public:
      */
     std::map<SDL_GUI::Drawable *, ScreenObject *> _model_mapping;
 
+    /** flag that determines whether the pivot points of screen objects are shown */
     bool _debugging_pivot = false;
+
+    /** flag that determines whether runtime stats are shown */
+    bool _debugging_stats = false;
 
     void init();
 

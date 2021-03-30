@@ -19,10 +19,12 @@ const std::map<std::set<SDL_Scancode>, std::map<SDL_Scancode, InputKey>> keyboar
     {{SDL_SCANCODE_LSHIFT}, {
         {SDL_SCANCODE_D, InputKey::TOGGLE_DEBUG},
         {SDL_SCANCODE_P, InputKey::TOGGLE_DEBUG_PIVOT},
+        {SDL_SCANCODE_S, InputKey::TOGGLE_DEBUG_STATS},
     }},
     {{SDL_SCANCODE_RSHIFT}, {
         {SDL_SCANCODE_D, InputKey::TOGGLE_DEBUG},
         {SDL_SCANCODE_P, InputKey::TOGGLE_DEBUG_PIVOT},
+        {SDL_SCANCODE_S, InputKey::TOGGLE_DEBUG_STATS},
     }},
 };
 

@@ -5,6 +5,7 @@
 
 #include <models/screen_object.h>
 
+class GameModel;
 class Screen {
     /** Background Image. */
     std::string _background_path;
@@ -12,12 +13,16 @@ class Screen {
     /** Vector of Screen Objects. */
     std::vector<ScreenObject *> _screen_objects;
 
+    const GameModel *_game_model;
+
 public:
-    Screen(std::string path);
+    Screen(std::string path, const GameModel *game_model);
 
     std::string background_path() const;
 
     std::vector<ScreenObject *> screen_objects();
+
+    const GameModel *game_model() const;
 
     void add_screen_object(ScreenObject *screen_object);
 };

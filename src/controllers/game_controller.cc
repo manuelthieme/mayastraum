@@ -22,6 +22,8 @@ void GameController::init() {
 
     this->_debug_rect = screen_texture->debug_rect();
 
+    this->init_debug_stats(screen_texture->stats_rect());
+
     screen_texture->set_width(1920);
     screen_texture->set_height(1080);
     screen_texture->add_attribute("screen");
@@ -97,6 +99,10 @@ void GameController::update() {
         this->_game_model->_debugging_pivot = !this->_game_model->_debugging_pivot;
     }
 
+    if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG_STATS)) {
+        this->_game_model->_debugging_stats = !this->_game_model->_debugging_stats;
+    }
+
 
     this->_character->tick();
 
@@ -104,6 +110,10 @@ void GameController::update() {
 
     if (this->_debug) {
         this->update_debug();
+    }
+
+    if (this->_game_model->_debugging_stats) {
+        this->update_debug_stats();
     }
 }
 
@@ -190,4 +200,51 @@ void GameController::update_debug() {
     if (this->_input_model->is_up(InputKey::CLICK)) {
         this->_drag = nullptr;
     }
+}
+
+void GameController::init_debug_stats(SDL_GUI::Rect *stats_rect) {
+    stats_rect->remove_all_children();
+
+    SDL_GUI::Text *t = new SDL_GUI::Text(this->_interface_model->font(), "FPS:");
+    stats_rect->add_child(t);
+
+    int height = t->height();
+    int width = t->width();
+
+    t = new SDL_GUI::Text(this->_interface_model->font(), "TPS:");
+    t->move({0, height});
+    stats_rect->add_child(t);
+
+    width = std::max(width, static_cast<int>(t->width()));
+
+    std::stringstream ss;
+    ss << this->_application->current_fps();
+    t = new SDL_GUI::Text(this->_interface_model->font(), ss.str());
+    t->move({width, 0});
+    stats_rect->add_child(t);
+    this->_fps_text = t;
+
+    ss.str("");
+    ss << this->_application->current_tps();
+    t = new SDL_GUI::Text(this->_interface_model->font(), ss.str());
+    t->move({width, height});
+    stats_rect->add_child(t);
+    this->_tps_text = t;
+
+    height += t->height();
+
+    stats_rect->set_height(height);
+
+    stats_rect->set_width(2 * width);
+    stats_rect->set_x(1920 - 2 * width);
+}
+
+void GameController::update_debug_stats() {
+    std::stringstream ss;
+    ss << this->_application->current_fps();
+    this->_fps_text->set_text(ss.str());
+
+    ss.str("");
+    ss << this->_application->current_tps();
+    this->_tps_text->set_text(ss.str());
 }
