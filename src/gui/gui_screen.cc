@@ -7,8 +7,8 @@ GuiScreen::GuiScreen(std::string type, const Screen *screen, SDL_Renderer *rende
     : Texture(type, screen->background_path(), renderer), _screen(screen) {
 
     this->_debug_rect = new SDL_GUI::Rect({1600, 700}, 320, 380);
-    this->_debug_rect->_default_style._has_background = true;
-    this->_debug_rect->_default_style._color = SDL_GUI::RGB(255, 255, 255, 150);
+    this->_debug_rect->_style._has_background = true;
+    this->_debug_rect->_style._color = SDL_GUI::RGB(255, 255, 255, 150);
 
     this->add_debug_drawable(this->_debug_rect,
         [this](){

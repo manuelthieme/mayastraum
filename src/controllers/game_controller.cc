@@ -16,16 +16,6 @@ GameController::GameController(SDL_GUI::ApplicationBase *application, GameModel 
     this->init();
 }
 void GameController::init() {
-    /* init debug styles */
-    this->_debug_hover_style._has_border = true;
-    this->_debug_hover_style._border_width = 5;
-    this->_debug_hover_style._border_color = SDL_GUI::RGB(255,0,0,125);
-
-    this->_debug_active_style._has_border = true;
-    this->_debug_active_style._border_width = 5;
-    this->_debug_active_style._border_color = SDL_GUI::RGB(0,255,0,125);
-
-
     /* set screen background */
     GuiScreen *screen_texture = new
         GuiScreen(this->_game_model->_active_screen, this->_interface_model->renderer());
@@ -56,6 +46,7 @@ void GameController::init() {
         GuiScreenObject *object_texture = new GuiScreenObject(this->_interface_model->renderer(),
                                                               screen_object, this->_game_model);
         object_texture->add_attribute(screen_object->_name);
+        object_texture->_style._border_width = 5;
 
         screen_texture->add_child(object_texture);
 
@@ -81,6 +72,7 @@ void GameController::init() {
     GuiScreenObject *object_texture = new GuiScreenObject(this->_interface_model->renderer(),
                                                           this->_character, this->_game_model);
     object_texture->add_attribute("character");
+    object_texture->_style._border_width = 5;
 
     screen_texture->add_child(object_texture);
 
@@ -149,9 +141,27 @@ void GameController::update_debug() {
     }
 
 
+    /* reset border everywhere */
+    this->_interface_model->drawable_root()->map([](SDL_GUI::Drawable *drawable) {
+            drawable->_style._has_border = false;
+        });
+
+    /* activate border of debugging target */
+    if (this->_debug_active) {
+        this->_debug_active->_style._has_border = true;
+    }
+
     if (hovered && hovered != this->_main) {
+        /* draw border of hovered object */
+        if (hovered != this->_debug_active) {
+            hovered->_style._has_border = true;
+            hovered->_style._border_color = SDL_GUI::RGB("red");
+        }
+
         if (this->_input_model->is_down(InputKey::CLICK)) {
             this->_debug_active = hovered;
+            this->_debug_active->_style._has_border = true;
+            this->_debug_active->_style._border_color = SDL_GUI::RGB("green");
         }
         if (this->_input_model->is_pressed(InputKey::UP)) {
             this->_debug_active->move({0,-1});
@@ -167,14 +177,6 @@ void GameController::update_debug() {
         }
     }
 
-    this->_interface_model->drawable_root()->map([](SDL_GUI::Drawable *drawable) {
-            drawable->set_current_style(&drawable->_default_style);
-        });
-
-    if (hovered && hovered != this->_main) {
-        hovered->set_current_style(&this->_debug_hover_style);
-    }
-    this->_debug_active->set_current_style(&this->_debug_active_style);
 
     if (this->_drag != nullptr) {
         this->_drag->move(this->_input_model->mouse_offset());

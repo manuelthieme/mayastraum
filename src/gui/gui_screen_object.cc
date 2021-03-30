@@ -19,16 +19,16 @@ GuiScreenObject::GuiScreenObject(std::string type, SDL_Renderer *renderer,
     SDL_GUI::Rect *rect = new SDL_GUI::Rect({static_cast<int>(pivot.x()) - 4,
                                              static_cast<int>(pivot.y()) - 4},
                                             9, 9);
-    rect->_default_style._has_background = true;
-    rect->_default_style._color = SDL_GUI::RGB(255, 255, 255, 150);
+    rect->_style._has_background = true;
+    rect->_style._color = SDL_GUI::RGB(255, 255, 255, 150);
 
     SDL_GUI::Line *l =
         new SDL_GUI::Line({0, 0}, {8, 8});
-    l->_default_style._color = SDL_GUI::RGB("red");
+    l->_style._color = SDL_GUI::RGB("red");
     rect->add_child(l, true);
 
     l = new SDL_GUI::Line({0, 8}, {8, -8});
-    l->_default_style._color = SDL_GUI::RGB("red");
+    l->_style._color = SDL_GUI::RGB("red");
     rect->add_child(l, true);
 
     this->add_debug_drawable(rect,
