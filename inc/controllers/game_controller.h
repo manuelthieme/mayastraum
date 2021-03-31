@@ -32,12 +32,15 @@ class GameController : public SDL_GUI::ControllerBase {
     SDL_GUI::Rect *_debug_rect;
     SDL_GUI::Text *_fps_text;
     SDL_GUI::Text *_tps_text;
+    SDL_GUI::Rect *_graph_rect;
 
     void update_debug();
 
     void init_debug_stats(SDL_GUI::Rect *stats_rect);
 
     void update_debug_stats();
+
+    void update_debug_graph();
 public:
     GameController(SDL_GUI::ApplicationBase *application, GameModel *game_model, SDL_GUI::InterfaceModel *interface_model, SDL_GUI::InputModel<InputKey> *inputModel);
 

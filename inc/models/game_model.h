@@ -37,6 +37,9 @@ public:
     /** flag that determines whether runtime stats are shown */
     bool _debugging_stats = false;
 
+    /** flag that determines whether pathfinding is shown */
+    bool _debugging_graph = false;
+
     void init();
 
     GameModel();

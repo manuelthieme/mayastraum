@@ -11,6 +11,7 @@ class GuiScreen : public SDL_GUI::Texture {
     const Screen *_screen;
     SDL_GUI::Rect *_debug_rect;
     SDL_GUI::Rect *_stats_rect;
+    SDL_GUI::Rect *_graph_rect;
     protected:
         GuiScreen(std::string type, const Screen *screen, SDL_Renderer *renderer);
     public:
@@ -19,4 +20,5 @@ class GuiScreen : public SDL_GUI::Texture {
 
         SDL_GUI::Rect *debug_rect();
         SDL_GUI::Rect *stats_rect();
+        SDL_GUI::Rect *graph_rect();
 };

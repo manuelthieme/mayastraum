@@ -2,6 +2,7 @@
 
 #include <sstream>
 
+#include <SDL_GUI/inc/gui/primitives/line.h>
 #include <SDL_GUI/inc/gui/primitives/rect.h>
 #include <SDL_GUI/inc/gui/primitives/text.h>
 #include <SDL_GUI/inc/gui/primitives/texture.h>
@@ -21,6 +22,7 @@ void GameController::init() {
         GuiScreen(this->_game_model->_active_screen, this->_interface_model->renderer());
 
     this->_debug_rect = screen_texture->debug_rect();
+    this->_graph_rect = screen_texture->graph_rect();
 
     this->init_debug_stats(screen_texture->stats_rect());
 
@@ -103,6 +105,10 @@ void GameController::update() {
         this->_game_model->_debugging_stats = !this->_game_model->_debugging_stats;
     }
 
+    if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG_GRAPH)) {
+        this->_game_model->_debugging_graph = !this->_game_model->_debugging_graph;
+    }
+
 
     this->_character->tick();
 
@@ -114,6 +120,10 @@ void GameController::update() {
 
     if (this->_game_model->_debugging_stats) {
         this->update_debug_stats();
+    }
+
+    if (this->_game_model->_debugging_graph) {
+        this->update_debug_graph();
     }
 }
 
@@ -247,4 +257,18 @@ void GameController::update_debug_stats() {
     ss.str("");
     ss << this->_application->current_tps();
     this->_tps_text->set_text(ss.str());
+}
+
+void GameController::update_debug_graph() {
+    this->_graph_rect->remove_all_children();
+    Point from = this->_character->position();
+    for (Point to: this->_character->path()) {
+        SDL_GUI::Line *l = new SDL_GUI::Line({static_cast<int>(from.x()),
+                                              static_cast<int>(from.y())},
+                                             {static_cast<int>(to.x() - from.x()),
+                                              static_cast<int>(to.y() - from.y())});
+        l->_style._color = SDL_GUI::RGB("red");
+        this->_graph_rect->add_child(l);
+        from = to;
+    }
 }

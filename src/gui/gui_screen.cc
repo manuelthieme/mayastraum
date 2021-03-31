@@ -24,6 +24,13 @@ GuiScreen::GuiScreen(std::string type, const Screen *screen, SDL_Renderer *rende
         [this](){
             return this->_screen->game_model()->_debugging_stats;
         });
+
+    this->_graph_rect = new SDL_GUI::Rect({0, 0}, 1920, 1080);
+
+    this->add_debug_drawable(this->_graph_rect,
+        [this](){
+            return 1 or this->_screen->game_model()->_debugging_graph;
+        });
 }
 
 SDL_GUI::Rect *GuiScreen::debug_rect() {
@@ -32,4 +39,8 @@ SDL_GUI::Rect *GuiScreen::debug_rect() {
 
 SDL_GUI::Rect *GuiScreen::stats_rect() {
     return this->_stats_rect;
+}
+
+SDL_GUI::Rect *GuiScreen::graph_rect() {
+    return this->_graph_rect;
 }

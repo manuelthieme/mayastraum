@@ -11,4 +11,5 @@ enum class InputKey {
     TOGGLE_DEBUG,
     TOGGLE_DEBUG_PIVOT,
     TOGGLE_DEBUG_STATS,
+    TOGGLE_DEBUG_GRAPH,
 };
