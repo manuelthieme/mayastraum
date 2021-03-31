@@ -1,3 +1,6 @@
 [submodule "lib/SDL_GUI"]
 	path = lib/SDL_GUI
 	url = git@github.com:manuelthieme/SDL_GUI.git
+[submodule "lib/wykobi"]
+	path = lib/wykobi
+	url = https://github.com/ArashPartow/wykobi
