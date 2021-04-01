@@ -40,6 +40,9 @@ public:
     /** flag that determines whether pathfinding is shown */
     bool _debugging_graph = false;
 
+    /** flag that determines whether hitboxes are shown */
+    bool _debugging_hitboxes = false;
+
     void init();
 
     GameModel();

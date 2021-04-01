@@ -13,7 +13,7 @@ GuiScreenObject::GuiScreenObject(std::string type, SDL_Renderer *renderer,
     this->_width = screen_object->width();
     this->_height = screen_object->height();
 
-    // generate pivot cross
+    /* generate pivot cross */
     Point pivot = screen_object->pivot();
 
     SDL_GUI::Rect *rect = new SDL_GUI::Rect({static_cast<int>(pivot.x()) - 4,
@@ -35,6 +35,17 @@ GuiScreenObject::GuiScreenObject(std::string type, SDL_Renderer *renderer,
         [game_model](){
             return game_model->_debugging_pivot;
         });
+
+    /* generate hitbox */
+    const Hitbox *hitbox = this->_screen_object->hitbox();
+    if (hitbox) {
+        SDL_GUI::Drawable *h = hitbox->drawable();
+        this->add_debug_drawable(h,
+            [game_model](){
+                return game_model->_debugging_hitboxes;
+            });
+    }
+
 }
 
 void GuiScreenObject::update() {

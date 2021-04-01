@@ -11,6 +11,12 @@ ScreenObject::ScreenObject(std::string path, Point position, unsigned width, uns
     this->init();
 }
 
+ScreenObject::~ScreenObject() {
+    if (this->_hitbox) {
+        delete this->_hitbox;
+    }
+}
+
 void ScreenObject::init() {
 
 }
@@ -35,6 +41,11 @@ unsigned ScreenObject::height() const {
     return this->_height;
 }
 
+const Hitbox *ScreenObject::hitbox() const {
+    return this->_hitbox;
+}
+
+
 void ScreenObject::set_position(Point position) {
     this->_position = position;
 }
@@ -56,8 +67,28 @@ void ScreenObject::set_size(unsigned width, unsigned height) {
     this->set_height(height);
 }
 
+void ScreenObject::set_hitbox(Hitbox *hitbox) {
+    this->_hitbox = hitbox;
+}
+
+
 void ScreenObject::move(Point movement) {
     this->_position += movement;
+}
+
+
+bool ScreenObject::collides(Point point) const {
+    return this->_hitbox->collides(point - this->_position);
+
+}
+
+bool ScreenObject::collides(Edge edge) const {
+    return this->_hitbox->collides(edge - this->_position);
+
+}
+
+Point ScreenObject::closest_point(Point point) const {
+    return this->_hitbox->closest_point(point);
 }
 
 #if 0
@@ -80,10 +111,6 @@ Point ScreenObject::renderSize(shared_ptr<Screen> s, float gameHeight) const {
     return Point(this->m_size.width() * factor, this->m_size.height() * factor);
 }
 
-
-Hitbox ScreenObject::hitbox() const {
-    return this->m_hitbox;
-}
 
 Hitbox ScreenObject::renderHitbox(shared_ptr<Screen> s, float gameHeight) const {
     Hitbox h;
@@ -111,10 +138,6 @@ void ScreenObject::setSize(Point p) {
 
 void ScreenObject::setPivot(Point p) {
     this->m_pivot = p;
-}
-
-void ScreenObject::setHitbox(Hitbox h) {
-    this->m_hitbox = h;
 }
 
 shared_ptr<Animation> ScreenObject::addAnimation(shared_ptr<Animation> a) {
@@ -151,33 +174,4 @@ void ScreenObject::tick(int t, shared_ptr<Screen> activeScreen, int gameHeight) 
     this->m_activeAnimation->tick(t);
 }
 
-bool ScreenObject::collides(Point p, shared_ptr<Screen> activeScreen, int gameHeight) const {
-    Point offPoint = this->m_hitbox.offPoint();
-    int count = 0;
-    for (auto e: this->renderHitbox(activeScreen, gameHeight).edges())
-        if ((e + this->m_position).intersects(Edge(p, offPoint)))
-            count++;
-
-    if (count % 2)
-        return true;
-
-    return false;
-}
-
-bool ScreenObject::collides(Edge e, shared_ptr<Screen> activeScreen, int gameHeight) const {
-    Hitbox renderHitbox = this->renderHitbox(activeScreen, gameHeight);
-
-    /* check whether the Edge intersects one of the hitbox edges */
-    for (auto edge: renderHitbox.edges()) {
-        edge += this->m_position;
-        if (edge.intersects(e))
-            //if(this->collides(edge.middle(), activeScreen, gameHeight))
-                return true;
-    }
-    return false;
-}
-
-Point ScreenObject::nearestPoint(Point p) const {
-    return p;
-}
 #endif

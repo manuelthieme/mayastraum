@@ -27,7 +27,9 @@ void GameModel::init() {
     tree->set_width(338);
     tree->set_height(789);
     tree->set_position({975, 750});
-    tree->set_pivot({75,650});
+    tree->set_pivot({170,650});
+    Hitbox *h = new CircleHitbox({170,650}, 20);
+    tree->set_hitbox(h);
     this->_active_screen->add_screen_object(tree);
 }
 

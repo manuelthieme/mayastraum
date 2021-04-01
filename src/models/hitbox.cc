@@ -1,84 +1,169 @@
-#if 0
-#include <includes.h>
+#include <models/hitbox.h>
 
-using namespace std;
-/* constructor */
-Hitbox::Hitbox() {
+#include <sstream>
+
+#include <SDL_GUI/inc/gui/primitives/circle.h>
+
+ostream& operator<<(ostream &output, const Hitbox &hitbox) {
+    output << hitbox.to_string();
+    return output;
 }
 
-/* getter */
-vector<Point> Hitbox::points() const {
-    return this->m_points;
+bool CircleHitbox::collides(Point point) const {
+    return wykobi::point_in_circle(point.vector(), this->_circle.circle());
 }
 
-vector<Edge> Hitbox::edges() const {
-    return this->m_edges;
+bool CircleHitbox::collides(Edge edge) const {
+    return wykobi::intersect(edge.segment(), this->_circle.circle());
 }
 
-Point Hitbox::offPoint() const {
-    if (this->m_points.size() < 1)
+Point CircleHitbox::closest_point(Point point) const {
+    return this->_circle.closest_point(point);
+}
+
+std::string CircleHitbox::to_string() const {
+    std::stringstream ss;
+    ss << "<CircleHitbox: " << this->_circle << ">";
+    return ss.str();
+}
+
+SDL_GUI::Drawable *CircleHitbox::drawable() const {
+    Point center = this->_circle.center();
+    return new SDL_GUI::Circle({static_cast<int>(center.x()), static_cast<int>(center.y())},
+                               static_cast<unsigned>(this->_circle.radius()));
+}
+
+bool AABBHitbox::collides(Point point) const {
+    return wykobi::point_in_rectangle(point.vector(), this->_aabb.rectangle());
+}
+
+bool AABBHitbox::collides(Edge edge) const {
+    return wykobi::intersect(edge.segment(), this->_aabb.rectangle());
+}
+
+Point AABBHitbox::closest_point(Point point) const {
+    return this->_aabb.closest_point(point);
+}
+
+std::string AABBHitbox::to_string() const {
+    std::stringstream ss;
+    ss << "<AABBHitbox: " << this->_aabb << ">";
+    return ss.str();
+}
+
+SDL_GUI::Drawable *AABBHitbox::drawable() const {
+    return new SDL_GUI::NullDrawable();
+}
+
+vector<Point> PolygonHitbox::points() const {
+    return this->_points;
+}
+
+vector<Edge> PolygonHitbox::edges() const {
+    return this->_edges;
+}
+
+Point PolygonHitbox::off_point() const {
+    if (this->_points.size() < 1)
         return Point(0, 0);
-    Point point = this->m_points.front();
-    for (auto p: this->m_points) {
+    Point point = this->_points.front();
+    for (auto p: this->_points) {
         if (p.x() < point.x())
-            point.setX(p.x());
+            point.set_x(p.x());
 
         if (p.y() < point.y())
-            point.setY(p.y());
+            point.set_y(p.y());
 
     }
     return point + Point(-1, -1);
 }
 
-/* setter */
-void Hitbox::setPoints(vector<Point> points) {
-    this->m_points = points;
+void PolygonHitbox::set_points(vector<Point> points) {
+    this->_points = points;
 }
 
-void Hitbox::addPoint(Point p) {
-    this->m_points.push_back(p);
+void PolygonHitbox::add_point(Point point) {
+    this->_points.push_back(point);
 }
 
-void Hitbox::setEdges(vector<Edge> edges) {
-    this->m_edges = edges;
+void PolygonHitbox::set_edges(vector<Edge> edges) {
+    this->_edges = edges;
 }
-void Hitbox::addEdge(Edge e) {
-    this->m_edges.push_back(e);
-}
-
-/* operators */
-bool Hitbox::operator==(const Hitbox &h) const {
-    return this->m_edges == h.m_edges
-        && this->m_points == h.m_points;
+void PolygonHitbox::add_edge(Edge edge) {
+    this->_edges.push_back(edge);
 }
 
-ostream& operator<<(ostream &output, const Hitbox &h) {
-    for (auto e: h.edges())
-        output << e << endl;
-
-    return output;
+std::string PolygonHitbox::to_string() const {
+    std::stringstream ss;
+    ss << "<Polygon Hitbox: ";
+    bool first = true;
+    for (const Edge &edge: this->_edges) {
+        if (not first) {
+            ss << " ,";
+        }
+        ss << edge;
+    }
+    ss << ">" << std::endl;
+    return ss.str();
 }
 
 
-/* misc */
 
-void Hitbox::calculateEdges() {
-    if (this->m_points.size() < 1)
+void PolygonHitbox::calculate_edges() {
+    if (this->_points.size() < 1)
         return;
-    this->m_edges.clear();
+    this->_edges.clear();
     Point before(0, 0);
     bool first = false;
-    for (auto p: this->m_points) {
+    for (const Point &point: this->_points) {
         if (!first) {
             first = true;
-            before = p;
+            before = point;
             continue;
         }
-        Edge e(before, p);
-        this->m_edges.push_back(e);
-        before = p;
+        Edge edge(before, point);
+        this->_edges.push_back(edge);
+        before = point;
     }
-    Edge e(before, this->m_points.front());
-    this->m_edges.push_back(e);
+    Edge edge(before, this->_points.front());
+    this->_edges.push_back(edge);
 }
-#endif
+
+bool PolygonHitbox::collides(Point point) const {
+    /* a point collides with the hitbox when the edge from a point outside the hitbox to the checked
+     * point collides with an even number of hitbox edges */
+    Point off_point = this->off_point();
+    int count = 0;
+    for (const Edge &edge: this->_edges) {
+        if ((edge).intersects(Edge(point, off_point))) {
+            count++;
+        }
+    }
+
+    if (count % 2) {
+        return true;
+    }
+
+    return false;
+}
+
+bool PolygonHitbox::collides(Edge edge) const {
+    /* check whether the Edge intersects one of the hitbox edges */
+    for (const Edge &e: this->_edges) {
+        if (e.intersects(edge)) {
+            /* TODO: what is this? */
+            //if(this->collides(edge.middle(), activeScreen, gameHeight))
+            return true;
+        }
+    }
+    return false;
+}
+
+Point PolygonHitbox::closest_point(Point point) const {
+    /* TODO: implement */
+    return point;
+}
+
+SDL_GUI::Drawable *PolygonHitbox::drawable() const {
+    return new SDL_GUI::NullDrawable();
+}

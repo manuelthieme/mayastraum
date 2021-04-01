@@ -1,11 +1,5 @@
 #include <util/edge.h>
 
-using namespace std;
-/* constructor */
-Edge::Edge(Point begin, Point end) : _begin(begin), _end(end) {
-}
-
-/* getter */
 Point Edge::begin() const {
     return this->_begin;
 }
@@ -19,98 +13,82 @@ float Edge::slope() const {
 }
 
 float Edge::magnitude() const {
-    return max(this->_begin.magnitude(), this->_end.magnitude()) - min(this->_begin.magnitude(), this->_end.magnitude());
+    return (this->_end - this->_begin).magnitude();
 }
 
-/* setter */
-void Edge::setBegin(Point begin) {
+wykobi::segment<float,2> Edge::segment() const {
+    return wykobi::make_segment(this->_begin.vector(), this->_end.vector());
+}
+
+void Edge::set_begin(Point begin) {
     this->_begin = begin;
 }
 
-void Edge::setEnd(Point end) {
+void Edge::set_end(Point end) {
     this->_end = end;
 }
 
-
-/* operators */
-bool Edge::operator==(const Edge &e) const{
-    return (this->_begin == e._begin && this->_end == e._end)
-        || (this->_end == e._begin && this->_begin == e._end);
+void Edge::set_magnitude(float magnitude) {
+    float scale = this->magnitude() / magnitude;
+    this->scale(scale);
 }
 
-ostream& operator<<(ostream &output, const Edge &e) {
-    Point b = e.begin();
-    Point end = e.end();
-    output << b << "---" << end;
+void Edge::scale(float scale) {
+    this->_end += (this->_end - this->_begin) * (1 - scale);
+}
+
+
+bool Edge::operator==(const Edge &edge) const{
+    return this->_begin == edge._begin and this->_end == edge._end;
+}
+
+ostream& operator<<(ostream &output, const Edge &edge) {
+    output << "<Edge: ";
+    Point begin = edge.begin();
+    Point end = edge.end();
+    output << begin << "---" << end << ">";
     return output;
 }
 
-Edge Edge::operator+(const Point &p) const {
-    return Edge(this->_begin + p, this->_end + p);
+Edge Edge::operator+(const Point &point) const {
+    return Edge(this->_begin + point, this->_end + point);
 }
 
-Edge Edge::operator+=(const Point &p) {
-    this->_begin += p;
-    this->_end += p;
+Edge Edge::operator+=(const Point &point) {
+    this->_begin += point;
+    this->_end += point;
 
     return *this;
 }
 
-/* misc */
-bool Edge::intersects(Edge e) const {
+Edge Edge::operator-(const Point &point) const {
+    return Edge(this->_begin - point, this->_end - point);
+}
 
-    Point intersection(0, 0);
+Edge Edge::operator-=(const Point &point) {
+    this->_begin -= point;
+    this->_end -= point;
 
-    if (this->_begin.x() == this->_end.x() and e._begin.x() == e._end.x()) {
-        if (this->_begin.x() != e._begin.x()) {
-            return false;
-        } else {
-            return false;
-        }
-    }
-    if (this->_begin.x() == this->_end.x()) {
-        float m = e.slope();
-        float n = e._begin.y() - e._begin.x() * m;
-        intersection = Point(this->_begin.x(), m * this->_begin.x() + n);
-    } else if (e._begin.x() == e._end.x()) {
-        float m = this->slope();
-        float n = this->_begin.y() - this->_begin.x() * m;
-        intersection = Point(e._begin.x(), m * e._begin.x() + n);
-    } else {
-        /* get slopes */
-        float m1 = this->slope();
-        float m2 = e.slope();
+    return *this;
+}
 
-        float n1 = this->_begin.y() - this->_begin.x() * m1;
-        float n2 = e._begin.y() - e._begin.x() * m2;
+Point Edge::intersection(Edge edge) const {
+    wykobi::point2d<float> intersection = wykobi::intersection_point(this->segment(), edge.segment());
 
-        if (m1 == m2)
-            if (n1 == n2)
-                return true;
-            else
-                return false;
+    return intersection;
+}
 
-        //cout << *this << endl << e << endl;
-        //cout << "\t" << m1 << "\t" << m2 << endl;
-
-        /* get intersection */
-        float x = (n2 - n1) / (m1 - m2);
-        float y = m1 * x + n1;
-
-        intersection = Point(x, y);
-    }
-
-    /* check whether intersection is one of the given EdgePoints */
-    bool isEdgePoint = (intersection.x() == this->_begin.x() || intersection.x() == this->_end.x());
-
-    /* check whether intersection is in bounds */
-    bool inBounds =
-        min(this->_begin.x(), this->_end.x()) <= intersection.x() && intersection.x() <= max(this->_begin.x(), this->_end.x())
-        && min(e._begin.x(), e._end.x()) <= intersection.x()      && intersection.x() <= max(e._begin.x(), e._end.x());
-
-    return (!isEdgePoint && inBounds);
+bool Edge::intersects(Edge edge) const {
+    return wykobi::intersect(this->segment(), edge.segment());
 }
 
 Point Edge::middle() const {
     return this->_begin.middle(this->_end);
+}
+
+Point Edge::closest_point(Point point) const {
+    wykobi::point2d<float> closest_point =
+        wykobi::closest_point_on_segment_from_point(this->segment(), point.vector());
+
+    return closest_point;
 }

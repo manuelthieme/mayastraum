@@ -4,6 +4,7 @@
 
 #include <SDL_GUI/inc/gui/positionable.h>
 
+#include <models/hitbox.h>
 #include <util/point.h>
 
 class ScreenObject {
@@ -14,12 +15,16 @@ protected:
     unsigned _width;
     unsigned _height;
 
+    Hitbox *_hitbox = nullptr;
+
     void init();
 public:
     std::string _name;
     ScreenObject(std::string path);
 
     ScreenObject(std::string path, Point position, unsigned width, unsigned height);
+
+    ~ScreenObject();
 
     std::string path() const;
 
@@ -30,6 +35,7 @@ public:
     Point pivot() const;
     unsigned width() const;
     unsigned height() const;
+    const Hitbox *hitbox() const;
 
     /* setter */
     void set_position(Point position);
@@ -37,8 +43,13 @@ public:
     void set_width(unsigned width);
     void set_height(unsigned height);
     void set_size(unsigned width, unsigned height);
+    void set_hitbox(Hitbox *hitbox);
 
     void move(Point movement);
+
+    bool collides(Point point) const;
+    bool collides(Edge edge) const;
+    Point closest_point(Point point) const;
 };
 
 #if 0
@@ -49,7 +60,6 @@ public:
 
 #if 0
 #include "Animation.h"
-#include "Hitbox.h"
 #include "Screen.h"
 #endif
 
@@ -57,7 +67,6 @@ using namespace std;
 class Screen;
 class ScreenObject {
     Point m_size;
-    Hitbox m_hitbox;
 
 protected:
     Point m_position;
@@ -71,12 +80,10 @@ public:
     /* getter */
     Point size() const;
     Point renderSize(shared_ptr<Screen> s, float gameHeight) const;
-    Hitbox hitbox() const;
     Hitbox renderHitbox(shared_ptr<Screen> s, float gameHeight) const;
     shared_ptr<Animation> activeAnimation() const;
 
     /* setter */
-    void setHitbox(Hitbox h);
     shared_ptr<Animation> addAnimation(shared_ptr<Animation> a);
     bool setActiveAnimation(shared_ptr<Animation> a);
 
@@ -86,9 +93,6 @@ public:
 
 
     /* misc */
-    bool collides(Point p, shared_ptr<Screen> activeScreen, int gameHeight) const;
-    bool collides(Edge e, shared_ptr<Screen> activeScreen, int gameHeight) const;
-    Point nearestPoint(Point p) const;
 };
 
 #endif

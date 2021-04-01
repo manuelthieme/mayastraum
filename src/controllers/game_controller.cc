@@ -109,6 +109,10 @@ void GameController::update() {
         this->_game_model->_debugging_graph = !this->_game_model->_debugging_graph;
     }
 
+    if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG_HITBOXES)) {
+        this->_game_model->_debugging_hitboxes = !this->_game_model->_debugging_hitboxes;
+    }
+
 
     this->_character->tick();
 
@@ -156,8 +160,30 @@ void GameController::update_debug() {
         std::stringstream ss;
         ss << name << " (" << this->_debug_active->_type << ")";
         SDL_GUI::Text *t = new SDL_GUI::Text(this->_interface_model->font(), ss.str());
-        t->set_y(offset + 10);
+        offset += 10;
+        t->set_y(offset);
+        offset += t->height();
         this->_debug_rect->add_child(t);
+
+        ss.str("");
+        ss << "Position: " << this->_debug_active->position();
+        t = new SDL_GUI::Text(this->_interface_model->font(), ss.str());
+        t->set_y(offset);
+        offset += t->height();
+        this->_debug_rect->add_child(t);
+
+        ss.str("");
+        ss << "Mouse relative: ";
+        if (this->_debug_active->is_inside(mouse_position)) {
+            ss << mouse_position - this->_debug_active->position();
+        } else {
+            ss << "--not inside--";
+        }
+        t = new SDL_GUI::Text(this->_interface_model->font(), ss.str());
+        t->set_y(offset);
+        offset += t->height();
+        this->_debug_rect->add_child(t);
+
     }
 
 
