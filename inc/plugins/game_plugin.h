@@ -1,8 +1,8 @@
 #pragma once
 
-#include <SDL_GUI/inc/application.h>
-#include <SDL_GUI/inc/plugins/plugin_base.h>
-#include <SDL_GUI/inc/plugins/default_plugin.h>
+#include <SDL_GUI/application.h>
+#include <SDL_GUI/plugins/plugin_base.h>
+#include <SDL_GUI/plugins/default_plugin.h>
 
 #include <config/input_config.h>
 #include <controllers/game_controller.h>

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <SDL_GUI/inc/gui/drawable.h>
+#include <SDL_GUI/gui/drawable.h>
 
 #include <util/aabb.h>
 #include <util/circle.h>

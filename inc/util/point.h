@@ -5,7 +5,7 @@
 
 #include <wykobi/wykobi.hpp>
 
-#include <SDL_GUI/inc/gui/position.h>
+#include <SDL_GUI/gui/position.h>
 
 using namespace std;
 class Point {

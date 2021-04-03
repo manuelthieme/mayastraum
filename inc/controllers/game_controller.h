@@ -1,13 +1,13 @@
 #pragma once
 
-#include <SDL_GUI/inc/application.h>
-#include <SDL_GUI/inc/controllers/controller_base.h>
-#include <SDL_GUI/inc/models/input_model.h>
-#include <SDL_GUI/inc/models/interface_model.h>
-#include <SDL_GUI/inc/gui/primitives/rect.h>
-#include <SDL_GUI/inc/gui/primitives/text.h>
-#include <SDL_GUI/inc/gui/style.h>
-#include <SDL_GUI/inc/input_keys.h>
+#include <SDL_GUI/application.h>
+#include <SDL_GUI/controllers/controller_base.h>
+#include <SDL_GUI/models/input_model.h>
+#include <SDL_GUI/models/interface_model.h>
+#include <SDL_GUI/gui/primitives/rect.h>
+#include <SDL_GUI/gui/primitives/text.h>
+#include <SDL_GUI/gui/style.h>
+#include <SDL_GUI/input_keys.h>
 
 #include <input_keys.h>
 #include <models/character.h>

@@ -1,6 +1,9 @@
 [submodule "lib/SDL_GUI"]
-	path = lib/SDL_GUI
+	path = ext/SDL_GUI
 	url = git@github.com:manuelthieme/SDL_GUI.git
 [submodule "lib/wykobi"]
-	path = lib/wykobi
+	path = ext/wykobi
 	url = https://github.com/ArashPartow/wykobi
+[submodule "lib/rapidyaml"]
+	path = ext/rapidyaml
+	url = https://github.com/biojppm/rapidyaml

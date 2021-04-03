@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include <SDL_GUI/inc/gui/primitives/rect.h>
-#include <SDL_GUI/inc/gui/primitives/line.h>
+#include <SDL_GUI/gui/primitives/rect.h>
+#include <SDL_GUI/gui/primitives/line.h>
 
 
 GuiScreenObject::GuiScreenObject(std::string type, SDL_Renderer *renderer,

@@ -1,6 +1,6 @@
 #include <gui/gui_screen.h>
 
-#include <SDL_GUI/inc/models/interface_model.h>
+#include <SDL_GUI/models/interface_model.h>
 
 #include <models/game_model.h>
 

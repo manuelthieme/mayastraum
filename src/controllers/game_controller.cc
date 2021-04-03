@@ -2,11 +2,11 @@
 
 #include <sstream>
 
-#include <SDL_GUI/inc/gui/primitives/line.h>
-#include <SDL_GUI/inc/gui/primitives/rect.h>
-#include <SDL_GUI/inc/gui/primitives/text.h>
-#include <SDL_GUI/inc/gui/primitives/texture.h>
-#include <SDL_GUI/inc/gui/drawable.h>
+#include <SDL_GUI/gui/primitives/line.h>
+#include <SDL_GUI/gui/primitives/rect.h>
+#include <SDL_GUI/gui/primitives/text.h>
+#include <SDL_GUI/gui/primitives/texture.h>
+#include <SDL_GUI/gui/drawable.h>
 
 #include <gui/gui_screen.h>
 #include <gui/gui_screen_object.h>

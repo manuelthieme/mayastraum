@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <SDL_GUI/inc/gui/positionable.h>
+#include <SDL_GUI/gui/positionable.h>
 
 #include <models/hitbox.h>
 #include <util/point.h>

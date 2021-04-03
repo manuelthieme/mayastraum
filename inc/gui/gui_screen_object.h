@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL.h>
 
-#include <SDL_GUI/inc/gui/primitives/texture.h>
+#include <SDL_GUI/gui/primitives/texture.h>
 
 #include <models/game_model.h>
 #include <models/screen_object.h>

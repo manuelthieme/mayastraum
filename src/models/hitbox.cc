@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include <SDL_GUI/inc/gui/primitives/circle.h>
+#include <SDL_GUI/gui/primitives/circle.h>
 
 ostream& operator<<(ostream &output, const Hitbox &hitbox) {
     output << hitbox.to_string();

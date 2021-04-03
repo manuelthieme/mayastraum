@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include <SDL_GUI/inc/gui/primitives/texture.h>
-#include <SDL_GUI/inc/gui/primitives/rect.h>
+#include <SDL_GUI/gui/primitives/texture.h>
+#include <SDL_GUI/gui/primitives/rect.h>
 
 #include <models/screen.h>
 
