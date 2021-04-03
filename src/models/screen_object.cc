@@ -1,4 +1,8 @@
 #include <models/screen_object.h>
+
+#include <rapidyaml/ryml.hpp>
+#include <c4/yml/std/string.hpp>
+
 ScreenObject::ScreenObject(std::string path): _path(path) {
     this->init();
 }
@@ -89,6 +93,46 @@ bool ScreenObject::collides(Edge edge) const {
 
 Point ScreenObject::closest_point(Point point) const {
     return this->_hitbox->closest_point(point);
+}
+
+std::string ScreenObject::serialise() const {
+
+    std::cout << std::endl;
+    ryml::Tree tree;
+    ryml::NodeRef root = tree.rootref();
+
+    root |= ryml::MAP;
+
+    root["type"] = "ScreenObject";
+    root["name"] << this->_name;
+    root["path"] << this->_path;
+
+
+    ryml::NodeRef pos = root["position"];
+    pos |= ryml::MAP;
+    pos["x"] << this->_position.x();
+    pos["y"] << this->_position.y();
+
+    root["width"] << this->width();
+    root["height"] << this->height();
+
+    ryml::NodeRef pivot = root["pivot"];
+    pivot |= ryml::MAP;
+    pivot["x"] << this->_pivot.x();
+    pivot["y"] << this->_pivot.y();
+
+    ryml::NodeRef hitbox = root["hitbox"];
+    hitbox |= ryml::MAP;
+
+    if (this->_hitbox) {
+        this->_hitbox->to_yaml(&hitbox);
+    }
+
+
+
+    ryml::emit(tree);
+
+    return "";
 }
 
 #if 0

@@ -50,6 +50,8 @@ public:
     bool collides(Point point) const;
     bool collides(Edge edge) const;
     Point closest_point(Point point) const;
+
+    std::string serialise() const;
 };
 
 #if 0

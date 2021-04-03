@@ -23,9 +23,10 @@ class GameController : public SDL_GUI::ControllerBase {
 
     bool _debug = false;
     ScreenObject *_drag = nullptr;
-    SDL_GUI::Drawable *_main;
-    SDL_GUI::Drawable *_debug_active;
-    SDL_GUI::Drawable *_debug_cursor;
+    SDL_GUI::Drawable *_main = nullptr;
+    SDL_GUI::Drawable *_debug_active = nullptr;
+    ScreenObject *_debug_screen_object = nullptr;
+    SDL_GUI::Drawable *_debug_cursor = nullptr;
 
     Character *_character;
 

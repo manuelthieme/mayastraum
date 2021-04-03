@@ -95,6 +95,12 @@ void GameController::update() {
     if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG)) {
         this->_interface_model->toggle_debug_information_drawn();
         this->_debug = this->_interface_model->debug_information_drawn();
+        if (not this->_debug) {
+            /* reset border everywhere */
+            this->_interface_model->drawable_root()->map([](SDL_GUI::Drawable *drawable) {
+                    drawable->_style._has_border = false;
+                });
+        }
     }
 
     if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG_PIVOT)) {
@@ -184,6 +190,15 @@ void GameController::update_debug() {
         offset += t->height();
         this->_debug_rect->add_child(t);
 
+        if (this->_debug_screen_object) {
+            ss.str("");
+            ss << "Name: " << this->_debug_screen_object->_name;
+            t = new SDL_GUI::Text(this->_interface_model->font(), ss.str());
+            t->set_y(offset);
+            offset += t->height();
+            this->_debug_rect->add_child(t);
+        }
+
     }
 
 
@@ -208,18 +223,34 @@ void GameController::update_debug() {
             this->_debug_active = hovered;
             this->_debug_active->_style._has_border = true;
             this->_debug_active->_style._border_color = SDL_GUI::RGB("green");
+
+            if (this->_game_model->_model_mapping.contains(this->_debug_active)) {
+                this->_debug_screen_object =
+                    this->_game_model->_model_mapping.at(this->_debug_active);
+            } else {
+                this->_debug_screen_object = nullptr;
+            }
         }
+    }
+
+    if (this->_debug_screen_object) {
+        /* move active object */
         if (this->_input_model->is_pressed(InputKey::UP)) {
-            this->_debug_active->move({0,-1});
+            this->_debug_screen_object->move({0,-1});
         }
         if (this->_input_model->is_pressed(InputKey::DOWN)) {
-            this->_debug_active->move({0,1});
+            this->_debug_screen_object->move({0,1});
         }
         if (this->_input_model->is_pressed(InputKey::LEFT)) {
-            this->_debug_active->move({-1,0});
+            this->_debug_screen_object->move({-1,0});
         }
         if (this->_input_model->is_pressed(InputKey::RIGHT)) {
-            this->_debug_active->move({1,0});
+            this->_debug_screen_object->move({1,0});
+        }
+
+        /* print yaml to stdout */
+        if (this->_input_model->is_down(InputKey::SERIALISE)) {
+            this->_debug_screen_object->serialise();
         }
     }
 

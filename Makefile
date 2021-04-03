@@ -38,12 +38,17 @@ WYKOBI_HEADERS := $(patsubst ./$(WYKOBI_EXTDIR)/%, $(WYKOBI_INCDIR)/%, $(shell f
 RYML_LIB     := $(LIBDIR)/libryml.a
 RYML_INCDIR  := $(LIBINCDIR)/rapidyaml
 RYML_EXTDIR  := $(EXTDIR)/rapidyaml
-RYML_HEADERS := $(patsubst ./$(RYML_EXTDIR)/src/%, $(RYML_INCDIR)/%, $(shell find ./$(RYML_EXTDIR)/src -maxdepth 1 -name "*.hpp"))
+RYML_HEADERS := $(patsubst ./$(RYML_EXTDIR)/src/%, $(RYML_INCDIR)/%, $(shell find ./$(RYML_EXTDIR)/src -name "*.hpp"))
+
+RYML_C4_INCDIR  := $(LIBINCDIR)/c4
+RYML_C4_EXTDIR  := $(EXTDIR)/rapidyaml/ext/c4core/src/c4
+RYML_C4_HEADERS := $(patsubst ./$(RYML_C4_EXTDIR)/%, $(RYML_C4_INCDIR)/%, $(shell find ./$(RYML_C4_EXTDIR) -name "*.hpp" -o -name "*.h"))
+RYML_C4_YML_HEADERS := $(RYML_C4_INCDIR)/yml
 
 
-LIBRARIES     := $(SDL_GUI_LIB) $(RYML_LIB)
-LIB_HEADERS  := $(SDL_GUI_HEADERS) $(WYKOBI_HEADERS) $(RYML_HEADERS)
-DYN_LIBS     := -lSDL2 -lSDL2_gfx -lSDL2_ttf -lSDL2_image -lfontconfig
+LIBRARIES   := $(SDL_GUI_LIB) $(RYML_LIB)
+LIB_HEADERS := $(SDL_GUI_HEADERS) $(WYKOBI_HEADERS) $(RYML_HEADERS) $(RYML_C4_HEADERS) $(RYML_C4_YML_HEADERS)
+DYN_LIBS    := -lSDL2 -lSDL2_gfx -lSDL2_ttf -lSDL2_image -lfontconfig
 
 
 # create directories
@@ -103,11 +108,18 @@ $(RYML_LIB): $(RYML_EXTDIR)
 $(WYKOBI_HEADERS): $(WYKOBI_INCDIR)/%: $(WYKOBI_EXTDIR)/% | $(WYKOBI_INCDIR)/
 	ln -fs $(CURDIR)/$< $@
 
-$(RYML_HEADERS): $(RYML_INCDIR)/%.hpp: $(RYML_EXTDIR)/src/%.hpp | $(RYML_INCDIR)/
+.SECONDEXPANSION:
+
+$(SDL_GUI_HEADERS): $(SDL_GUI_INCDIR)/%.h: $(SDL_GUI_EXTDIR)/inc/%.h | $(SDL_GUI_INCDIR)/ $$(@D)/
 	ln -fs $(CURDIR)/$< $@
 
-.SECONDEXPANSION:
-$(SDL_GUI_HEADERS): $(SDL_GUI_INCDIR)/%.h: $(SDL_GUI_EXTDIR)/inc/%.h | $(SDL_GUI_INCDIR)/ $$(@D)/
+$(RYML_HEADERS): $(RYML_INCDIR)/%.hpp: $(RYML_EXTDIR)/src/%.hpp | $(RYML_INCDIR)/ $$(@D)/
+	ln -fs $(CURDIR)/$< $@
+
+$(RYML_C4_INCDIR)/yml: $(RYML_INCDIR)/c4/yml
+	ln -fs $(CURDIR)/$< $@
+
+$(RYML_C4_HEADERS): $(RYML_C4_INCDIR)/%: $(RYML_C4_EXTDIR)/% | $(RYML_C4_INCDIR)/ $$(@D)/
 	ln -fs $(CURDIR)/$< $@
 
 -include $(wildcard $(DEPS))

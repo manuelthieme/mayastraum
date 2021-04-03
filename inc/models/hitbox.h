@@ -6,6 +6,8 @@
 
 #include <SDL_GUI/gui/drawable.h>
 
+#include <rapidyaml/ryml.hpp>
+
 #include <util/aabb.h>
 #include <util/circle.h>
 #include <util/edge.h>
@@ -34,6 +36,8 @@ public:
 
     /** generate a drawable for this hitbox */
     virtual SDL_GUI::Drawable *drawable() const = 0;
+
+    virtual void to_yaml(ryml::NodeRef *node) const = 0;
 };
 
 /** Hitbox given through a circle */
@@ -69,6 +73,8 @@ public:
 
     /** @copydoc Hitbox::drawable() const */
     SDL_GUI::Drawable *drawable() const override;
+
+    void to_yaml(ryml::NodeRef *node) const override;
 };
 
 /** Hitbox given through an Axis-Aligned Bounding Box */
@@ -99,6 +105,8 @@ public:
 
     /** @copydoc Hitbox::drawable() const */
     SDL_GUI::Drawable *drawable() const override;
+
+    void to_yaml(ryml::NodeRef *node) const override;
 };
 
 class PolygonHitbox : public Hitbox {
@@ -169,5 +177,7 @@ public:
 
     /** @copydoc Hitbox::drawable() const */
     SDL_GUI::Drawable *drawable() const override;
+
+    void to_yaml(ryml::NodeRef *node) const override;
 };
 

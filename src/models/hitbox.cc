@@ -9,6 +9,9 @@ ostream& operator<<(ostream &output, const Hitbox &hitbox) {
     return output;
 }
 
+
+/* CircleHitbox */
+
 bool CircleHitbox::collides(Point point) const {
     return wykobi::point_in_circle(point.vector(), this->_circle.circle());
 }
@@ -33,6 +36,21 @@ SDL_GUI::Drawable *CircleHitbox::drawable() const {
                                static_cast<unsigned>(this->_circle.radius()));
 }
 
+void CircleHitbox::to_yaml(ryml::NodeRef *node) const {
+    ryml::NodeRef &n = *node;
+    n["type"] = "CircleHitbox";
+
+    ryml::NodeRef center = n["center"];
+    center |= ryml::MAP;
+    center["x"] << this->_circle.center().x();
+    center["y"] << this->_circle.center().y();
+
+    n["radius"] << this->_circle.radius();
+}
+
+
+/* AABBHitbox */
+
 bool AABBHitbox::collides(Point point) const {
     return wykobi::point_in_rectangle(point.vector(), this->_aabb.rectangle());
 }
@@ -54,6 +72,13 @@ std::string AABBHitbox::to_string() const {
 SDL_GUI::Drawable *AABBHitbox::drawable() const {
     return new SDL_GUI::NullDrawable();
 }
+
+void AABBHitbox::to_yaml(ryml::NodeRef *node) const {
+    (void)node;
+}
+
+
+/* PolygonHitbox */
 
 vector<Point> PolygonHitbox::points() const {
     return this->_points;
@@ -166,4 +191,8 @@ Point PolygonHitbox::closest_point(Point point) const {
 
 SDL_GUI::Drawable *PolygonHitbox::drawable() const {
     return new SDL_GUI::NullDrawable();
+}
+
+void PolygonHitbox::to_yaml(ryml::NodeRef *node) const {
+    (void)node;
 }
