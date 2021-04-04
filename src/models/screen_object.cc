@@ -25,6 +25,33 @@ static const std::map<std::string, HitboxType> TYPE_MAPPING = {
     {"PolygonHitbox", HitboxType::POLYGON},
 };
 
+static Hitbox *deserialise_hitbox(YAML::Node hitbox_yaml) {
+    Hitbox *hitbox = nullptr;
+
+    if (not hitbox_yaml) {
+        return hitbox;
+    }
+
+    std::string type_str = hitbox_yaml["type"].as<std::string>();
+
+    HitboxType type = TYPE_MAPPING.contains(type_str) ? TYPE_MAPPING.at(type_str) : HitboxType::NONE;
+
+    switch(type) {
+        case HitboxType::CIRCLE:
+            hitbox = new CircleHitbox(hitbox_yaml);
+            break;
+        case HitboxType::AABB:
+            hitbox = new AABBHitbox(hitbox_yaml);
+            break;
+        case HitboxType::POLYGON:
+            hitbox = new PolygonHitbox(hitbox_yaml);
+            break;
+        case HitboxType::NONE:
+            break;
+    }
+    return hitbox;
+}
+
 
 ScreenObject::ScreenObject(YAML::Node object_yaml) {
     this->_path   = object_yaml["path"].as<std::string>();
@@ -36,27 +63,8 @@ ScreenObject::ScreenObject(YAML::Node object_yaml) {
 
     this->_pivot = Point(object_yaml["pivot"]);
 
-    YAML::Node hitbox_yaml = object_yaml["hitbox"];
-
-    if (hitbox_yaml) {
-        std::string type_str = hitbox_yaml["type"].as<std::string>();
-
-        HitboxType type = TYPE_MAPPING.contains(type_str) ? TYPE_MAPPING.at(type_str) : HitboxType::NONE;
-
-        switch(type) {
-            case HitboxType::CIRCLE:
-                this->_hitbox = new CircleHitbox(hitbox_yaml);
-                break;
-            case HitboxType::AABB:
-                this->_hitbox = new AABBHitbox(hitbox_yaml);
-                break;
-            case HitboxType::POLYGON:
-                this->_hitbox = new PolygonHitbox(hitbox_yaml);
-                break;
-            case HitboxType::NONE:
-                break;
-        }
-    }
+    this->_hitbox = deserialise_hitbox(object_yaml["hitbox"]);
+    this->_hover_box = deserialise_hitbox(object_yaml["hover_box"]);
 }
 
 ScreenObject::~ScreenObject() {

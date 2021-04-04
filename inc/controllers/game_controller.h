@@ -19,25 +19,25 @@ class GameController : public SDL_GUI::ControllerBase {
     SDL_GUI::InterfaceModel *_interface_model;
     const SDL_GUI::InputModel<SDL_GUI::InputKey, SDL_GUI::InputState> *_default_input_model;
     SDL_GUI::InputModel<InputKey, InputState> *_input_model;
+
     void init();
 
-    bool _debug = false;
-    ScreenObject *_drag = nullptr;
-    SDL_GUI::Drawable *_main = nullptr;
-    SDL_GUI::Drawable *_debug_active = nullptr;
-    ScreenObject *_debug_screen_object = nullptr;
-    SDL_GUI::Drawable *_debug_cursor = nullptr;
+    void init_view();
 
-    Character *_character;
+    void init_screen_view();
 
-    SDL_GUI::Rect *_debug_rect;
-    SDL_GUI::Text *_fps_text;
-    SDL_GUI::Text *_tps_text;
-    SDL_GUI::Rect *_graph_rect;
+    void init_screen_objects_view();
+
+    void init_character_view();
+
+    void init_debug_stats();
 
     void update_debug();
 
-    void init_debug_stats(SDL_GUI::Rect *stats_rect);
+    void update_debug_rect();
+
+    void update_debug_borders();
+
 
     void update_debug_stats();
 

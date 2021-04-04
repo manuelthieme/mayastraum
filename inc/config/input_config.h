@@ -7,10 +7,10 @@
 
 enum class InputKey {
     QUIT,
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
+    MOVE_UP,
+    MOVE_DOWN,
+    MOVE_LEFT,
+    MOVE_RIGHT,
     CLICK,
     MOVE_CHARACTER,
     TOGGLE_DEBUG,
@@ -20,11 +20,15 @@ enum class InputKey {
     TOGGLE_DEBUG_HITBOXES,
     SERIALISE,
     CHANGE_DEBUG_OBJECT,
+    TOGGLE_EDIT_HITBOX,
+    ADD_HITBOX_POINT,
+    CYCLE_HITBOX,
 };
 
 enum class InputState {
     ALL,
     DEBUG,
+    EDIT_HITBOX,
 };
 
 const std::map<InputState, std::map<std::set<SDL_Scancode>, std::map<SDL_Scancode, InputKey>>>
@@ -47,10 +51,10 @@ keyboard_input_config = {
     }},
     {InputState::DEBUG, {
         {{}, {
-            {SDL_SCANCODE_K, InputKey::UP},
-            {SDL_SCANCODE_J, InputKey::DOWN},
-            {SDL_SCANCODE_H, InputKey::LEFT},
-            {SDL_SCANCODE_L, InputKey::RIGHT},
+            {SDL_SCANCODE_K, InputKey::MOVE_UP},
+            {SDL_SCANCODE_J, InputKey::MOVE_DOWN},
+            {SDL_SCANCODE_H, InputKey::MOVE_LEFT},
+            {SDL_SCANCODE_L, InputKey::MOVE_RIGHT},
         }},
         {{SDL_SCANCODE_LSHIFT}, {
             {SDL_SCANCODE_P, InputKey::TOGGLE_DEBUG_PIVOT},
@@ -61,6 +65,24 @@ keyboard_input_config = {
             {SDL_SCANCODE_P, InputKey::TOGGLE_DEBUG_PIVOT},
             {SDL_SCANCODE_H, InputKey::TOGGLE_DEBUG_HITBOXES},
             {SDL_SCANCODE_Z, InputKey::SERIALISE},
+        }},
+        {{SDL_SCANCODE_LCTRL}, {
+            {SDL_SCANCODE_H, InputKey::TOGGLE_EDIT_HITBOX},
+        }},
+        {{SDL_SCANCODE_RCTRL}, {
+            {SDL_SCANCODE_H, InputKey::TOGGLE_EDIT_HITBOX},
+        }},
+    }},
+    {InputState::EDIT_HITBOX, {
+        {{}, {
+            {SDL_SCANCODE_Q, InputKey::TOGGLE_EDIT_HITBOX},
+            {SDL_SCANCODE_N, InputKey::CYCLE_HITBOX},
+        }},
+        {{SDL_SCANCODE_LCTRL}, {
+            {SDL_SCANCODE_H, InputKey::TOGGLE_EDIT_HITBOX},
+        }},
+        {{SDL_SCANCODE_RCTRL}, {
+            {SDL_SCANCODE_H, InputKey::TOGGLE_EDIT_HITBOX},
         }},
     }},
 };
@@ -77,7 +99,13 @@ mouse_input_config {
     }},
     {InputState::DEBUG, {
         {{}, {
-            {SDL_BUTTON_LEFT, InputKey::CHANGE_DEBUG_OBJECT}
+            {SDL_BUTTON_LEFT, InputKey::CHANGE_DEBUG_OBJECT},
+        }},
+    }},
+    {InputState::EDIT_HITBOX, {
+        {{}, {
+            {SDL_BUTTON_LEFT, InputKey::ADD_HITBOX_POINT},
+            {SDL_BUTTON_RIGHT, InputKey::TOGGLE_EDIT_HITBOX},
         }},
     }},
 };

@@ -33,7 +33,7 @@ GuiScreenObject::GuiScreenObject(std::string type, SDL_Renderer *renderer,
 
     this->add_debug_drawable(rect,
         [game_model](){
-            return game_model->_debugging_pivot;
+            return game_model->_debugging && game_model->_debugging_pivot;
         });
 
     /* generate hitbox */
@@ -42,7 +42,7 @@ GuiScreenObject::GuiScreenObject(std::string type, SDL_Renderer *renderer,
         SDL_GUI::Drawable *h = hitbox->drawable();
         this->add_debug_drawable(h,
             [game_model](){
-                return game_model->_debugging_hitboxes;
+                return game_model->_debugging && game_model->_debugging_hitboxes;
             });
     }
 

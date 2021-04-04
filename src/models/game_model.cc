@@ -20,6 +20,11 @@ void GameModel::init() {
     Screen *screen = new Screen(screen_yml, this);
     this->_screens.push_back(screen);
     this->_active_screen = screen;
+
+    /* init Character */
+    YAML::Node character_yml = YAML::LoadFile("data/character.yml");
+
+    this->_character = new Character(character_yml);
 }
 
 #if 0

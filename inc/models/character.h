@@ -3,6 +3,8 @@
 #include <list>
 #include <vector>
 
+#include <yaml-cpp/yaml.h>
+
 #include <models/screen_object.h>
 #include <util/point.h>
 
@@ -11,13 +13,14 @@ class Character : public ScreenObject {
     Point _target;
 
     /** Path to run until reaching the Target. */
+    /* TODO: this shadown ScreenObject::_path. dont do that. */
     std::list<Point> _path;
 
     /** running speed of Character. */
-    int _speed;
+    int _speed = 10;
 
     /** Flag whether the Character is in runningAnimation. */
-    bool _running;
+    bool _running = false;
 
 public:
     /**
@@ -29,6 +32,8 @@ public:
      */
     Character(std::string path, SDL_GUI::Position position, unsigned width, unsigned height, int
               speed = 10);
+
+    Character(YAML::Node character_yaml);
 
     /**
      * Get running speed.

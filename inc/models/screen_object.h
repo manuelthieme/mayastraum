@@ -18,6 +18,7 @@ protected:
     unsigned _height = 0;
 
     Hitbox *_hitbox = nullptr;
+    Hitbox *_hover_box = nullptr;
 
     void init();
 public:

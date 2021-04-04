@@ -4,8 +4,11 @@
 #include <map>
 
 #include <SDL_GUI/gui/drawable.h>
+#include <SDL_GUI/gui/primitives/rect.h>
+#include <SDL_GUI/gui/primitives/text.h>
 #include <SDL_GUI/models/model_base.h>
 
+#include <gui/gui_screen.h>
 #include <models/character.h>
 #include <models/screen.h>
 
@@ -24,12 +27,36 @@ public:
     /**
      *  Player Character
      */
-    Character *_player;
+    Character *_character;
+
+    SDL_GUI::Drawable *_main;   /**< drawable root for the game */
+    GuiScreen *_screen_texture; /**< screen drawable */
+    SDL_GUI::Rect *_debug_rect; /**< drawable wrapper for general debug information */
+    SDL_GUI::Rect *_stats_rect; /**< drawable wrapper for fps and tps */
+    SDL_GUI::Text *_fps_text;   /**< text that displays fps stat */
+    SDL_GUI::Text *_tps_text;   /**< text that displays tps stat */
+    SDL_GUI::Rect *_graph_rect; /**< drawable wrapper for graph visualisation */
+
+    SDL_GUI::Drawable *_debug_active = nullptr;     /**< drawable that gets debugged */
+    ScreenObject *_debug_active_object = nullptr;   /**< screenobject that gets debugged */
+    SDL_GUI::Drawable *_hovered = nullptr;          /**< drawable that is hovered */
+    ScreenObject *_hovered_screen_object = nullptr; /**< screenobject that is hovered */
+    std::vector<SDL_GUI::Drawable *> _all_hovered;  /**< drawables that are hovered */
+
+    Point _drag_movement;   /**< dragging that has to be done on active debug */
+    bool _dragging = false; /**< flag that determines whether the dragging is applied */
+
+    /** flag that determines whether we are in hitbox edit mode */
+    bool _editing_hitbox = false;
+    Hitbox *_edited_hitbox = nullptr; /**< Hitbox that gets edited */
 
     /**
      * Mapping from texture to ScreenObject
      */
     std::map<SDL_GUI::Drawable *, ScreenObject *> _model_mapping;
+
+    /** flag that determines whether basic debugging is activated */
+    bool _debugging = false;
 
     /** flag that determines whether the pivot points of screen objects are shown */
     bool _debugging_pivot = false;

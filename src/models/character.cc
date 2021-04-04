@@ -5,8 +5,13 @@ Character::Character(std::string path, SDL_GUI::Position position, unsigned widt
     ScreenObject(path, position, width, height),
     _target(position),
     _speed(speed) {
-    this->_running = false;
     this->_path.push_back(position);
+}
+
+Character::Character(YAML::Node character_yaml)
+    : ScreenObject(character_yaml),
+      _target(this->_position) {
+    this->_path.push_back(this->position());
 }
 
 int Character::speed() const {
