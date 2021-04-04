@@ -7,9 +7,9 @@
 #include <SDL_GUI/gui/primitives/rect.h>
 #include <SDL_GUI/gui/primitives/text.h>
 #include <SDL_GUI/gui/style.h>
-#include <SDL_GUI/input_keys.h>
+#include <SDL_GUI/config/input_config.h>
 
-#include <input_keys.h>
+#include <config/input_config.h>
 #include <models/character.h>
 #include <models/game_model.h>
 
@@ -17,8 +17,8 @@ class GameController : public SDL_GUI::ControllerBase {
     SDL_GUI::ApplicationBase *_application;
     GameModel *_game_model;
     SDL_GUI::InterfaceModel *_interface_model;
-    const SDL_GUI::InputModel<SDL_GUI::InputKey> *_default_input_model;
-    const SDL_GUI::InputModel<InputKey> *_input_model;
+    const SDL_GUI::InputModel<SDL_GUI::InputKey, SDL_GUI::InputState> *_default_input_model;
+    SDL_GUI::InputModel<InputKey, InputState> *_input_model;
     void init();
 
     bool _debug = false;
@@ -43,7 +43,7 @@ class GameController : public SDL_GUI::ControllerBase {
 
     void update_debug_graph();
 public:
-    GameController(SDL_GUI::ApplicationBase *application, GameModel *game_model, SDL_GUI::InterfaceModel *interface_model, SDL_GUI::InputModel<InputKey> *inputModel);
+    GameController(SDL_GUI::ApplicationBase *application, GameModel *game_model, SDL_GUI::InterfaceModel *interface_model, SDL_GUI::InputModel<InputKey, InputState> *inputModel);
 
     void update();
 };

@@ -7,7 +7,7 @@
 #include <config/input_config.h>
 #include <controllers/game_controller.h>
 #include <models/game_model.h>
-#include <input_keys.h>
+#include <config/input_config.h>
 
 class GamePlugin : public SDL_GUI::PluginBase {
 public:
@@ -18,14 +18,14 @@ public:
         (void) argc;
         (void) argv;
         /* Models */
-        SDL_GUI::InputModel<InputKey> *input_model = new SDL_GUI::InputModel<InputKey>();
+        SDL_GUI::InputModel<InputKey, InputState> *input_model = new SDL_GUI::InputModel<InputKey, InputState>(InputState::ALL);
         app->add_model(input_model);
 
         GameModel *game_model = new GameModel();
         app->add_model(game_model);
 
         /* Controllers */
-        SDL_GUI::InputController<InputKey> *input_controller = new SDL_GUI::InputController<InputKey>(input_model, keyboard_input_config, window_event_config, mouse_input_config);
+        SDL_GUI::InputController<InputKey, InputState> *input_controller = new SDL_GUI::InputController<InputKey, InputState>(input_model, keyboard_input_config, window_event_config, mouse_input_config);
         app->add_controller(input_controller);
 
         SDL_GUI::DefaultPlugin &default_plugin = std::get<SDL_GUI::DefaultPlugin>(previous);

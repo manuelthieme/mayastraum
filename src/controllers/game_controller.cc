@@ -12,7 +12,7 @@
 #include <gui/gui_screen_object.h>
 
 
-GameController::GameController(SDL_GUI::ApplicationBase *application, GameModel *game_model, SDL_GUI::InterfaceModel *interface_model, SDL_GUI::InputModel<InputKey> *input_model) : _application(application), _game_model(game_model), _interface_model(interface_model), _input_model(input_model) {
+GameController::GameController(SDL_GUI::ApplicationBase *application, GameModel *game_model, SDL_GUI::InterfaceModel *interface_model, SDL_GUI::InputModel<InputKey, InputState> *input_model) : _application(application), _game_model(game_model), _interface_model(interface_model), _input_model(input_model) {
     this->_debug_active = this->_interface_model->null_drawable();
     this->init();
 }
@@ -87,7 +87,7 @@ void GameController::update() {
     if (this->_input_model->is_pressed(InputKey::QUIT)) {
         this->_application->_is_running = false;
     }
-    if (this->_input_model->is_down(InputKey::RIGHT_CLICK)) {
+    if (this->_input_model->is_down(InputKey::MOVE_CHARACTER)) {
         this->_character->set_target({Point(this->_input_model->mouse_position())});
         this->_character->start_running();
     }
@@ -95,7 +95,10 @@ void GameController::update() {
     if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG)) {
         this->_interface_model->toggle_debug_information_drawn();
         this->_debug = this->_interface_model->debug_information_drawn();
-        if (not this->_debug) {
+        if (this->_debug) {
+            this->_input_model->set_state(InputState::DEBUG);
+        } else {
+            this->_input_model->set_state(InputState::ALL);
             /* reset border everywhere */
             this->_interface_model->drawable_root()->map([](SDL_GUI::Drawable *drawable) {
                     drawable->_style._has_border = false;
