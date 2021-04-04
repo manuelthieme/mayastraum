@@ -250,7 +250,7 @@ void GameController::update_debug() {
 
         /* print yaml to stdout */
         if (this->_input_model->is_down(InputKey::SERIALISE)) {
-            this->_debug_screen_object->serialise();
+            std::cout << std::endl << this->_debug_screen_object->serialise() << std::endl;
         }
     }
 

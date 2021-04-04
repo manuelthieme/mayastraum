@@ -3,6 +3,18 @@
 Screen::Screen(std::string path, const GameModel *game_model)
     : _background_path(path), _game_model(game_model) {}
 
+Screen::Screen(YAML::Node screen_yaml, const GameModel *game_model)
+    : _game_model(game_model) {
+    this->_background_path = screen_yaml["path"].as<std::string>();
+    this->_name = screen_yaml["name"].as<std::string>();
+
+    for (auto object_path: screen_yaml["screen_objects"]) {
+        YAML::Node object_yaml = YAML::LoadFile(object_path.as<std::string>());
+        ScreenObject *object = new ScreenObject(object_yaml);
+        this->add_screen_object(object);
+    }
+}
+
 std::string Screen::background_path() const {
     return this->_background_path;
 }

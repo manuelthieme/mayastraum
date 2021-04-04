@@ -10,6 +10,15 @@ Point::Point(const SDL_GUI::Position &position) {
     this->_point = wykobi::make_vector<float>(position._x, position._y);
 }
 
+Point::Point(YAML::Node point_yaml) {
+    if (not point_yaml) {
+        return;
+    }
+    float x = point_yaml["x"].as<float>();
+    float y = point_yaml["y"].as<float>();
+    this->_point = wykobi::make_vector<float>(x, y);
+}
+
 /* getter */
 float Point::x() const {
     return this->_point[0];
@@ -118,4 +127,12 @@ void Point::move_to(Point to, float distance) {
 Point Point::middle(Point p) const {
     Point middle(wykobi::segment_mid_point(this->_point, p._point));
     return middle;
+}
+
+YAML::Emitter &operator<<(YAML::Emitter &out, const Point &point) {
+    out << YAML::BeginMap;
+    out << YAML::Key << "x" << YAML::Value << point.x();
+    out << YAML::Key << "y" << YAML::Value << point.y();
+    out << YAML::EndMap;
+    return out;
 }

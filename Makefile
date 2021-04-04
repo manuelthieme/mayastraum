@@ -29,25 +29,20 @@ CXXFLAGSTAGS := -I/home/morion/.vim/tags
 SDL_GUI_LIB     := $(LIBDIR)/libSDL_GUI.a
 SDL_GUI_INCDIR  := $(LIBINCDIR)/SDL_GUI
 SDL_GUI_EXTDIR  := $(EXTDIR)/SDL_GUI
-SDL_GUI_HEADERS := $(patsubst ./$(SDL_GUI_EXTDIR)/inc/%, $(SDL_GUI_INCDIR)/%, $(shell find ./$(SDL_GUI_EXTDIR) -name "*.h"))
+SDL_GUI_HEADERS := $(SDL_GUI_EXTDIR)/inc
+
+YAML_CPP_LIB     := $(LIBDIR)/libyaml-cpp.a
+YAML_CPP_INCDIR  := $(LIBINCDIR)/yaml-cpp
+YAML_CPP_EXTDIR  := $(EXTDIR)/yaml-cpp
+YAML_CPP_HEADERS := $(YAML_CPP_EXTDIR)/include/yaml-cpp
 
 WYKOBI_INCDIR  := $(LIBINCDIR)/wykobi
 WYKOBI_EXTDIR  := $(EXTDIR)/wykobi
-WYKOBI_HEADERS := $(patsubst ./$(WYKOBI_EXTDIR)/%, $(WYKOBI_INCDIR)/%, $(shell find ./$(WYKOBI_EXTDIR) -name "*.hpp" -o -name "*.inl"))
-
-RYML_LIB     := $(LIBDIR)/libryml.a
-RYML_INCDIR  := $(LIBINCDIR)/rapidyaml
-RYML_EXTDIR  := $(EXTDIR)/rapidyaml
-RYML_HEADERS := $(patsubst ./$(RYML_EXTDIR)/src/%, $(RYML_INCDIR)/%, $(shell find ./$(RYML_EXTDIR)/src -name "*.hpp"))
-
-RYML_C4_INCDIR  := $(LIBINCDIR)/c4
-RYML_C4_EXTDIR  := $(EXTDIR)/rapidyaml/ext/c4core/src/c4
-RYML_C4_HEADERS := $(patsubst ./$(RYML_C4_EXTDIR)/%, $(RYML_C4_INCDIR)/%, $(shell find ./$(RYML_C4_EXTDIR) -name "*.hpp" -o -name "*.h"))
-RYML_C4_YML_HEADERS := $(RYML_C4_INCDIR)/yml
+WYKOBI_HEADERS := $(WYKOBI_EXTDIR)
 
 
-LIBRARIES   := $(SDL_GUI_LIB) $(RYML_LIB)
-LIB_HEADERS := $(SDL_GUI_HEADERS) $(WYKOBI_HEADERS) $(RYML_HEADERS) $(RYML_C4_HEADERS) $(RYML_C4_YML_HEADERS)
+LIBRARIES   := $(SDL_GUI_LIB) $(YAML_CPP_LIB)
+LIB_HEADERS := $(SDL_GUI_INCDIR) $(WYKOBI_INCDIR) $(YAML_CPP_INCDIR)
 DYN_LIBS    := -lSDL2 -lSDL2_gfx -lSDL2_ttf -lSDL2_image -lfontconfig
 
 
@@ -100,26 +95,20 @@ $(SDL_GUI_LIB): $(SDL_GUI_EXTDIR)
 	$(MAKE) -C $^ lib
 	ln -fs $(CURDIR)/$</build/libSDL_GUI.a $@
 
-$(RYML_LIB): $(RYML_EXTDIR)
-	$(CMAKE) -S $< -B $</$(BUILD) -DCMAKE_BUILD_TYPE=Release
+$(YAML_CPP_LIB): $(YAML_CPP_EXTDIR)
+	$(CMAKE) -S $< -B $</$(BUILD)
 	$(CMAKE) --build $</$(BUILD) --parallel
-	ln -fs $(CURDIR)/$</$(BUILD)/libryml.a $@
+	ln -fs $(CURDIR)/$</$(BUILD)/libyaml-cpp.a $@
 
-$(WYKOBI_HEADERS): $(WYKOBI_INCDIR)/%: $(WYKOBI_EXTDIR)/% | $(WYKOBI_INCDIR)/
-	ln -fs $(CURDIR)/$< $@
+$(YAML_CPP_INCDIR): $(YAML_CPP_HEADERS)
+$(SDL_GUI_INCDIR): $(SDL_GUI_HEADERS)
+$(WYKOBI_INCDIR): $(WYKOBI_HEADERS)
+
+$(LIBRARIES): | $(LIBDIR)/
 
 .SECONDEXPANSION:
 
-$(SDL_GUI_HEADERS): $(SDL_GUI_INCDIR)/%.h: $(SDL_GUI_EXTDIR)/inc/%.h | $(SDL_GUI_INCDIR)/ $$(@D)/
-	ln -fs $(CURDIR)/$< $@
-
-$(RYML_HEADERS): $(RYML_INCDIR)/%.hpp: $(RYML_EXTDIR)/src/%.hpp | $(RYML_INCDIR)/ $$(@D)/
-	ln -fs $(CURDIR)/$< $@
-
-$(RYML_C4_INCDIR)/yml: $(RYML_INCDIR)/c4/yml
-	ln -fs $(CURDIR)/$< $@
-
-$(RYML_C4_HEADERS): $(RYML_C4_INCDIR)/%: $(RYML_C4_EXTDIR)/% | $(RYML_C4_INCDIR)/ $$(@D)/
+$(LIB_HEADERS): | $(LIBINCDIR)/ $$(@D)/
 	ln -fs $(CURDIR)/$< $@
 
 -include $(wildcard $(DEPS))

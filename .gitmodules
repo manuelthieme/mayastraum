@@ -4,6 +4,6 @@
 [submodule "lib/wykobi"]
 	path = ext/wykobi
 	url = https://github.com/ArashPartow/wykobi
-[submodule "lib/rapidyaml"]
-	path = ext/rapidyaml
-	url = https://github.com/biojppm/rapidyaml
+[submodule "ext/yaml-cpp"]
+	path = ext/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cmath>
 
+#include <yaml-cpp/yaml.h>
+
 #include <wykobi/wykobi.hpp>
 
 #include <SDL_GUI/gui/position.h>
@@ -26,6 +28,8 @@ public:
 
     Point(wykobi::vector2d<float> point)
         : _point(point) {}
+
+    Point(YAML::Node point_yaml);
 
     /**
      * Get x-value.
@@ -98,3 +102,4 @@ public:
      */
     Point middle(Point p) const;
 };
+YAML::Emitter &operator<<(YAML::Emitter &out, const Point &point);

@@ -6,7 +6,7 @@
 
 #include <SDL_GUI/gui/drawable.h>
 
-#include <rapidyaml/ryml.hpp>
+#include <yaml-cpp/yaml.h>
 
 #include <util/aabb.h>
 #include <util/circle.h>
@@ -17,6 +17,8 @@ using namespace std;
 /** Base class for the different options to describe a hitbox */
 class Hitbox {
 public:
+
+    Hitbox() = default;
 
     virtual ~Hitbox() = default;
 
@@ -37,8 +39,10 @@ public:
     /** generate a drawable for this hitbox */
     virtual SDL_GUI::Drawable *drawable() const = 0;
 
-    virtual void to_yaml(ryml::NodeRef *node) const = 0;
+    virtual void to_yaml(YAML::Emitter *out) const = 0;
 };
+
+YAML::Emitter &operator<<(YAML::Emitter &out, const Hitbox &hitbox);
 
 /** Hitbox given through a circle */
 class CircleHitbox : public Hitbox {
@@ -59,6 +63,10 @@ public:
     CircleHitbox(Point center = {0, 0}, float radius = 0)
         : _circle(center, radius) {}
 
+    CircleHitbox(YAML::Node hitbox_yaml)
+        : _circle(hitbox_yaml) {}
+
+
     /** @copydoc Hitbox::collides(Point) const */
     bool collides(Point point) const override;
 
@@ -74,7 +82,7 @@ public:
     /** @copydoc Hitbox::drawable() const */
     SDL_GUI::Drawable *drawable() const override;
 
-    void to_yaml(ryml::NodeRef *node) const override;
+    void to_yaml(YAML::Emitter *out) const override;
 };
 
 /** Hitbox given through an Axis-Aligned Bounding Box */
@@ -91,6 +99,8 @@ public:
     AABBHitbox(Point position = {0, 0}, float width = 0, float height = 0)
         : _aabb(position, width, height) {}
 
+    AABBHitbox(YAML::Node hitbox_yaml);
+
     /** @copydoc Hitbox::collides(Point) const */
     bool collides(Point point) const override;
 
@@ -106,7 +116,7 @@ public:
     /** @copydoc Hitbox::drawable() const */
     SDL_GUI::Drawable *drawable() const override;
 
-    void to_yaml(ryml::NodeRef *node) const override;
+    void to_yaml(YAML::Emitter *out) const override;
 };
 
 class PolygonHitbox : public Hitbox {
@@ -117,6 +127,8 @@ class PolygonHitbox : public Hitbox {
     vector<Point> _points;
 
 public:
+   PolygonHitbox(YAML::Node hitbox_yaml);
+
     /**
      * Get Edges.
      * @return Vector of Edges.
@@ -178,6 +190,6 @@ public:
     /** @copydoc Hitbox::drawable() const */
     SDL_GUI::Drawable *drawable() const override;
 
-    void to_yaml(ryml::NodeRef *node) const override;
+    void to_yaml(YAML::Emitter *out) const override;
 };
 

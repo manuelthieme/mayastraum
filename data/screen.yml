@@ -1,0 +1,5 @@
+name: Garten
+path: screens/garden.png
+screen_objects:
+  - data/cabin.yml
+  - data/tree.yml

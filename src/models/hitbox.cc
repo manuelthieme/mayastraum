@@ -9,6 +9,11 @@ ostream& operator<<(ostream &output, const Hitbox &hitbox) {
     return output;
 }
 
+YAML::Emitter &operator<<(YAML::Emitter &out, const Hitbox &hitbox) {
+    hitbox.to_yaml(&out);
+    return out;
+}
+
 
 /* CircleHitbox */
 
@@ -36,20 +41,19 @@ SDL_GUI::Drawable *CircleHitbox::drawable() const {
                                static_cast<unsigned>(this->_circle.radius()));
 }
 
-void CircleHitbox::to_yaml(ryml::NodeRef *node) const {
-    ryml::NodeRef &n = *node;
-    n["type"] = "CircleHitbox";
-
-    ryml::NodeRef center = n["center"];
-    center |= ryml::MAP;
-    center["x"] << this->_circle.center().x();
-    center["y"] << this->_circle.center().y();
-
-    n["radius"] << this->_circle.radius();
+void CircleHitbox::to_yaml(YAML::Emitter *out) const {
+    *out << YAML::BeginMap;
+    *out << YAML::Key << "center" << this->_circle.center();
+    *out << YAML::Key << "radius" << this->_circle.radius();
+    *out << YAML::EndMap;
 }
 
 
 /* AABBHitbox */
+AABBHitbox::AABBHitbox(YAML::Node hitbox_yaml) {
+    /* TODO: implement */
+}
+
 
 bool AABBHitbox::collides(Point point) const {
     return wykobi::point_in_rectangle(point.vector(), this->_aabb.rectangle());
@@ -73,12 +77,16 @@ SDL_GUI::Drawable *AABBHitbox::drawable() const {
     return new SDL_GUI::NullDrawable();
 }
 
-void AABBHitbox::to_yaml(ryml::NodeRef *node) const {
-    (void)node;
+void AABBHitbox::to_yaml(YAML::Emitter *out) const {
+    (void)out;
 }
 
 
 /* PolygonHitbox */
+PolygonHitbox::PolygonHitbox(YAML::Node hitbox_yaml) {
+    /* TODO: implement */
+}
+
 
 vector<Point> PolygonHitbox::points() const {
     return this->_points;
@@ -193,6 +201,6 @@ SDL_GUI::Drawable *PolygonHitbox::drawable() const {
     return new SDL_GUI::NullDrawable();
 }
 
-void PolygonHitbox::to_yaml(ryml::NodeRef *node) const {
-    (void)node;
+void PolygonHitbox::to_yaml(YAML::Emitter *out) const {
+    (void)out;
 }

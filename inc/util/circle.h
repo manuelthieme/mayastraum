@@ -1,5 +1,7 @@
 #pragma once
 
+#include <yaml-cpp/yaml.h>
+
 #include <wykobi/wykobi.hpp>
 
 #include <util/edge.h>
@@ -15,6 +17,8 @@ public:
      */
     Circle(Point center = {0, 0}, float radius = 0)
         : _circle(wykobi::make_circle(center.vector(), radius)) {}
+
+    Circle(YAML::Node circle_yaml);
 
     wykobi::circle<float> circle() const;
 

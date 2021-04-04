@@ -1,5 +1,10 @@
 #include <models/game_model.h>
 
+#include <fstream>
+#include <sstream>
+
+#include <yaml-cpp/yaml.h>
+
 #include <models/screen_object.h>
 
 
@@ -8,29 +13,13 @@ GameModel::GameModel() {
 }
 
 void GameModel::init() {
+
+    YAML::Node screen_yml = YAML::LoadFile("data/screen.yml");
+
     /* create dummy screen */
-    Screen *screen = new Screen("screens/garden.png", this);
+    Screen *screen = new Screen(screen_yml, this);
     this->_screens.push_back(screen);
     this->_active_screen = screen;
-
-    /* create dummy screenobjects */
-    ScreenObject *cabin = new ScreenObject("sprites/house.png");
-    cabin->_name = "cabin";
-    cabin->set_width(764);
-    cabin->set_height(1057);
-    cabin->set_position({1500, 700});
-    cabin->set_pivot({383,679});
-    this->_active_screen->add_screen_object(cabin);
-
-    ScreenObject *tree = new ScreenObject("sprites/tree1.png");
-    tree->_name = "tree";
-    tree->set_width(338);
-    tree->set_height(789);
-    tree->set_position({975, 750});
-    tree->set_pivot({170,650});
-    Hitbox *h = new CircleHitbox({170,650}, 20);
-    tree->set_hitbox(h);
-    this->_active_screen->add_screen_object(tree);
 }
 
 #if 0

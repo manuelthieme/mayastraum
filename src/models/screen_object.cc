@@ -1,8 +1,5 @@
 #include <models/screen_object.h>
 
-#include <rapidyaml/ryml.hpp>
-#include <c4/yml/std/string.hpp>
-
 ScreenObject::ScreenObject(std::string path): _path(path) {
     this->init();
 }
@@ -13,6 +10,53 @@ ScreenObject::ScreenObject(std::string path, Point position, unsigned width, uns
     _width(width),
     _height(height) {
     this->init();
+}
+
+enum class HitboxType {
+    CIRCLE,
+    AABB,
+    POLYGON,
+    NONE,
+};
+
+static const std::map<std::string, HitboxType> TYPE_MAPPING = {
+    {"CircleHitbox" , HitboxType::CIRCLE},
+    {"AABBHitbox"   , HitboxType::AABB},
+    {"PolygonHitbox", HitboxType::POLYGON},
+};
+
+
+ScreenObject::ScreenObject(YAML::Node object_yaml) {
+    this->_path   = object_yaml["path"].as<std::string>();
+    this->_name   = object_yaml["name"].as<std::string>();
+    this->_width  = object_yaml["width"].as<float>();
+    this->_height = object_yaml["height"].as<float>();
+
+    this->_position = Point(object_yaml["position"]);
+
+    this->_pivot = Point(object_yaml["pivot"]);
+
+    YAML::Node hitbox_yaml = object_yaml["hitbox"];
+
+    if (hitbox_yaml) {
+        std::string type_str = hitbox_yaml["type"].as<std::string>();
+
+        HitboxType type = TYPE_MAPPING.contains(type_str) ? TYPE_MAPPING.at(type_str) : HitboxType::NONE;
+
+        switch(type) {
+            case HitboxType::CIRCLE:
+                this->_hitbox = new CircleHitbox(hitbox_yaml);
+                break;
+            case HitboxType::AABB:
+                this->_hitbox = new AABBHitbox(hitbox_yaml);
+                break;
+            case HitboxType::POLYGON:
+                this->_hitbox = new PolygonHitbox(hitbox_yaml);
+                break;
+            case HitboxType::NONE:
+                break;
+        }
+    }
 }
 
 ScreenObject::~ScreenObject() {
@@ -96,43 +140,38 @@ Point ScreenObject::closest_point(Point point) const {
 }
 
 std::string ScreenObject::serialise() const {
+    YAML::Emitter out;
+    out << *this;
+    return out.c_str();
+}
 
-    std::cout << std::endl;
-    ryml::Tree tree;
-    ryml::NodeRef root = tree.rootref();
+YAML::Emitter& operator<<(YAML::Emitter &out, const ScreenObject &screen_object) {
+    out << YAML::BeginMap;
 
-    root |= ryml::MAP;
+    out << YAML::Key << "type"<< YAML::Value << "ScreenObject";
+    out << YAML::Key << "name" << YAML::Value << screen_object._name;
+    out << YAML::Key << "path" << YAML::Value << screen_object.path();
 
-    root["type"] = "ScreenObject";
-    root["name"] << this->_name;
-    root["path"] << this->_path;
+    out << YAML::Key << "position" << YAML::Value;
+    out << YAML::BeginMap;
+    out << YAML::Key << "x" << screen_object.position().x();
+    out << YAML::Key << "y" << screen_object.position().y();
+    out << YAML::EndMap;
 
+    out << YAML::Key << "width" << YAML::Value << screen_object.width();
+    out << YAML::Key << "height" << YAML::Value << screen_object.height();
 
-    ryml::NodeRef pos = root["position"];
-    pos |= ryml::MAP;
-    pos["x"] << this->_position.x();
-    pos["y"] << this->_position.y();
+    out << YAML::Key << "pivot" << YAML::Value;
+    out << YAML::BeginMap;
+    out << YAML::Key << "x" << screen_object.pivot().x();
+    out << YAML::Key << "y" << screen_object.pivot().y();
+    out << YAML::EndMap;
 
-    root["width"] << this->width();
-    root["height"] << this->height();
-
-    ryml::NodeRef pivot = root["pivot"];
-    pivot |= ryml::MAP;
-    pivot["x"] << this->_pivot.x();
-    pivot["y"] << this->_pivot.y();
-
-    ryml::NodeRef hitbox = root["hitbox"];
-    hitbox |= ryml::MAP;
-
-    if (this->_hitbox) {
-        this->_hitbox->to_yaml(&hitbox);
+    if (screen_object.hitbox()) {
+        out << YAML::Key << "hitbox" << YAML::Value << *screen_object.hitbox();
     }
 
-
-
-    ryml::emit(tree);
-
-    return "";
+    return out;
 }
 
 #if 0

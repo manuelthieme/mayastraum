@@ -3,12 +3,16 @@
 #include <string>
 #include <vector>
 
+#include <yaml-cpp/yaml.h>
+
 #include <models/screen_object.h>
 
 class GameModel;
 class Screen {
     /** Background Image. */
     std::string _background_path;
+
+    std::string _name = "";
 
     /** Vector of Screen Objects. */
     std::vector<ScreenObject *> _screen_objects;
@@ -17,6 +21,8 @@ class Screen {
 
 public:
     Screen(std::string path, const GameModel *game_model);
+
+    Screen(YAML::Node screen_yaml, const GameModel *game_model);
 
     std::string background_path() const;
 

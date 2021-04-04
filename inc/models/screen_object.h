@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <yaml-cpp/yaml.h>
+
 #include <SDL_GUI/gui/positionable.h>
 
 #include <models/hitbox.h>
@@ -9,28 +11,29 @@
 
 class ScreenObject {
 protected:
-    std::string _path;
-    Point _position;
-    Point _pivot;
-    unsigned _width;
-    unsigned _height;
+    std::string _path = "";
+    Point _position = {0,0};
+    Point _pivot = {0,0};
+    unsigned _width = 0;
+    unsigned _height = 0;
 
     Hitbox *_hitbox = nullptr;
 
     void init();
 public:
-    std::string _name;
+    std::string _name = "";
     ScreenObject(std::string path);
 
     ScreenObject(std::string path, Point position, unsigned width, unsigned height);
 
-    ~ScreenObject();
+    ScreenObject(YAML::Node object_yaml);
 
-    std::string path() const;
+    ~ScreenObject();
 
     virtual void tick() {}
 
     /* getter */
+    std::string path() const;
     Point position() const;
     Point pivot() const;
     unsigned width() const;
@@ -53,6 +56,8 @@ public:
 
     std::string serialise() const;
 };
+
+YAML::Emitter& operator<<(YAML::Emitter &out, const ScreenObject &screen_object);
 
 #if 0
 #include <iostream>

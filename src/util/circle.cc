@@ -1,5 +1,17 @@
 #include <util/circle.h>
 
+
+Circle::Circle(YAML::Node circle_yaml) {
+    if (not circle_yaml) {
+        return;
+    }
+    Point c(circle_yaml["center"]);
+
+    float radius = circle_yaml["radius"].as<float>();
+
+    this->_circle = wykobi::make_circle(c.vector(), radius);
+}
+
 wykobi::circle<float> Circle::circle() const {
     return this->_circle;
 }
