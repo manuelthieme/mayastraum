@@ -5,8 +5,8 @@
 #include <map>
 #include <set>
 
-#include <util/edge.h>
-#include <util/point.h>
+#include <util/geometry/edge.h>
+#include <util/geometry/point.h>
 
 using namespace std;
 class Graph {

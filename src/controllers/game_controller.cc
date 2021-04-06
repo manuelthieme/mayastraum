@@ -367,10 +367,7 @@ void GameController::update_debug_graph() {
     this->_game_model->_graph_rect->remove_all_children();
     Point from = this->_game_model->_character->position();
     for (Point to: this->_game_model->_character->path()) {
-        SDL_GUI::Line *l = new SDL_GUI::Line({static_cast<int>(from.x()),
-                                              static_cast<int>(from.y())},
-                                             {static_cast<int>(to.x() - from.x()),
-                                              static_cast<int>(to.y() - from.y())});
+        SDL_GUI::Line *l = new SDL_GUI::Line(from.position(), to.position());
         l->_style._color = SDL_GUI::RGB("red");
         this->_game_model->_graph_rect->add_child(l);
         from = to;

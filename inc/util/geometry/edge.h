@@ -5,9 +5,10 @@
 
 #include <wykobi/wykobi.hpp>
 
-#include <util/point.h>
+#include <util/geometry/point.h>
+#include <util/serialisable.h>
 
-class Edge {
+class Edge : public Serialisable {
 
     /** First Point of Edge.  */
     Point _begin;
@@ -77,7 +78,6 @@ public:
 
     /* operators */
     bool operator==(const Edge &edge) const;
-    friend ostream& operator<<(ostream &output, const Edge &edge);
     Edge operator+(const Point &point) const;
     Edge operator+=(const Point &point);
     Edge operator-(const Point &point) const;
@@ -105,4 +105,7 @@ public:
 
     /** calculate point on the edge that is nearest to a given point */
     Point closest_point(Point point) const;
+
+    void to_yaml(YAML::Emitter *output) const override;
+    std::string to_string() const override;
 };

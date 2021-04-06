@@ -2,27 +2,25 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
+#include <list>
 
 #include <SDL_GUI/gui/drawable.h>
 
 #include <yaml-cpp/yaml.h>
 
-#include <util/aabb.h>
-#include <util/circle.h>
-#include <util/edge.h>
-
-using namespace std;
+#include <util/geometry/aabb.h>
+#include <util/geometry/circle.h>
+#include <util/geometry/edge.h>
+#include <util/geometry/polygon.h>
+#include <util/serialisable.h>
 
 /** Base class for the different options to describe a hitbox */
-class Hitbox {
+class Hitbox : public Serialisable {
 public:
 
     Hitbox() = default;
 
     virtual ~Hitbox() = default;
-
-    friend ostream& operator<<(ostream &output, const Hitbox &hitbox);
 
     /** check if point is inside Hitbox */
     virtual bool collides(Point point) const = 0;
@@ -38,11 +36,7 @@ public:
 
     /** generate a drawable for this hitbox */
     virtual SDL_GUI::Drawable *drawable() const = 0;
-
-    virtual void to_yaml(YAML::Emitter *out) const = 0;
 };
-
-YAML::Emitter &operator<<(YAML::Emitter &out, const Hitbox &hitbox);
 
 /** Hitbox given through a circle */
 class CircleHitbox : public Hitbox {
@@ -82,7 +76,7 @@ public:
     /** @copydoc Hitbox::drawable() const */
     SDL_GUI::Drawable *drawable() const override;
 
-    void to_yaml(YAML::Emitter *out) const override;
+    void to_yaml(YAML::Emitter *output) const override;
 };
 
 /** Hitbox given through an Axis-Aligned Bounding Box */
@@ -116,54 +110,33 @@ public:
     /** @copydoc Hitbox::drawable() const */
     SDL_GUI::Drawable *drawable() const override;
 
-    void to_yaml(YAML::Emitter *out) const override;
+    void to_yaml(YAML::Emitter *output) const override;
 };
 
 class PolygonHitbox : public Hitbox {
-    /** Vector of Edges. */
-    vector<Edge> _edges;
-
-    /** vector of Points. */
-    vector<Point> _points;
+    Polygon _polygon;
 
 public:
-   PolygonHitbox(YAML::Node hitbox_yaml);
+   PolygonHitbox(YAML::Node hitbox_yaml)
+       : _polygon(hitbox_yaml) {}
 
     /**
      * Get Edges.
-     * @return Vector of Edges.
+     * @return list of Edges.
      */
-    vector<Edge> edges() const;
+    std::list<Edge> edges() const;
 
     /**
      * Get Points.
-     * @return Vector of Points.
+     * @return list of Points.
      */
-    vector<Point> points() const;
-
-    /**
-     * Get A Point defenitely outside the Hitbox.
-     * @return Point outside the Hitbox.
-     */
-    Point off_point() const;
-
-    /**
-     * Override Edges.
-     * @param edges Vector of Edges to insert.
-     */
-    void set_edges(vector<Edge> edges);
-
-    /**
-     * Add an Edge.
-     * @param e Edge to add.
-     */
-    void add_edge(Edge e);
+    std::list<Point> points() const;
 
     /**
      * Override Points.
-     * @param points Vector of Points to insert.
+     * @param points list of Points to insert.
      */
-    void set_points(vector<Point> points);
+    void set_points(std::list<Point> points);
 
     /**
      * Add a Point.
@@ -171,9 +144,6 @@ public:
      */
     void add_point(Point p);
 
-
-    /** Calculate Edges on based on the Points by building a Cycle.  */
-    void calculate_edges();
 
     /** @copydoc Hitbox::collides(Point) const */
     bool collides(Point point) const override;
@@ -184,12 +154,14 @@ public:
     /** copydoc Hitbox::nearest_point(Point) const */
     Point closest_point(Point point) const override;
 
-    /** @copydoc Hitbox::to_string() const */
-    std::string to_string() const override;
-
     /** @copydoc Hitbox::drawable() const */
     SDL_GUI::Drawable *drawable() const override;
 
-    void to_yaml(YAML::Emitter *out) const override;
+    /** @copydoc Serialisable::to_yaml(YAML::Emitter *) const */
+    void to_yaml(YAML::Emitter *output) const override;
+
+    /** @copydoc Serialisable::to_string() const */
+    std::string to_string() const override;
+
 };
 

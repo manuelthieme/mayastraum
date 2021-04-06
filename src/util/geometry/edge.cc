@@ -1,4 +1,4 @@
-#include <util/edge.h>
+#include <util/geometry/edge.h>
 
 Point Edge::begin() const {
     return this->_begin;
@@ -42,14 +42,6 @@ bool Edge::operator==(const Edge &edge) const{
     return this->_begin == edge._begin and this->_end == edge._end;
 }
 
-ostream& operator<<(ostream &output, const Edge &edge) {
-    output << "<Edge: ";
-    Point begin = edge.begin();
-    Point end = edge.end();
-    output << begin << "---" << end << ">";
-    return output;
-}
-
 Edge Edge::operator+(const Point &point) const {
     return Edge(this->_begin + point, this->_end + point);
 }
@@ -91,4 +83,17 @@ Point Edge::closest_point(Point point) const {
         wykobi::closest_point_on_segment_from_point(this->segment(), point.vector());
 
     return closest_point;
+}
+
+void Edge::to_yaml(YAML::Emitter *output) const {
+    *output << YAML::BeginMap;
+    *output << YAML::Key << "begin" << YAML::Value << this->_begin;
+    *output << YAML::Key << "end"   << YAML::Value << this->_end;
+    *output << YAML::EndMap;
+}
+
+std::string Edge::to_string() const {
+    std::stringstream ss;
+    ss << "<Edge: " << this->_begin << "---" << this->_end << ">";
+    return ss.str();
 }

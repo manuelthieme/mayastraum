@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <SDL_GUI/gui/primitives/rect.h>
+#include <SDL_GUI/gui/primitives/wrap_rect.h>
 #include <SDL_GUI/gui/primitives/line.h>
 
 
@@ -15,20 +15,21 @@ GuiScreenObject::GuiScreenObject(std::string type, SDL_Renderer *renderer,
 
     /* generate pivot cross */
     Point pivot = screen_object->pivot();
+    pivot.move({-4, -4});
 
-    SDL_GUI::Rect *rect = new SDL_GUI::Rect({static_cast<int>(pivot.x()) - 4,
-                                             static_cast<int>(pivot.y()) - 4},
-                                            9, 9);
-    rect->_style._has_background = true;
-    rect->_style._color = SDL_GUI::RGB(255, 255, 255, 150);
+    SDL_GUI::WrapRect *rect = new SDL_GUI::WrapRect(pivot.position());
+    //rect->_style._has_background = true;
+    //rect->_style._color = SDL_GUI::RGB(255, 255, 255, 150);
 
     SDL_GUI::Line *l =
-        new SDL_GUI::Line({0, 0}, {8, 8});
+        new SDL_GUI::Line({0, 0}, {9, 9});
+    l->set_line_width(3);
     l->_style._color = SDL_GUI::RGB("red");
     rect->add_child(l, true);
 
-    l = new SDL_GUI::Line({0, 8}, {8, -8});
+    l = new SDL_GUI::Line({0, 9}, {9, 0});
     l->_style._color = SDL_GUI::RGB("red");
+    l->set_line_width(3);
     rect->add_child(l, true);
 
     this->add_debug_drawable(rect,

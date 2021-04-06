@@ -4,10 +4,11 @@
 
 #include <wykobi/wykobi.hpp>
 
-#include <util/edge.h>
-#include <util/point.h>
+#include <util/geometry/edge.h>
+#include <util/geometry/point.h>
+#include <util/serialisable.h>
 
-class Circle {
+class Circle : public Serialisable {
     wykobi::circle<float> _circle;
 public:
     /**
@@ -28,5 +29,6 @@ public:
 
     Point closest_point(Point point) const;
 
-    friend ostream& operator<<(ostream &output, const Circle &circle);
+    void to_yaml(YAML::Emitter *output) const override;
+    std::string to_string() const override;
 };

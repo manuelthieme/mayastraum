@@ -1,4 +1,6 @@
-#include <util/point.h>
+#include <util/geometry/point.h>
+
+#include <wykobi/wykobi_utilities.hpp>
 
 
 /* constructor */
@@ -34,6 +36,10 @@ float Point::magnitude() const {
 
 wykobi::vector2d<float> Point::vector() const {
     return this->_point;
+}
+
+SDL_GUI::Position Point::position() const {
+    return SDL_GUI::Position(static_cast<int>(this->x()), static_cast<int>(this->y()));
 }
 
 /* setter */
@@ -83,11 +89,6 @@ bool Point::operator!=(const Point &p) const {
     return not (*this == p);
 }
 
-ostream& operator<<(ostream &output, const Point &p) {
-    output << "<Point: " << p._point << ">";
-    return output;
-}
-
 Point Point::operator+=(const Point &p) {
     this->_point = this->_point + p._point;
 
@@ -124,15 +125,24 @@ void Point::move_to(Point to, float distance) {
     this->_point = this->_point + (wykobi::normalize(to._point - this->_point) * distance);
 }
 
+void Point::move(Point direction) {
+    *this += direction;
+}
+
 Point Point::middle(Point p) const {
     Point middle(wykobi::segment_mid_point(this->_point, p._point));
     return middle;
 }
 
-YAML::Emitter &operator<<(YAML::Emitter &out, const Point &point) {
-    out << YAML::BeginMap;
-    out << YAML::Key << "x" << YAML::Value << point.x();
-    out << YAML::Key << "y" << YAML::Value << point.y();
-    out << YAML::EndMap;
-    return out;
+void Point::to_yaml(YAML::Emitter *output) const {
+    *output << YAML::BeginMap;
+    *output << YAML::Key << "x" << YAML::Value << this->x();
+    *output << YAML::Key << "y" << YAML::Value << this->y();
+    *output << YAML::EndMap;
+}
+
+std::string Point::to_string() const {
+    std::stringstream ss;
+    ss << "<Point: " << this->_point << ">";
+    return ss.str();
 }

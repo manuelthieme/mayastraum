@@ -6,7 +6,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include <models/screen_object.h>
-#include <util/point.h>
+#include <util/geometry/point.h>
 
 class Character : public ScreenObject {
     /** Target Point. */

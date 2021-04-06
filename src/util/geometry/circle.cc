@@ -1,4 +1,4 @@
-#include <util/circle.h>
+#include <util/geometry/circle.h>
 
 
 Circle::Circle(YAML::Node circle_yaml) {
@@ -29,8 +29,15 @@ Point Circle::closest_point(Point point) const {
 
     return closest_point;
 }
+void Circle::to_yaml(YAML::Emitter *output) const {
+    *output << YAML::BeginMap;
+    *output << YAML::Key << "center" << YAML::Value << this->center();
+    *output << YAML::Key << "radius" << YAML::Value << this->radius();
+    *output << YAML::EndMap;
+}
 
-ostream& operator<<(ostream &output, const Circle &circle) {
-    output << "<Circle: " << circle.center() << "r=" << circle.radius() << ">";
-    return output;
+std::string Circle::to_string() const {
+    std::stringstream ss;
+    ss << "<Circle: " << this->center() << "r=" << this->radius() << ">";
+    return ss.str();
 }

@@ -1,4 +1,4 @@
-#include <util/aabb.h>
+#include <util/geometry/aabb.h>
 
 wykobi::rectangle<float> AABB::rectangle() const {
     return wykobi::make_rectangle(this->_position.vector(),

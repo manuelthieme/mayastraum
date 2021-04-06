@@ -9,8 +9,10 @@
 
 #include <SDL_GUI/gui/position.h>
 
+#include <util/serialisable.h>
+
 using namespace std;
-class Point {
+class Point : public Serialisable {
     wykobi::vector2d<float> _point;
 
 public:
@@ -52,6 +54,9 @@ public:
     /** get the underlying wykobi vector */
     wykobi::vector2d<float> vector() const;
 
+    /** get the SDL_GUI::Position */
+    SDL_GUI::Position position() const;
+
     /**
      * Set x-value.
      * @param x x-value.
@@ -81,7 +86,6 @@ public:
 
     bool operator==(const Point &p) const;
     bool operator!=(const Point &p) const;
-    friend ostream& operator<<(ostream &output, const Point &p);
     Point operator+=(const Point &p);
     Point operator-=(const Point &p);
     Point operator*=(const float &s);
@@ -95,11 +99,15 @@ public:
      */
     void move_to(Point to, float distance);
 
+    void move(Point direction);
+
     /**
      * Get middle of two Points.
      * @param p Point to get middle to.
      * @return middle.
      */
     Point middle(Point p) const;
+
+    void to_yaml(YAML::Emitter *output) const override;
+    std::string to_string() const override;
 };
-YAML::Emitter &operator<<(YAML::Emitter &out, const Point &point);

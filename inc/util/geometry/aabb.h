@@ -2,7 +2,7 @@
 
 #include <wykobi/wykobi.hpp>
 
-#include <util/point.h>
+#include <util/geometry/point.h>
 
 class AABB {
     Point _position;

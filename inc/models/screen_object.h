@@ -7,7 +7,7 @@
 #include <SDL_GUI/gui/positionable.h>
 
 #include <models/hitbox.h>
-#include <util/point.h>
+#include <util/geometry/point.h>
 
 class ScreenObject {
 protected:
