@@ -12,12 +12,6 @@ ScreenObject::ScreenObject(std::string path, Point position, unsigned width, uns
     this->init();
 }
 
-static const std::map<std::string, HitboxType> TYPE_MAPPING = {
-    {"CircleHitbox" , HitboxType::CIRCLE},
-    {"AABBHitbox"   , HitboxType::AABB},
-    {"PolygonHitbox", HitboxType::POLYGON},
-};
-
 void ScreenObject::deserialise_box(YAML::Node hitbox_yaml, bool hover_box) {
     if (not hitbox_yaml) {
         return;
@@ -25,7 +19,9 @@ void ScreenObject::deserialise_box(YAML::Node hitbox_yaml, bool hover_box) {
 
     std::string type_str = hitbox_yaml["type"].as<std::string>();
 
-    HitboxType type = TYPE_MAPPING.contains(type_str) ? TYPE_MAPPING.at(type_str) : HitboxType::NONE;
+    HitboxType type = HITBOX_TYPE_MAPPING.contains(type_str)
+                      ? HITBOX_TYPE_MAPPING.at(type_str)
+                      : HitboxType::NONE;
     Hitbox **box = hover_box ? &this->_hover_box : &this->_hitbox;
     PolygonHitbox **poly_box = hover_box ? &this->_polygon_hover_box : &this->_polygon_hitbox;
 

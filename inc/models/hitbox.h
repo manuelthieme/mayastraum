@@ -21,6 +21,13 @@ enum class HitboxType {
     NONE,
 };
 
+const std::map<std::string, HitboxType> HITBOX_TYPE_MAPPING = {
+    {"CircleHitbox" , HitboxType::CIRCLE},
+    {"AABBHitbox"   , HitboxType::AABB},
+    {"PolygonHitbox", HitboxType::POLYGON},
+};
+
+
 /** Base class for the different options to describe a hitbox */
 class Hitbox : public Serialisable {
 public:
@@ -130,8 +137,7 @@ public:
     PolygonHitbox()
         : Hitbox(HitboxType::POLYGON) {}
 
-    PolygonHitbox(YAML::Node hitbox_yaml)
-        : Hitbox(HitboxType::POLYGON), _polygon(hitbox_yaml) {}
+    PolygonHitbox(YAML::Node hitbox_yaml);
 
     /**
      * Get Edges.

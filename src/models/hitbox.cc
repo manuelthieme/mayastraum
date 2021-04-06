@@ -76,6 +76,15 @@ void AABBHitbox::to_yaml(YAML::Emitter *output) const {
 
 
 /* PolygonHitbox */
+PolygonHitbox::PolygonHitbox(YAML::Node hitbox_yaml)
+    : Hitbox(HitboxType::POLYGON) {
+    if (not hitbox_yaml) {
+        return;
+    }
+    this->_type = HitboxType::POLYGON;
+    this->_polygon = Polygon(hitbox_yaml["polygon"]);
+}
+
 std::list<Point> PolygonHitbox::points() const {
     return this->_polygon.points();
 }
@@ -117,7 +126,10 @@ SDL_GUI::Drawable *PolygonHitbox::drawable() const {
 }
 
 void PolygonHitbox::to_yaml(YAML::Emitter *output) const {
-    *output << this->_polygon;
+    *output << YAML::BeginMap;
+    *output << YAML::Key << "type" << YAML::Value << "PolygonHitbox";
+    *output << YAML::Key << "polygon" << this->_polygon;
+    *output << YAML::EndMap;
 }
 
 std::string PolygonHitbox::to_string() const {
