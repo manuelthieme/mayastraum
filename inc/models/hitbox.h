@@ -14,11 +14,20 @@
 #include <util/geometry/polygon.h>
 #include <util/serialisable.h>
 
+enum class HitboxType {
+    CIRCLE,
+    AABB,
+    POLYGON,
+    NONE,
+};
+
 /** Base class for the different options to describe a hitbox */
 class Hitbox : public Serialisable {
 public:
+    HitboxType _type;
 
-    Hitbox() = default;
+    Hitbox(HitboxType type)
+        : _type(type) {}
 
     virtual ~Hitbox() = default;
 
@@ -47,7 +56,7 @@ public:
      * @param circle circle describing the hitbox
      */
     CircleHitbox(Circle circle)
-        : _circle(circle) {}
+        : Hitbox(HitboxType::CIRCLE), _circle(circle) {}
 
     /**
      * Constructor
@@ -55,10 +64,10 @@ public:
      * @param radius circles radius
      */
     CircleHitbox(Point center = {0, 0}, float radius = 0)
-        : _circle(center, radius) {}
+        : Hitbox(HitboxType::CIRCLE), _circle(center, radius) {}
 
     CircleHitbox(YAML::Node hitbox_yaml)
-        : _circle(hitbox_yaml) {}
+        : Hitbox(HitboxType::CIRCLE), _circle(hitbox_yaml) {}
 
 
     /** @copydoc Hitbox::collides(Point) const */
@@ -91,9 +100,10 @@ public:
      * @param height bounding box' height
      */
     AABBHitbox(Point position = {0, 0}, float width = 0, float height = 0)
-        : _aabb(position, width, height) {}
+        : Hitbox(HitboxType::AABB), _aabb(position, width, height) {}
 
-    AABBHitbox(YAML::Node hitbox_yaml);
+    AABBHitbox(YAML::Node hitbox_yaml)
+        : Hitbox(HitboxType::AABB), _aabb(hitbox_yaml) {}
 
     /** @copydoc Hitbox::collides(Point) const */
     bool collides(Point point) const override;
@@ -117,8 +127,11 @@ class PolygonHitbox : public Hitbox {
     Polygon _polygon;
 
 public:
-   PolygonHitbox(YAML::Node hitbox_yaml)
-       : _polygon(hitbox_yaml) {}
+    PolygonHitbox()
+        : Hitbox(HitboxType::POLYGON) {}
+
+    PolygonHitbox(YAML::Node hitbox_yaml)
+        : Hitbox(HitboxType::POLYGON), _polygon(hitbox_yaml) {}
 
     /**
      * Get Edges.
@@ -143,6 +156,10 @@ public:
      * @param p Point to add.
      */
     void add_point(Point p);
+
+    void remove_point(Point &p);
+
+    void remove_last_point();
 
 
     /** @copydoc Hitbox::collides(Point) const */

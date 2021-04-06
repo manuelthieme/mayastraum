@@ -14,19 +14,20 @@ enum class InputKey {
     CLICK,
     MOVE_CHARACTER,
     TOGGLE_DEBUG,
-    TOGGLE_DEBUG_PIVOT,
-    TOGGLE_DEBUG_STATS,
-    TOGGLE_DEBUG_GRAPH,
-    TOGGLE_DEBUG_HITBOXES,
+    TOGGLE_SHOW_PIVOT,
+    TOGGLE_SHOW_STATS,
+    TOGGLE_SHOW_GRAPH,
+    CYCLE_SHOW_HITBOX,
     SERIALISE,
     CHANGE_DEBUG_OBJECT,
-    TOGGLE_EDIT_HITBOX,
+    CYCLE_EDIT_HITBOX,
     ADD_HITBOX_POINT,
-    CYCLE_HITBOX,
+    REMOVE_HITBOX_POINT,
 };
 
 enum class InputState {
     ALL,
+    NON_DEBUG,
     DEBUG,
     EDIT_HITBOX,
 };
@@ -40,13 +41,13 @@ keyboard_input_config = {
         }},
         {{SDL_SCANCODE_LSHIFT}, {
             {SDL_SCANCODE_D, InputKey::TOGGLE_DEBUG},
-            {SDL_SCANCODE_S, InputKey::TOGGLE_DEBUG_STATS},
-            {SDL_SCANCODE_G, InputKey::TOGGLE_DEBUG_GRAPH},
+            {SDL_SCANCODE_S, InputKey::TOGGLE_SHOW_STATS},
+            {SDL_SCANCODE_G, InputKey::TOGGLE_SHOW_GRAPH},
         }},
         {{SDL_SCANCODE_RSHIFT}, {
             {SDL_SCANCODE_D, InputKey::TOGGLE_DEBUG},
-            {SDL_SCANCODE_S, InputKey::TOGGLE_DEBUG_STATS},
-            {SDL_SCANCODE_G, InputKey::TOGGLE_DEBUG_GRAPH},
+            {SDL_SCANCODE_S, InputKey::TOGGLE_SHOW_STATS},
+            {SDL_SCANCODE_G, InputKey::TOGGLE_SHOW_GRAPH},
         }},
     }},
     {InputState::DEBUG, {
@@ -57,32 +58,28 @@ keyboard_input_config = {
             {SDL_SCANCODE_L, InputKey::MOVE_RIGHT},
         }},
         {{SDL_SCANCODE_LSHIFT}, {
-            {SDL_SCANCODE_P, InputKey::TOGGLE_DEBUG_PIVOT},
-            {SDL_SCANCODE_H, InputKey::TOGGLE_DEBUG_HITBOXES},
+            {SDL_SCANCODE_P, InputKey::TOGGLE_SHOW_PIVOT},
+            {SDL_SCANCODE_H, InputKey::CYCLE_SHOW_HITBOX},
             {SDL_SCANCODE_Z, InputKey::SERIALISE},
         }},
         {{SDL_SCANCODE_RSHIFT}, {
-            {SDL_SCANCODE_P, InputKey::TOGGLE_DEBUG_PIVOT},
-            {SDL_SCANCODE_H, InputKey::TOGGLE_DEBUG_HITBOXES},
+            {SDL_SCANCODE_P, InputKey::TOGGLE_SHOW_PIVOT},
+            {SDL_SCANCODE_H, InputKey::CYCLE_SHOW_HITBOX},
             {SDL_SCANCODE_Z, InputKey::SERIALISE},
         }},
         {{SDL_SCANCODE_LCTRL}, {
-            {SDL_SCANCODE_H, InputKey::TOGGLE_EDIT_HITBOX},
+            {SDL_SCANCODE_H, InputKey::CYCLE_EDIT_HITBOX},
         }},
         {{SDL_SCANCODE_RCTRL}, {
-            {SDL_SCANCODE_H, InputKey::TOGGLE_EDIT_HITBOX},
+            {SDL_SCANCODE_H, InputKey::CYCLE_EDIT_HITBOX},
         }},
     }},
     {InputState::EDIT_HITBOX, {
-        {{}, {
-            {SDL_SCANCODE_Q, InputKey::TOGGLE_EDIT_HITBOX},
-            {SDL_SCANCODE_N, InputKey::CYCLE_HITBOX},
-        }},
         {{SDL_SCANCODE_LCTRL}, {
-            {SDL_SCANCODE_H, InputKey::TOGGLE_EDIT_HITBOX},
+            {SDL_SCANCODE_H, InputKey::CYCLE_EDIT_HITBOX},
         }},
         {{SDL_SCANCODE_RCTRL}, {
-            {SDL_SCANCODE_H, InputKey::TOGGLE_EDIT_HITBOX},
+            {SDL_SCANCODE_H, InputKey::CYCLE_EDIT_HITBOX},
         }},
     }},
 };
@@ -94,18 +91,24 @@ mouse_input_config {
     {InputState::ALL, {
         {{}, {
             {SDL_BUTTON_LEFT, InputKey::CLICK},
+        }},
+    }},
+    {InputState::NON_DEBUG, {
+        {{}, {
+            {SDL_BUTTON_LEFT, InputKey::CHANGE_DEBUG_OBJECT},
             {SDL_BUTTON_RIGHT, InputKey::MOVE_CHARACTER},
         }},
     }},
     {InputState::DEBUG, {
         {{}, {
             {SDL_BUTTON_LEFT, InputKey::CHANGE_DEBUG_OBJECT},
+            {SDL_BUTTON_RIGHT, InputKey::MOVE_CHARACTER},
         }},
     }},
     {InputState::EDIT_HITBOX, {
         {{}, {
             {SDL_BUTTON_LEFT, InputKey::ADD_HITBOX_POINT},
-            {SDL_BUTTON_RIGHT, InputKey::TOGGLE_EDIT_HITBOX},
+            {SDL_BUTTON_RIGHT, InputKey::REMOVE_HITBOX_POINT},
         }},
     }},
 };

@@ -57,6 +57,10 @@ void Polygon::remove_point(Point &point) {
     this->_points.remove(point);
 }
 
+void Polygon::remove_last_point() {
+    this->_points.pop_back();
+}
+
 bool Polygon::collides(Point point) const {
     return wykobi::point_in_polygon(point.vector(), this->polygon());
 }

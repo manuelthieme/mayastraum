@@ -31,6 +31,7 @@ public:
     void set_points(std::list<Point> points);
     void add_point(Point point);
     void remove_point(Point &point);
+    void remove_last_point();
 
     bool collides(Point point) const;
     bool collides(Edge edge) const;

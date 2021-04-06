@@ -98,8 +98,10 @@ void GameController::update() {
         this->_game_model->_debugging = this->_interface_model->debug_information_drawn();
         if (this->_game_model->_debugging) {
             this->_input_model->set_state(InputState::DEBUG);
+            std::cout << "entering debug mode" << std::endl;
         } else {
-            this->_input_model->set_state(InputState::ALL);
+            this->_input_model->set_state(InputState::NON_DEBUG);
+            std::cout << "leaving debug mode" << std::endl;
             /* reset border everywhere */
             this->_interface_model->drawable_root()->map([](SDL_GUI::Drawable *drawable) {
                     drawable->_style._has_border = false;
@@ -107,36 +109,40 @@ void GameController::update() {
         }
     }
 
-    if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG_PIVOT)) {
-        this->_game_model->_debugging_pivot = !this->_game_model->_debugging_pivot;
+    if (this->_input_model->is_down(InputKey::TOGGLE_SHOW_PIVOT)) {
+        this->_game_model->_showing_pivot = !this->_game_model->_showing_pivot;
     }
 
-    if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG_STATS)) {
-        this->_game_model->_debugging_stats = !this->_game_model->_debugging_stats;
+    if (this->_input_model->is_down(InputKey::TOGGLE_SHOW_STATS)) {
+        this->_game_model->_showing_stats = !this->_game_model->_showing_stats;
     }
 
-    if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG_GRAPH)) {
-        this->_game_model->_debugging_graph = !this->_game_model->_debugging_graph;
+    if (this->_input_model->is_down(InputKey::TOGGLE_SHOW_GRAPH)) {
+        this->_game_model->_showing_graph = !this->_game_model->_showing_graph;
     }
 
-    if (this->_input_model->is_down(InputKey::TOGGLE_DEBUG_HITBOXES)) {
-        this->_game_model->_debugging_hitboxes = !this->_game_model->_debugging_hitboxes;
+    if (this->_input_model->is_down(InputKey::CYCLE_SHOW_HITBOX)) {
+            this->_game_model->_editing_hitbox = !this->_game_model->_editing_hitbox;
+        this->_game_model->cycle_showing_box();
     }
 
 
     this->_game_model->_character->tick();
 
 
+    if (this->_game_model->editing_box()) {
+        this->update_edit_hitbox();
+    }
 
     if (this->_game_model->_debugging) {
         this->update_debug();
     }
 
-    if (this->_game_model->_debugging_stats) {
+    if (this->_game_model->_showing_stats) {
         this->update_debug_stats();
     }
 
-    if (this->_game_model->_debugging_graph) {
+    if (this->_game_model->_showing_graph) {
         this->update_debug_graph();
     }
 }
@@ -191,13 +197,15 @@ void GameController::update_debug() {
         }
 
         /* toggle hitbox creation */
-        if (this->_input_model->is_down(InputKey::TOGGLE_EDIT_HITBOX)) {
-            this->_game_model->_editing_hitbox = this->_game_model->_editing_hitbox;
+        if (this->_input_model->is_down(InputKey::CYCLE_EDIT_HITBOX)) {
+            this->_game_model->cycle_editing_box();
             /* change input state */
-            if (this->_game_model->_editing_hitbox) {
+            if (this->_game_model->editing_box()) {
                this->_input_model->set_state(InputState::EDIT_HITBOX);
+               std::cout << "entering edit hitbox mode." << std::endl;
             } else {
                this->_input_model->set_state(InputState::DEBUG);
+               std::cout << "leaving edit hitbox mode." << std::endl;
             }
         }
 
@@ -218,6 +226,51 @@ void GameController::update_debug() {
         if (this->_input_model->is_down(InputKey::SERIALISE)) {
             std::cout << std::endl << debug_active_object->serialise() << std::endl;
         }
+    }
+}
+
+void GameController::update_edit_hitbox() {
+    ScreenObject *debug_active_object = this->_game_model->_debug_active_object;
+    if (not debug_active_object) {
+        return;
+    }
+
+    PolygonHitbox *poly_box;
+    Hitbox *box;
+    if (this->_game_model->editing_hitbox()) {
+        poly_box = debug_active_object->polygon_hitbox();
+        box = debug_active_object->hitbox();
+    } else {
+        poly_box = debug_active_object->polygon_hover_box();
+        box = debug_active_object->hover_box();
+    }
+
+    if (not poly_box) {
+        /* there is a box that is not a polygonbox */
+        if (box) {
+            return;
+        }
+
+        /* there is no box -> create one */
+        poly_box = new PolygonHitbox;
+        if (this->_game_model->editing_hitbox()) {
+            debug_active_object->set_hitbox(poly_box);
+        } else {
+            debug_active_object->set_hover_box(poly_box);
+        }
+    }
+
+
+    if (this->_input_model->is_down(InputKey::ADD_HITBOX_POINT)) {
+        SDL_GUI::Position mouse_position = this->_input_model->mouse_position();
+        Point relative_position(mouse_position - this->_game_model->_debug_active->position());
+        std::cout << "adding hitbox point: " << relative_position << std::endl;
+        poly_box->add_point(relative_position);
+    }
+
+    if (this->_input_model->is_down(InputKey::REMOVE_HITBOX_POINT)) {
+        std::cout << "removing hitbox point" << std::endl;
+        poly_box->remove_last_point();
     }
 }
 

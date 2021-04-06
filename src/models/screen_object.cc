@@ -12,44 +12,37 @@ ScreenObject::ScreenObject(std::string path, Point position, unsigned width, uns
     this->init();
 }
 
-enum class HitboxType {
-    CIRCLE,
-    AABB,
-    POLYGON,
-    NONE,
-};
-
 static const std::map<std::string, HitboxType> TYPE_MAPPING = {
     {"CircleHitbox" , HitboxType::CIRCLE},
     {"AABBHitbox"   , HitboxType::AABB},
     {"PolygonHitbox", HitboxType::POLYGON},
 };
 
-static Hitbox *deserialise_hitbox(YAML::Node hitbox_yaml) {
-    Hitbox *hitbox = nullptr;
-
+void ScreenObject::deserialise_box(YAML::Node hitbox_yaml, bool hover_box) {
     if (not hitbox_yaml) {
-        return hitbox;
+        return;
     }
 
     std::string type_str = hitbox_yaml["type"].as<std::string>();
 
     HitboxType type = TYPE_MAPPING.contains(type_str) ? TYPE_MAPPING.at(type_str) : HitboxType::NONE;
+    Hitbox **box = hover_box ? &this->_hover_box : &this->_hitbox;
+    PolygonHitbox **poly_box = hover_box ? &this->_polygon_hover_box : &this->_polygon_hitbox;
 
     switch(type) {
         case HitboxType::CIRCLE:
-            hitbox = new CircleHitbox(hitbox_yaml);
+            *box = new CircleHitbox(hitbox_yaml);
             break;
         case HitboxType::AABB:
-            hitbox = new AABBHitbox(hitbox_yaml);
+            *box = new AABBHitbox(hitbox_yaml);
             break;
         case HitboxType::POLYGON:
-            hitbox = new PolygonHitbox(hitbox_yaml);
+            *poly_box = new PolygonHitbox(hitbox_yaml);
+            *box = *poly_box;
             break;
         case HitboxType::NONE:
             break;
     }
-    return hitbox;
 }
 
 
@@ -63,8 +56,8 @@ ScreenObject::ScreenObject(YAML::Node object_yaml) {
 
     this->_pivot = Point(object_yaml["pivot"]);
 
-    this->_hitbox = deserialise_hitbox(object_yaml["hitbox"]);
-    this->_hover_box = deserialise_hitbox(object_yaml["hover_box"]);
+    this->deserialise_box(object_yaml["hitbox"]);
+    this->deserialise_box(object_yaml["hover_box"], true);
 }
 
 ScreenObject::~ScreenObject() {
@@ -97,8 +90,37 @@ unsigned ScreenObject::height() const {
     return this->_height;
 }
 
+Hitbox *ScreenObject::hitbox() {
+    return this->_hitbox;
+}
+
 const Hitbox *ScreenObject::hitbox() const {
     return this->_hitbox;
+}
+
+Hitbox *ScreenObject::hover_box() {
+    return this->_hover_box;
+}
+
+const Hitbox *ScreenObject::hover_box() const {
+    return this->_hover_box;
+}
+
+
+PolygonHitbox *ScreenObject::polygon_hitbox() {
+    return this->_polygon_hitbox;
+}
+
+const PolygonHitbox *ScreenObject::polygon_hitbox() const {
+    return this->_polygon_hitbox;
+}
+
+PolygonHitbox *ScreenObject::polygon_hover_box() {
+    return this->_polygon_hover_box;
+}
+
+const PolygonHitbox *ScreenObject::polygon_hover_box() const {
+    return this->_polygon_hover_box;
 }
 
 
@@ -127,6 +149,19 @@ void ScreenObject::set_hitbox(Hitbox *hitbox) {
     this->_hitbox = hitbox;
 }
 
+void ScreenObject::set_hitbox(PolygonHitbox *hitbox) {
+    this->_polygon_hitbox = hitbox;
+    this->_hitbox = hitbox;
+}
+
+void ScreenObject::set_hover_box(Hitbox *hover_box) {
+    this->_hover_box = hover_box;
+}
+
+void ScreenObject::set_hover_box(PolygonHitbox *hover_box) {
+    this->_polygon_hover_box = hover_box;
+    this->_hover_box = hover_box;
+}
 
 void ScreenObject::move(Point movement) {
     this->_position += movement;
@@ -177,6 +212,10 @@ YAML::Emitter& operator<<(YAML::Emitter &out, const ScreenObject &screen_object)
 
     if (screen_object.hitbox()) {
         out << YAML::Key << "hitbox" << YAML::Value << *screen_object.hitbox();
+    }
+
+    if (screen_object.hover_box()) {
+        out << YAML::Key << "hover_box" << YAML::Value << *screen_object.hover_box();
     }
 
     return out;

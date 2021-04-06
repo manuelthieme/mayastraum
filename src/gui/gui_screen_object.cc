@@ -18,8 +18,6 @@ GuiScreenObject::GuiScreenObject(std::string type, SDL_Renderer *renderer,
     pivot.move({-4, -4});
 
     SDL_GUI::WrapRect *rect = new SDL_GUI::WrapRect(pivot.position());
-    //rect->_style._has_background = true;
-    //rect->_style._color = SDL_GUI::RGB(255, 255, 255, 150);
 
     SDL_GUI::Line *l =
         new SDL_GUI::Line({0, 0}, {9, 9});
@@ -34,18 +32,42 @@ GuiScreenObject::GuiScreenObject(std::string type, SDL_Renderer *renderer,
 
     this->add_debug_drawable(rect,
         [game_model](){
-            return game_model->_debugging && game_model->_debugging_pivot;
+            return game_model->_debugging && game_model->_showing_pivot;
         });
 
     /* generate hitbox */
-    const Hitbox *hitbox = this->_screen_object->hitbox();
-    if (hitbox) {
-        SDL_GUI::Drawable *h = hitbox->drawable();
-        this->add_debug_drawable(h,
-            [game_model](){
-                return game_model->_debugging && game_model->_debugging_hitboxes;
-            });
-    }
+    SDL_GUI::WrapRect *hitbox_rect = new SDL_GUI::WrapRect();
+    hitbox_rect->add_recalculation_callback(
+        [this](SDL_GUI::Drawable *d){
+            d->remove_all_children();
+            const Hitbox *hitbox = this->_screen_object->hitbox();
+            if (hitbox) {
+                d->add_child(hitbox->drawable());
+            }
+        });
+    this->add_debug_drawable(hitbox_rect,
+        [this, game_model](){
+            return game_model->_debugging
+                    and ((game_model->editing_hitbox() and game_model->_debug_active == this)
+                        or (not game_model->editing_box() and game_model->showing_hitbox()));
+        });
+
+    /* generate hoverbox */
+    SDL_GUI::WrapRect *hover_box_rect = new SDL_GUI::WrapRect();
+    hover_box_rect->add_recalculation_callback(
+        [this](SDL_GUI::Drawable *d){
+            d->remove_all_children();
+            const Hitbox *hover_box = this->_screen_object->hover_box();
+            if (hover_box) {
+                d->add_child(hover_box->drawable());
+            }
+        });
+    this->add_debug_drawable(hover_box_rect,
+        [this, game_model](){
+            return game_model->_debugging
+                    and ((game_model->editing_hover_box() and game_model->_debug_active == this)
+                        or (not game_model->editing_box() and game_model->showing_hover_box()));
+        });
 
 }
 

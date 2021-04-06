@@ -22,14 +22,14 @@ GuiScreen::GuiScreen(std::string type, const Screen *screen, SDL_Renderer *rende
 
     this->add_debug_drawable(this->_stats_rect,
         [this](){
-            return this->_screen->game_model()->_debugging_stats;
+            return this->_screen->game_model()->_showing_stats;
         });
 
     this->_graph_rect = new SDL_GUI::Rect({0, 0}, 1920, 1080);
 
     this->add_debug_drawable(this->_graph_rect,
         [this](){
-            return 1 or this->_screen->game_model()->_debugging_graph;
+            return 1 or this->_screen->game_model()->_showing_graph;
         });
 }
 

@@ -47,10 +47,6 @@ void CircleHitbox::to_yaml(YAML::Emitter *output) const {
 
 
 /* AABBHitbox */
-AABBHitbox::AABBHitbox(YAML::Node hitbox_yaml) {
-    /* TODO: implement */
-}
-
 
 bool AABBHitbox::collides(Point point) const {
     return wykobi::point_in_rectangle(point.vector(), this->_aabb.rectangle());
@@ -75,7 +71,7 @@ SDL_GUI::Drawable *AABBHitbox::drawable() const {
 }
 
 void AABBHitbox::to_yaml(YAML::Emitter *output) const {
-    (void)output;
+    this->_aabb.to_yaml(output);
 }
 
 
@@ -94,6 +90,14 @@ void PolygonHitbox::set_points(std::list<Point> points) {
 
 void PolygonHitbox::add_point(Point point) {
     this->_polygon.add_point(point);
+}
+
+void PolygonHitbox::remove_point(Point &p){
+    this->_polygon.remove_point(p);
+}
+
+void PolygonHitbox::remove_last_point(){
+    this->_polygon.remove_last_point();
 }
 
 bool PolygonHitbox::collides(Point point) const {

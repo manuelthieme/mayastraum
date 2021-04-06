@@ -34,10 +34,11 @@ class GameController : public SDL_GUI::ControllerBase {
 
     void update_debug();
 
+    void update_edit_hitbox();
+
     void update_debug_rect();
 
     void update_debug_borders();
-
 
     void update_debug_stats();
 

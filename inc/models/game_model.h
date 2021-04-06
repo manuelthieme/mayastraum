@@ -13,6 +13,11 @@
 #include <models/screen.h>
 
 class GameModel : public SDL_GUI::ModelBase {
+    /** bitmap that holds information about what hitbox type is shown */
+    unsigned _showing_box = false;
+    /** bitmap that holds information about what hitbox type is edited */
+    unsigned _editing_box = false;
+
 public:
     /**
      * List of Screens in Game.
@@ -59,16 +64,26 @@ public:
     bool _debugging = false;
 
     /** flag that determines whether the pivot points of screen objects are shown */
-    bool _debugging_pivot = false;
+    bool _showing_pivot = false;
 
     /** flag that determines whether runtime stats are shown */
-    bool _debugging_stats = false;
+    bool _showing_stats = false;
 
     /** flag that determines whether pathfinding is shown */
-    bool _debugging_graph = false;
+    bool _showing_graph = false;
 
-    /** flag that determines whether hitboxes are shown */
-    bool _debugging_hitboxes = false;
+    bool showing_hitbox() const;
+    bool showing_hover_box() const;
+
+    void cycle_showing_box();
+
+    bool editing_hitbox() const;
+    bool editing_hover_box() const;
+    bool editing_box() const;
+
+    void cycle_editing_box();
+
+
 
     void init();
 

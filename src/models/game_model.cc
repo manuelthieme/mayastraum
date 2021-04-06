@@ -27,6 +27,36 @@ void GameModel::init() {
     this->_character = new Character(character_yml);
 }
 
+bool GameModel::showing_hitbox() const {
+    return this->_showing_box & 1;
+}
+
+bool GameModel::showing_hover_box() const {
+    return this->_showing_box & 2;
+}
+
+void GameModel::cycle_showing_box() {
+    this->_showing_box++;
+    this->_showing_box %= 4;
+}
+
+bool GameModel::editing_hitbox() const {
+    return this->_editing_box & 1;
+}
+
+bool GameModel::editing_hover_box() const {
+    return this->_editing_box & 2;
+}
+
+bool GameModel::editing_box() const {
+    return this->_editing_box;
+}
+
+void GameModel::cycle_editing_box() {
+    this->_editing_box++;
+    this->_editing_box %= 3;
+}
+
 #if 0
 #include <includes.h>
 

@@ -18,9 +18,13 @@ protected:
     unsigned _height = 0;
 
     Hitbox *_hitbox = nullptr;
+    PolygonHitbox *_polygon_hitbox = nullptr;
     Hitbox *_hover_box = nullptr;
+    PolygonHitbox *_polygon_hover_box = nullptr;
 
     void init();
+
+    void deserialise_box(YAML::Node hitbox_yaml, bool hover_box = false);
 public:
     std::string _name = "";
     ScreenObject(std::string path);
@@ -39,7 +43,16 @@ public:
     Point pivot() const;
     unsigned width() const;
     unsigned height() const;
+
+    Hitbox *hitbox();
     const Hitbox *hitbox() const;
+    Hitbox *hover_box();
+    const Hitbox *hover_box() const;
+
+    PolygonHitbox *polygon_hitbox();
+    const PolygonHitbox *polygon_hitbox() const;
+    PolygonHitbox *polygon_hover_box();
+    const PolygonHitbox *polygon_hover_box() const;
 
     /* setter */
     void set_position(Point position);
@@ -47,7 +60,11 @@ public:
     void set_width(unsigned width);
     void set_height(unsigned height);
     void set_size(unsigned width, unsigned height);
+
     void set_hitbox(Hitbox *hitbox);
+    void set_hitbox(PolygonHitbox *hitbox);
+    void set_hover_box(Hitbox *hover_box);
+    void set_hover_box(PolygonHitbox *hover_box);
 
     void move(Point movement);
 

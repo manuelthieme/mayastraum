@@ -19,6 +19,7 @@ public:
         (void) argv;
         /* Models */
         SDL_GUI::InputModel<InputKey, InputState> *input_model = new SDL_GUI::InputModel<InputKey, InputState>(InputState::ALL);
+        input_model->set_state(InputState::NON_DEBUG);
         app->add_model(input_model);
 
         GameModel *game_model = new GameModel();
