@@ -5,6 +5,10 @@
 #include <SDL_GUI/gui/primitives/line.h>
 #include <SDL_GUI/gui/primitives/wrap_rect.h>
 
+Polygon::Polygon() {
+    this->init();
+}
+
 Polygon::Polygon(YAML::Node polygon_yaml) {
     if (not polygon_yaml) {
         return;
@@ -12,7 +16,18 @@ Polygon::Polygon(YAML::Node polygon_yaml) {
     for (auto point: polygon_yaml["points"]) {
         this->_points.emplace_back(point);
     }
+    this->init();
 }
+
+void Polygon::init() {
+    this->_gui_polygon = new SDL_GUI::Polygon();
+    for (const Point &point: this->_points) {
+        this->_gui_polygon->add_point(point.position());
+    }
+    this->_gui_polygon->_style._color = SDL_GUI::RGB("yellow");
+    this->_gui_polygon->set_line_width(3);
+}
+
 
 std::list<Point> &Polygon::points() {
     return this->_points;
@@ -47,18 +62,24 @@ wykobi::polygon<float, 2> Polygon::polygon() const {
 
 void Polygon::set_points(std::list<Point> points) {
     this->_points = points;
+    for (const Point &point: this->_points) {
+        this->_gui_polygon->add_point(point.position());
+    }
 }
 
 void Polygon::add_point(Point point) {
     this->_points.push_back(point);
+    this->_gui_polygon->add_point(point.position());
 }
 
 void Polygon::remove_point(Point &point) {
     this->_points.remove(point);
+    /* TODO: implement */
 }
 
 void Polygon::remove_last_point() {
     this->_points.pop_back();
+    this->_gui_polygon->remove_last_point();
 }
 
 bool Polygon::collides(Point point) const {
@@ -83,14 +104,7 @@ Point Polygon::closest_point(Point point) const {
 }
 
 SDL_GUI::Drawable *Polygon::drawable() const {
-    SDL_GUI::WrapRect *wrapper = new SDL_GUI::WrapRect();
-    for (Edge edge: this->edges()) {
-        SDL_GUI::Line *l = new SDL_GUI::Line(edge.begin().position(), edge.end().position());
-        l->set_line_width(3);
-        l->_style._color = SDL_GUI::RGB("yellow");
-        wrapper->add_child(l);
-    }
-    return wrapper;
+    return this->_gui_polygon;
 }
 
 std::string Polygon::to_string() const {

@@ -39,7 +39,9 @@ GuiScreenObject::GuiScreenObject(std::string type, SDL_Renderer *renderer,
     SDL_GUI::WrapRect *hitbox_rect = new SDL_GUI::WrapRect();
     hitbox_rect->add_recalculation_callback(
         [this](SDL_GUI::Drawable *d){
-            d->remove_all_children();
+            if (d->children().size()) {
+                return;
+            }
             const Hitbox *hitbox = this->_screen_object->hitbox();
             if (hitbox) {
                 d->add_child(hitbox->drawable());
@@ -56,7 +58,9 @@ GuiScreenObject::GuiScreenObject(std::string type, SDL_Renderer *renderer,
     SDL_GUI::WrapRect *hover_box_rect = new SDL_GUI::WrapRect();
     hover_box_rect->add_recalculation_callback(
         [this](SDL_GUI::Drawable *d){
-            d->remove_all_children();
+            if (d->children().size()) {
+                return;
+            }
             const Hitbox *hover_box = this->_screen_object->hover_box();
             if (hover_box) {
                 d->add_child(hover_box->drawable());

@@ -8,6 +8,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include <SDL_GUI/gui/drawable.h>
+#include <SDL_GUI/gui/primitives/polygon.h>
 
 #include <util/geometry/point.h>
 #include <util/geometry/edge.h>
@@ -15,11 +16,15 @@
 
 class Polygon : public Serialisable {
     std::list<Point> _points;
+
+    SDL_GUI::Polygon *_gui_polygon;
 public:
 
-    Polygon() = default;
+    Polygon();
 
     Polygon(YAML::Node polygon_yaml);
+
+    void init();
 
     std::list<Point> &points();
     std::list<Point> points() const;
