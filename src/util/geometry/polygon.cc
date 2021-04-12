@@ -24,7 +24,9 @@ void Polygon::init() {
     for (const Point &point: this->_points) {
         this->_gui_polygon->add_point(point.position());
     }
-    this->_gui_polygon->_style._color = SDL_GUI::RGB("yellow");
+    this->_gui_polygon->_style._has_border = true;
+    this->_gui_polygon->_style._border_color = SDL_GUI::RGB("yellow");
+    this->_gui_polygon->_style._border_color._a = 150;
     this->_gui_polygon->set_line_width(3);
 }
 

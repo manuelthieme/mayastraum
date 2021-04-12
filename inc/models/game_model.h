@@ -8,10 +8,10 @@
 #include <SDL_GUI/gui/primitives/text.h>
 #include <SDL_GUI/models/model_base.h>
 
-#include <gui/gui_screen.h>
 #include <models/character.h>
 #include <models/screen.h>
 
+class GuiScreen;
 class GameModel : public SDL_GUI::ModelBase {
     /** bitmap that holds information about what hitbox type is shown */
     unsigned _showing_box = false;

@@ -8,9 +8,11 @@
 
 #include <models/hitbox.h>
 #include <util/geometry/point.h>
+#include <util/serialisable.h>
 
-class ScreenObject {
+class ScreenObject : public Serialisable {
 protected:
+    std::string _type = "ScreenObject";
     std::string _path = "";
     Point _position = {0,0};
     Point _pivot = {0,0};
@@ -25,6 +27,8 @@ protected:
     void init();
 
     void deserialise_box(YAML::Node hitbox_yaml, bool hover_box = false);
+
+    virtual void _to_yaml (YAML::Emitter *output) const;
 public:
     std::string _name = "";
     ScreenObject(std::string path);
@@ -73,9 +77,8 @@ public:
     Point closest_point(Point point) const;
 
     std::string serialise() const;
+    virtual void to_yaml (YAML::Emitter *output) const override;
 };
-
-YAML::Emitter& operator<<(YAML::Emitter &out, const ScreenObject &screen_object);
 
 #if 0
 #include <iostream>

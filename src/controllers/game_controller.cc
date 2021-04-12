@@ -28,8 +28,11 @@ void GameController::init_view() {
 
 void GameController::init_screen_view() {
     /* set screen background */
+    Screen *screen = this->_game_model->_active_screen;
     GuiScreen *screen_texture =
-        new GuiScreen(this->_game_model->_active_screen, this->_interface_model->renderer());
+        new GuiScreen(this->_interface_model->renderer(), screen, this->_game_model);
+
+    this->_game_model->_model_mapping.insert({screen_texture, screen});
 
     this->_game_model->_screen_texture = screen_texture;
     this->_game_model->_stats_rect     = screen_texture->stats_rect();

@@ -8,17 +8,13 @@
 #include <models/screen_object.h>
 
 class GameModel;
-class Screen {
-    /** Background Image. */
-    std::string _background_path;
-
-    std::string _name = "";
-
+class Screen : public ScreenObject {
     /** Vector of Screen Objects. */
     std::vector<ScreenObject *> _screen_objects;
 
     const GameModel *_game_model;
 
+    virtual void _to_yaml (YAML::Emitter *output) const override;
 public:
     Screen(std::string path, const GameModel *game_model);
 
@@ -31,6 +27,7 @@ public:
     const GameModel *game_model() const;
 
     void add_screen_object(ScreenObject *screen_object);
+
 };
 
 #if 0

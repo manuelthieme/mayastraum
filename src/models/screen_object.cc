@@ -184,37 +184,39 @@ std::string ScreenObject::serialise() const {
     return out.c_str();
 }
 
-YAML::Emitter& operator<<(YAML::Emitter &out, const ScreenObject &screen_object) {
-    out << YAML::BeginMap;
+void ScreenObject::to_yaml (YAML::Emitter *output) const {
+    *output << YAML::BeginMap;
+    this->_to_yaml(output);
+    *output << YAML::EndMap;
+}
 
-    out << YAML::Key << "type"<< YAML::Value << "ScreenObject";
-    out << YAML::Key << "name" << YAML::Value << screen_object._name;
-    out << YAML::Key << "path" << YAML::Value << screen_object.path();
+void ScreenObject::_to_yaml (YAML::Emitter *output) const {
+    *output << YAML::Key << "type"<< YAML::Value << this->_type;
+    *output << YAML::Key << "name" << YAML::Value << this->_name;
+    *output << YAML::Key << "path" << YAML::Value << this->path();
 
-    out << YAML::Key << "position" << YAML::Value;
-    out << YAML::BeginMap;
-    out << YAML::Key << "x" << screen_object.position().x();
-    out << YAML::Key << "y" << screen_object.position().y();
-    out << YAML::EndMap;
+    *output << YAML::Key << "position" << YAML::Value;
+    *output << YAML::BeginMap;
+    *output << YAML::Key << "x" << this->position().x();
+    *output << YAML::Key << "y" << this->position().y();
+    *output << YAML::EndMap;
 
-    out << YAML::Key << "width" << YAML::Value << screen_object.width();
-    out << YAML::Key << "height" << YAML::Value << screen_object.height();
+    *output << YAML::Key << "width" << YAML::Value << this->width();
+    *output << YAML::Key << "height" << YAML::Value << this->height();
 
-    out << YAML::Key << "pivot" << YAML::Value;
-    out << YAML::BeginMap;
-    out << YAML::Key << "x" << screen_object.pivot().x();
-    out << YAML::Key << "y" << screen_object.pivot().y();
-    out << YAML::EndMap;
+    *output << YAML::Key << "pivot" << YAML::Value;
+    *output << YAML::BeginMap;
+    *output << YAML::Key << "x" << this->pivot().x();
+    *output << YAML::Key << "y" << this->pivot().y();
+    *output << YAML::EndMap;
 
-    if (screen_object.hitbox()) {
-        out << YAML::Key << "hitbox" << YAML::Value << *screen_object.hitbox();
+    if (this->hitbox()) {
+        *output << YAML::Key << "hitbox" << YAML::Value << *this->hitbox();
     }
 
-    if (screen_object.hover_box()) {
-        out << YAML::Key << "hover_box" << YAML::Value << *screen_object.hover_box();
+    if (this->hover_box()) {
+        *output << YAML::Key << "hover_box" << YAML::Value << *this->hover_box();
     }
-
-    return out;
 }
 
 #if 0

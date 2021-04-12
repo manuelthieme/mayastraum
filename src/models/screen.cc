@@ -1,13 +1,12 @@
 #include <models/screen.h>
 
 Screen::Screen(std::string path, const GameModel *game_model)
-    : _background_path(path), _game_model(game_model) {}
+    : ScreenObject(path, {0,0}, 1920, 1080), _game_model(game_model) {
+    this->_type = "Screen";
+}
 
 Screen::Screen(YAML::Node screen_yaml, const GameModel *game_model)
-    : _game_model(game_model) {
-    this->_background_path = screen_yaml["path"].as<std::string>();
-    this->_name = screen_yaml["name"].as<std::string>();
-
+    : ScreenObject(screen_yaml), _game_model(game_model) {
     for (auto object_path: screen_yaml["screen_objects"]) {
         YAML::Node object_yaml = YAML::LoadFile(object_path.as<std::string>());
         ScreenObject *object = new ScreenObject(object_yaml);
@@ -16,7 +15,7 @@ Screen::Screen(YAML::Node screen_yaml, const GameModel *game_model)
 }
 
 std::string Screen::background_path() const {
-    return this->_background_path;
+    return this->_path;
 }
 
 std::vector<ScreenObject *> Screen::screen_objects() {
@@ -29,6 +28,18 @@ const GameModel *Screen::game_model() const {
 
 void Screen::add_screen_object(ScreenObject *screen_object) {
     this->_screen_objects.push_back(screen_object);
+}
+
+void Screen::_to_yaml (YAML::Emitter *output) const {
+    ScreenObject::_to_yaml(output);
+    *output << YAML::Key << "screen_objects" << YAML::Value;
+    *output << YAML::BeginSeq;
+    for (ScreenObject *screen_object: this->_screen_objects) {
+        std::stringstream ss;
+        ss << "data/" << screen_object->_name << ".yml";
+        *output << ss.str();
+    }
+    *output << YAML::EndSeq;
 }
 #if 0
 #include <includes.h>

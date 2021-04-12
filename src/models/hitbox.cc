@@ -37,8 +37,12 @@ std::string CircleHitbox::to_string() const {
 
 SDL_GUI::Drawable *CircleHitbox::drawable() const {
     Point center = this->_circle.center();
-    return new SDL_GUI::Circle({static_cast<int>(center.x()), static_cast<int>(center.y())},
-                               static_cast<unsigned>(this->_circle.radius()));
+    SDL_GUI::Drawable *circle =
+        new SDL_GUI::Circle({static_cast<int>(center.x()), static_cast<int>(center.y())},
+                            static_cast<unsigned>(this->_circle.radius()));
+    circle->_style._color = SDL_GUI::RGB("yellow");
+    circle->_style._border_color._a = 150;
+    return circle;
 }
 
 void CircleHitbox::to_yaml(YAML::Emitter *output) const {

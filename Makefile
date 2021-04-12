@@ -1,7 +1,7 @@
 BUILD     := build
 SRCDIR    := src
 INCDIR    := inc
-EXTDIR	  := ext
+EXTDIR    := ext
 LIBDIR    := $(EXTDIR)/lib
 LIBINCDIR := $(EXTDIR)/inc
 DEPDIR    := .d
@@ -31,6 +31,8 @@ SDL_GUI_INCDIR  := $(LIBINCDIR)/SDL_GUI
 SDL_GUI_EXTDIR  := $(EXTDIR)/SDL_GUI
 SDL_GUI_HEADERS := $(SDL_GUI_EXTDIR)/inc
 
+SDL2_GFX_LIB     := $(LIBDIR)/libSDL2_gfx.a
+
 YAML_CPP_LIB     := $(LIBDIR)/libyaml-cpp.a
 YAML_CPP_INCDIR  := $(LIBINCDIR)/yaml-cpp
 YAML_CPP_EXTDIR  := $(EXTDIR)/yaml-cpp
@@ -41,9 +43,9 @@ WYKOBI_EXTDIR  := $(EXTDIR)/wykobi
 WYKOBI_HEADERS := $(WYKOBI_EXTDIR)
 
 
-LIBRARIES   := $(SDL_GUI_LIB) $(YAML_CPP_LIB)
+LIBRARIES   := $(SDL_GUI_LIB) $(SDL2_GFX_LIB) $(YAML_CPP_LIB)
 LIB_HEADERS := $(SDL_GUI_INCDIR) $(WYKOBI_INCDIR) $(YAML_CPP_INCDIR)
-DYN_LIBS    := -lSDL2 -lSDL2_gfx -lSDL2_ttf -lSDL2_image -lfontconfig
+DYN_LIBS    := -lSDL2 -lSDL2_ttf -lSDL2_image -lfontconfig
 
 
 # create directories
@@ -65,6 +67,8 @@ run: all
 clean:
 	$(RM) $(BUILD)
 	$(RM) $(DEPDIR)
+	$(RM) $(LIBDIR)
+	$(RM) $(LIBINCDIR)
 
 .PHONY: sure
 sure: clean
@@ -79,7 +83,7 @@ tags: $(SRCSCC)
 	sed -e '/^$$/d' -e '/\.o:[ \t]*$$/d' | \
 	ctags -L - --c++-kinds=+p --fields=+iaS --extra=+q -o "tags" --language-force=C++
 
-$(OBJS): $(BUILD)/%.o: $(SRCDIR)/%.cc  $(LIB_HEADERS) $(DEPDIR)/%.d | $(DEPDIR)/
+$(OBJS): $(BUILD)/%.o: $(SRCDIR)/%.cc $(LIB_HEADERS) $(DEPDIR)/%.d | $(DEPDIR)/
 	$(CXX) $(DEPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 %/:
@@ -92,8 +96,11 @@ $(TARGET): $(OBJS) $(LIBRARIES)
 
 
 $(SDL_GUI_LIB): $(SDL_GUI_EXTDIR)
-	$(MAKE) -C $^ lib
+	$(MAKE) -C $< lib
 	ln -fs $(CURDIR)/$</build/libSDL_GUI.a $@
+
+$(SDL2_GFX_LIB): | $(SDL_GUI_LIB)
+	ln -fs $(CURDIR)/$(SDL_GUI_EXTDIR)/build/libSDL2_gfx.a $@
 
 $(YAML_CPP_LIB): $(YAML_CPP_EXTDIR)
 	$(CMAKE) -S $< -B $</$(BUILD)

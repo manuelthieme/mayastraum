@@ -1,5 +1,40 @@
+type: ScreenObject
 name: Garten
 path: screens/garden.png
+position:
+  x: 0
+  y: 0
+width: 1920
+height: 1080
+pivot:
+  x: 0
+  y: 0
+hitbox:
+  type: PolygonHitbox
+  polygon:
+    points:
+      - x: 0
+        y: 443
+      - x: 187
+        y: 435
+      - x: 330
+        y: 432
+      - x: 499
+        y: 437
+      - x: 623
+        y: 450
+      - x: 919
+        y: 468
+      - x: 1223
+        y: 455
+      - x: 1739
+        y: 451
+      - x: 1920
+        y: 442
+      - x: 1920
+        y: 0
+      - x: 0
+        y: 0
 screen_objects:
   - data/cabin.yml
   - data/tree.yml
