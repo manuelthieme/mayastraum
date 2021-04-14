@@ -26,7 +26,12 @@ public:
         app->add_model(game_model);
 
         /* Controllers */
-        SDL_GUI::InputController<InputKey, InputState> *input_controller = new SDL_GUI::InputController<InputKey, InputState>(input_model, keyboard_input_config, window_event_config, mouse_input_config);
+        SDL_GUI::InputController<InputKey, InputState> *input_controller =
+            new SDL_GUI::InputController<InputKey, InputState>(input_model,
+                                                               keyboard_input_config,
+                                                               window_event_config,
+                                                               mouse_input_config,
+                                                               InputKey::QUIT);
         app->add_controller(input_controller);
 
         SDL_GUI::DefaultPlugin &default_plugin = std::get<SDL_GUI::DefaultPlugin>(previous);
