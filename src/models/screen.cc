@@ -7,11 +7,17 @@ Screen::Screen(std::string path, const GameModel *game_model)
 
 Screen::Screen(YAML::Node screen_yaml, const GameModel *game_model)
     : ScreenObject(screen_yaml), _game_model(game_model) {
+    std::vector<Hitbox *> hitboxes;
     for (auto object_path: screen_yaml["screen_objects"]) {
         YAML::Node object_yaml = YAML::LoadFile(object_path.as<std::string>());
         ScreenObject *object = new ScreenObject(object_yaml);
         this->add_screen_object(object);
+        hitboxes.push_back(object->hitbox());
     }
+    std::vector<ScreenObject *> screen_objects(this->_screen_objects);
+
+    screen_objects.push_back(this);
+    this->_pathfinder.init(screen_objects);
 }
 
 std::string Screen::background_path() const {
@@ -24,6 +30,10 @@ std::vector<ScreenObject *> Screen::screen_objects() {
 
 const GameModel *Screen::game_model() const {
     return this->_game_model;
+}
+
+Pathfinder &Screen::pathfinder() {
+    return this->_pathfinder;
 }
 
 void Screen::add_screen_object(ScreenObject *screen_object) {

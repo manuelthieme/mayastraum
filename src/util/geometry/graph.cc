@@ -2,12 +2,12 @@
 #include <limits>
 
 /* getter */
-vector<Edge> Graph::edges() const {
+std::vector<Edge> Graph::edges() const {
     return this->_edges;
 }
 
-vector<Edge> Graph::edges(const Point p) const {
-    vector<Edge> ret;
+std::vector<Edge> Graph::edges(const Point p) const {
+    std::vector<Edge> ret;
     for(auto e: this->_edges) {
         if(e.begin() != p && e.end() != p)
             continue;
@@ -16,8 +16,12 @@ vector<Edge> Graph::edges(const Point p) const {
     return ret;
 }
 
-vector<unsigned> Graph::outgoingEdges(unsigned p) const {
-    vector<unsigned> ret;
+std::vector<Point> Graph::nodes() const {
+    return this->_nodes;
+}
+
+std::vector<unsigned> Graph::outgoing_edges(unsigned p) const {
+    std::vector<unsigned> ret;
     unsigned i = 0;
     for (auto e: this->_edges) {
         if (e.begin() != this->_nodes.at(p) && e.end() != this->_nodes.at(p)) {
@@ -32,21 +36,21 @@ vector<unsigned> Graph::outgoingEdges(unsigned p) const {
 
 
 /* setter */
-void Graph::setEdges(vector<Edge> es) {
+void Graph::set_edges(std::vector<Edge> es) {
     this->_edges = es;
 }
 
-void Graph::addEdge(Edge e) {
+void Graph::add_edge(Edge e) {
     for (auto edge: this->_edges)
         if (edge == e)
             return;
 
     this->_edges.push_back(e);
-    this->addNode(e.begin());
-    this->addNode(e.end());
+    this->add_node(e.begin());
+    this->add_node(e.end());
 }
 
-void Graph::addNode(Point p) {
+void Graph::add_node(Point p) {
     for (auto n: this->_nodes)
         if (p == n)
             return;
@@ -59,9 +63,23 @@ void Graph::clear() {
     this->_nodes.clear();
 }
 
+bool Graph::contains(Point p) const {
+    if (std::find(this->_nodes.begin(), this->_nodes.end(), p) != this->_nodes.end()) {
+        return true;
+    }
+    return false;
+}
+
+bool Graph::contains(Edge e) const {
+    if (std::find(this->_edges.begin(), this->_edges.end(), e) != this->_edges.end()) {
+        return true;
+    }
+    return false;
+}
+
  /* misc */
 
-list<Point> Graph::shortestPath(Point source, Point sink) const {
+std::list<Point> Graph::shortest_path(Point source, Point sink) const {
     signed source_i = -1;
     signed sink_i = -1;
     unsigned i = 0;
@@ -77,34 +95,34 @@ list<Point> Graph::shortestPath(Point source, Point sink) const {
 
         ++i;
     }
-    list<Point> ret = this->aStar(source_i, sink_i);
+    std::list<Point> ret = this->a_star(source_i, sink_i);
     return ret;
 }
 
-list<Point> Graph::dijkstra(Point source, Point sink) const {
+std::list<Point> Graph::dijkstra(Point source, Point sink) const {
     /* initialize */
-    list<Point> ret;
-    map<Point, Point> predecessor;
-    map<Point, signed int> minLength;
-    set<Point> q;
+    std::list<Point> ret;
+    std::map<Point, Point> predecessor;
+    std::map<Point, signed int> min_length;
+    std::set<Point> q;
 
     /* check if source and sink are in graph */
-    bool sourceIn = false;
-    bool sinkIn = false;
+    bool source_in = false;
+    bool sink_in = false;
     for (auto n: this->_nodes) {
         if (n == source) {
-            sourceIn = true;
-            if (sinkIn)
+            source_in = true;
+            if (sink_in)
                 break;
         }
         if (n == sink) {
-            sinkIn = true;
-            if (sourceIn)
+            sink_in = true;
+            if (source_in)
                 break;
         }
     }
 
-    if (not (sourceIn and sinkIn))
+    if (not (source_in and sink_in))
         return ret;
 
     /* set length to infinite */
@@ -116,11 +134,11 @@ list<Point> Graph::dijkstra(Point source, Point sink) const {
                 break;
             }
 
-        minLength[p] = -1;
+        min_length[p] = -1;
     }
 
     /* source length is zero */
-    minLength[source] = 0;
+    min_length[source] = 0;
 
     /* source is in queue */
     q.insert(source);
@@ -130,11 +148,11 @@ list<Point> Graph::dijkstra(Point source, Point sink) const {
     while (not q.empty()) {
         /* find nearest node in queue */
         Point p;
-        bool pIsSet = false;
+        bool p_is_set = false;
         for(auto point: q) {
-            if(!pIsSet or minLength[point] < minLength[p]) {
+            if(!p_is_set or min_length[point] < min_length[p]) {
                 p = point;
-                pIsSet = true;
+                p_is_set = true;
             } else {
             }
         }
@@ -154,65 +172,60 @@ list<Point> Graph::dijkstra(Point source, Point sink) const {
 
 
             /* if not visited yet, push_back into queue and set predecessor*/
-            if(minLength[to] == -1) {
+            if(min_length[to] == -1) {
                 q.insert(to);
-                minLength[to] = minLength[p] + e.magnitude();
+                min_length[to] = min_length[p] + e.magnitude();
                 predecessor[to] = p;
             }
             /* if length is lower, update length and predecessor */
-            else if(minLength[to] > (minLength[p] + e.magnitude())) {
-                minLength[to] = minLength[p] + e.magnitude();
+            else if(min_length[to] > (min_length[p] + e.magnitude())) {
+                min_length[to] = min_length[p] + e.magnitude();
             }
         }
     }
 
     /* make list from predecessors */
     ret.push_front(sink);
-    Point toPush = sink;
-    while (toPush != source) {
-        if(minLength[toPush] == -1)
+    Point to_push = sink;
+    while (to_push != source) {
+        if(min_length[to_push] == -1)
             break;
-        toPush = predecessor[toPush];
-        ret.push_front(toPush);
+        to_push = predecessor[to_push];
+        ret.push_front(to_push);
     }
     return ret;
 }
 
-list<Point> Graph::aStar(int source, int sink) const {
-    set<unsigned> closedSet;
-    set<unsigned> openSet;
-    openSet.insert(source);
+std::list<Point> Graph::a_star(int source, int sink) const {
+    std::set<unsigned> closed_set;
+    std::set<unsigned> open_set;
+    open_set.insert(source);
 
-    map<unsigned, unsigned> predecessor;
+    std::map<unsigned, unsigned> predecessor;
 
-    map<unsigned, float> g_score;
-    map<unsigned, float> f_score;
+    std::map<unsigned, float> g_score;
+    std::map<unsigned, float> f_score;
 
-    cout << "size: " << this->_nodes.size() << endl;;
     for (unsigned i = 0; i < this->_nodes.size(); ++i) {
         g_score.insert({i, numeric_limits<float>::infinity()});
         f_score.insert({i, numeric_limits<float>::infinity()});
     }
     g_score.at(source) = 0;
-    f_score.at(source) = this->heuristicCostEstimate(source, sink);
-    cout << "heuristic for source: " << f_score.at(source) << endl;
+    f_score.at(source) = this->heuristic_cost_estimate(source, sink);
 
-    while (not openSet.empty()) {
-        cout << "entering while loop" << endl;
+    while (not open_set.empty()) {
         signed current = -1;
-        for (auto n: openSet)
+        for (auto n: open_set)
             if (current < 0 or f_score.at(n) < f_score.at(current))
                 current = n;
 
         if (current == sink)
-            return this->reconstructPath(predecessor, sink);
+            return this->reconstruct_path(predecessor, sink);
 
-        openSet.erase(current);
-        closedSet.insert(current);
+        open_set.erase(current);
+        closed_set.insert(current);
 
-        cout << "found " << this->outgoingEdges(current).size() << " outgoing edges" << endl;
-        for (auto e: this->outgoingEdges(current)) {
-            cout << "\tentering for loop" << endl;
+        for (auto e: this->outgoing_edges(current)) {
             Point to;
             Edge edge = this->_edges.at(e);
 
@@ -222,39 +235,36 @@ list<Point> Graph::aStar(int source, int sink) const {
             else
                 to = edge.begin();
 
-            signed to_i = this->nodeIndex(to);
-            cout << "\tPoint " << to_i << endl;
+            signed to_i = this->node_index(to);
             if (to_i < 0)
                 break;
 
 
-            if (closedSet.find(to_i) != closedSet.end())
+            if (closed_set.find(to_i) != closed_set.end())
                 continue;
 
             float tentative_g_score = g_score.at(current) + edge.magnitude();
 
-            if (openSet.find(to_i) == openSet.end())
-                openSet.insert(to_i);
+            if (open_set.find(to_i) == open_set.end())
+                open_set.insert(to_i);
             else if (tentative_g_score >= g_score.at(to_i))
                 continue;
 
             predecessor.insert({to_i, current});
             g_score.at(to_i) = tentative_g_score;
-            f_score.at(to_i) = g_score.at(to_i) + heuristicCostEstimate(to_i, sink);
+            f_score.at(to_i) = g_score.at(to_i) + heuristic_cost_estimate(to_i, sink);
         }
-        cout << "\tleaving for loop" << endl;
     }
-    cout << "leaving while loop" << endl;
-    list<Point> ret;
+    std::list<Point> ret;
     return ret;
 }
 
-float Graph::heuristicCostEstimate(int start, int end) const {
+float Graph::heuristic_cost_estimate(int start, int end) const {
     return Edge(this->_nodes.at(start), this->_nodes.at(end)).magnitude();
 }
 
-list<Point> Graph::reconstructPath(map<unsigned, unsigned> predecessor, unsigned sink) const {
-    list<Point> ret;
+std::list<Point> Graph::reconstruct_path(std::map<unsigned, unsigned> predecessor, unsigned sink) const {
+    std::list<Point> ret;
     ret.push_front(this->_nodes.at(sink));
     while (predecessor.find(sink) != predecessor.end()) {
         sink = predecessor.at(sink);
@@ -263,14 +273,12 @@ list<Point> Graph::reconstructPath(map<unsigned, unsigned> predecessor, unsigned
     return ret;
 }
 
-signed Graph::nodeIndex(Point p) const {
+signed Graph::node_index(Point p) const {
     unsigned i = 0;
     for (auto n: this->_nodes) {
-        cout << "comparing " << n << " with " << p << " ... " << endl;
         if (n == p)
             return i;
 
-        cout << "obviously not the same" << endl;
         ++i;
     }
     return -1;

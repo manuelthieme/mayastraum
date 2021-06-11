@@ -114,12 +114,12 @@ Point Point::operator/=(const float &s) {
 }
 
 /* misc */
-void Point::move_to(Point to, float distance) {
+void Point::move_to(Point to, float distance, bool overflow) {
     float max_distance = wykobi::distance(this->_point, to.vector());
     if (max_distance == std::numeric_limits<float>::epsilon()) {
         return;
     }
-    if (max_distance < distance) {
+    if (not overflow && max_distance < distance) {
         distance = max_distance;
     }
     this->_point = this->_point + (wykobi::normalize(to._point - this->_point) * distance);
@@ -132,6 +132,10 @@ void Point::move(Point direction) {
 Point Point::middle(Point p) const {
     Point middle(wykobi::segment_mid_point(this->_point, p._point));
     return middle;
+}
+
+float Point::distance(Point p) const {
+    return wykobi::distance(this->vector(), p.vector());
 }
 
 void Point::to_yaml(YAML::Emitter *output) const {

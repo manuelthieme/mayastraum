@@ -13,7 +13,7 @@
 #include <util/geometry/point.h>
 #include <util/geometry/edge.h>
 
-
+class Circle;
 class Polygon : public Serialisable {
     std::list<Point> _points;
 
@@ -21,6 +21,8 @@ class Polygon : public Serialisable {
 public:
 
     Polygon();
+
+    Polygon(Circle circle);
 
     Polygon(YAML::Node polygon_yaml);
 
@@ -41,7 +43,12 @@ public:
     bool collides(Point point) const;
     bool collides(Edge edge) const;
 
+
+    std::vector<Point> collision_points(Edge edge) const;
+
     Point closest_point(Point point) const;
+
+    bool point_on_polygon(Point point) const;
 
     SDL_GUI::Drawable *drawable() const;
 

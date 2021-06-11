@@ -96,8 +96,9 @@ public:
      * Move in a certain direction with a certain Speed.
      * @param to Point to move to.
      * @param disctance distance to move in the given direction
+     * @param overflow if set to true, the result may exceed the target point
      */
-    void move_to(Point to, float distance);
+    void move_to(Point to, float distance, bool overflow = false);
 
     void move(Point direction);
 
@@ -107,6 +108,8 @@ public:
      * @return middle.
      */
     Point middle(Point p) const;
+
+    float distance(Point p) const;
 
     void to_yaml(YAML::Emitter *output) const override;
     std::string to_string() const override;

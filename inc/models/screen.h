@@ -6,6 +6,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include <models/screen_object.h>
+#include <util/pathfinder.h>
 
 class GameModel;
 class Screen : public ScreenObject {
@@ -13,6 +14,8 @@ class Screen : public ScreenObject {
     std::vector<ScreenObject *> _screen_objects;
 
     const GameModel *_game_model;
+
+    Pathfinder _pathfinder;
 
     virtual void _to_yaml (YAML::Emitter *output) const override;
 public:
@@ -25,6 +28,8 @@ public:
     std::vector<ScreenObject *> screen_objects();
 
     const GameModel *game_model() const;
+
+    Pathfinder &pathfinder();
 
     void add_screen_object(ScreenObject *screen_object);
 

@@ -38,6 +38,8 @@ public:
 
     virtual ~Hitbox() = default;
 
+    virtual std::list<Edge> edges() const = 0;
+
     /** check if point is inside Hitbox */
     virtual bool collides(Point point) const = 0;
 
@@ -56,14 +58,15 @@ public:
 
 /** Hitbox given through a circle */
 class CircleHitbox : public Hitbox {
-    Circle _circle; /**< circle describing this hitbox */
+    Circle _circle;     /**< circle describing this hitbox */
+    Polygon _polygon;   /**< for approximation */
 public:
     /**
      * Constructor
      * @param circle circle describing the hitbox
      */
     CircleHitbox(Circle circle)
-        : Hitbox(HitboxType::CIRCLE), _circle(circle) {}
+        : Hitbox(HitboxType::CIRCLE), _circle(circle), _polygon(circle) {}
 
     /**
      * Constructor
@@ -71,11 +74,13 @@ public:
      * @param radius circles radius
      */
     CircleHitbox(Point center = {0, 0}, float radius = 0)
-        : Hitbox(HitboxType::CIRCLE), _circle(center, radius) {}
+        : Hitbox(HitboxType::CIRCLE), _circle(center, radius), _polygon(this->_circle) {}
 
     CircleHitbox(YAML::Node hitbox_yaml)
-        : Hitbox(HitboxType::CIRCLE), _circle(hitbox_yaml) {}
+        : Hitbox(HitboxType::CIRCLE), _circle(hitbox_yaml), _polygon(this->_circle) {}
 
+
+    virtual std::list<Edge> edges() const override;
 
     /** @copydoc Hitbox::collides(Point) const */
     bool collides(Point point) const override;
@@ -112,6 +117,9 @@ public:
     AABBHitbox(YAML::Node hitbox_yaml)
         : Hitbox(HitboxType::AABB), _aabb(hitbox_yaml) {}
 
+
+    virtual std::list<Edge> edges() const override;
+
     /** @copydoc Hitbox::collides(Point) const */
     bool collides(Point point) const override;
 
@@ -143,7 +151,7 @@ public:
      * Get Edges.
      * @return list of Edges.
      */
-    std::list<Edge> edges() const;
+    virtual std::list<Edge> edges() const override;
 
     /**
      * Get Points.

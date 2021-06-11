@@ -1,11 +1,25 @@
 #include <util/geometry/polygon.h>
 
+
 #include <sstream>
 
 #include <SDL_GUI/gui/primitives/line.h>
 #include <SDL_GUI/gui/primitives/wrap_rect.h>
 
+#include <util/geometry/circle.h>
+
 Polygon::Polygon() {
+    this->init();
+}
+
+Polygon::Polygon(Circle circle) {
+    Point center = circle.center();
+    float radius = circle.radius();
+
+    this->_points.emplace_back(center + Point{-radius, -radius});
+    this->_points.emplace_back(center + Point{-radius,  radius});
+    this->_points.emplace_back(center + Point{ radius, -radius});
+    this->_points.emplace_back(center + Point{ radius,  radius});
     this->init();
 }
 
@@ -85,7 +99,8 @@ void Polygon::remove_last_point() {
 }
 
 bool Polygon::collides(Point point) const {
-    return wykobi::point_in_polygon(point.vector(), this->polygon());
+    return wykobi::point_in_polygon(point.vector(), this->polygon())
+        and not wykobi::point_on_polygon_edge(point.vector(), this->polygon());
 }
 
 bool Polygon::collides(Edge edge) const {
@@ -94,15 +109,57 @@ bool Polygon::collides(Edge edge) const {
     wykobi::polygon<float, 2> polygon = this->polygon();
     unsigned j = polygon.size() - 1;
     for (unsigned i = 0; i < polygon.size(); ++i) {
+        /* check if edge intersects polygon part */
         if (wykobi::intersect(edge.segment(), wykobi::make_segment(polygon[i], polygon[j]))) {
             return true;
         }
+        j = i;
     }
     return false;
 }
 
+std::vector<Point> Polygon::collision_points(Edge edge) const {
+    std::vector<Point> collision_points;
+    wykobi::polygon<float, 2> polygon = this->polygon();
+    unsigned j = polygon.size() - 1;
+    for (unsigned i = 0; i < polygon.size(); ++i) {
+        wykobi::segment<float,2> polygon_segment = wykobi::make_segment(polygon[i], polygon[j]);
+        /* check if edge intersects polygon part */
+        if (wykobi::intersect(edge.segment(), polygon_segment)) {
+            Point point{wykobi::intersection_point(edge.segment(), polygon_segment)};
+            collision_points.push_back(point);
+        }
+        j = i;
+    }
+    return collision_points;
+}
+
 Point Polygon::closest_point(Point point) const {
-    return wykobi::closest_point_on_polygon_from_point(this->polygon(), point.vector());
+    wykobi::polygon<float, 2> polygon = this->polygon();
+    Point closest{wykobi::closest_point_on_polygon_from_point(polygon, point.vector())};
+    if (wykobi::point_on_polygon_edge(closest.vector(), polygon)) {
+        return closest;
+    }
+    /* for some reason, wyokbi has not implemented the closest point on a polygon edge.
+     * So we do it ourselfs. */
+    unsigned j = polygon.size() - 1;
+    Point best_closest;
+    float best_distance;
+    for (unsigned i = 0; i < polygon.size(); ++i) {
+        wykobi::segment<float,2> polygon_segment = wykobi::make_segment(polygon[i], polygon[j]);
+        Point closest{wykobi::closest_point_on_segment_from_point(polygon_segment, point.vector())};
+        float distance = point.distance(closest);
+        if (i == 0 or distance < best_distance) {
+            best_closest = closest;
+            best_distance = distance;
+        }
+        j = i;
+    }
+    return best_closest;
+}
+
+bool Polygon::point_on_polygon(Point point) const {
+    return wykobi::point_on_polygon_edge(point.vector(), this->polygon());
 }
 
 SDL_GUI::Drawable *Polygon::drawable() const {

@@ -17,12 +17,39 @@ YAML::Emitter &operator<<(YAML::Emitter &out, const Hitbox &hitbox) {
 
 /* CircleHitbox */
 
+std::list<Edge> CircleHitbox::edges() const {
+    return this->_polygon.edges();
+}
+
+
 bool CircleHitbox::collides(Point point) const {
     return wykobi::point_in_circle(point.vector(), this->_circle.circle());
 }
 
 bool CircleHitbox::collides(Edge edge) const {
-    return wykobi::intersect(edge.segment(), this->_circle.circle());
+    bool collides = wykobi::intersect(edge.segment(), this->_circle.circle());
+    if (not collides) {
+        return false;
+    }
+
+    bool begin_on_circle = this->_circle.point_on_circle(edge.begin());
+    bool end_on_circle = this->_circle.point_on_circle(edge.end());
+
+    unsigned n_edge_collisions = begin_on_circle + end_on_circle;
+
+    /* there is a collision but either both or none of the edge extremes are on */
+    if (n_edge_collisions != 1) {
+        return true;
+    }
+
+    std::vector<Point> collision_points = this->_circle.collision_points(edge);
+
+    /* if more than one collision point (but only one edge extreme on circle) -> collision */
+    if (collision_points.size() > 1) {
+
+    }
+
+    return false;
 }
 
 Point CircleHitbox::closest_point(Point point) const {
@@ -51,6 +78,11 @@ void CircleHitbox::to_yaml(YAML::Emitter *output) const {
 
 
 /* AABBHitbox */
+
+std::list<Edge> AABBHitbox::edges() const {
+    /* TODO: implement */
+    return std::list<Edge>();
+}
 
 bool AABBHitbox::collides(Point point) const {
     return wykobi::point_in_rectangle(point.vector(), this->_aabb.rectangle());
@@ -118,7 +150,39 @@ bool PolygonHitbox::collides(Point point) const {
 }
 
 bool PolygonHitbox::collides(Edge edge) const {
-    return this->_polygon.collides(edge);
+    /* there is no collision */
+    bool collides = this->_polygon.collides(edge);
+    if (not collides) {
+        return false;
+    }
+
+    /* when middle collides, there is a collision */
+    bool middle_collides = this->_polygon.collides(edge.middle());
+    if (middle_collides) {
+        return true;
+    }
+
+    bool begin_on_polygon = this->_polygon.point_on_polygon(edge.begin());
+    bool end_on_polygon = this->_polygon.point_on_polygon(edge.end());
+
+    unsigned n_edge_collisions = begin_on_polygon + end_on_polygon;
+
+    /* there is a collision but not at start or beginning */
+    if (n_edge_collisions == 0) {
+        return true;
+    }
+
+    std::vector<Point> collision_points = this->_polygon.collision_points(edge);
+    /* there are more than 2 collisions */
+    if (collision_points.size() > 2) {
+        return true;
+    }
+
+    if (collision_points.size() == n_edge_collisions) {
+        return false;
+    }
+
+    return false;
 }
 
 Point PolygonHitbox::closest_point(Point point) const {

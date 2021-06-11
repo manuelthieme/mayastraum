@@ -92,7 +92,14 @@ void GameController::update() {
         this->_application->_is_running = false;
     }
     if (this->_input_model->is_down(InputKey::MOVE_CHARACTER)) {
-        this->_game_model->_character->set_target({Point(this->_input_model->mouse_position())});
+        /* build graph */
+        Point target = Point(this->_input_model->mouse_position());
+        Point position = this->_game_model->_character->position();
+        std::list<Point> path =
+            this->_game_model->_active_screen->pathfinder().shortest_path(position, target);
+
+        /* shortest path */
+        this->_game_model->_character->set_target(path);
         this->_game_model->_character->start_running();
     }
 
@@ -122,6 +129,9 @@ void GameController::update() {
 
     if (this->_input_model->is_down(InputKey::TOGGLE_SHOW_GRAPH)) {
         this->_game_model->_showing_graph = !this->_game_model->_showing_graph;
+        if (not this->_game_model->_showing_graph) {
+            this->_game_model->_graph_rect->hide();
+        }
     }
 
     if (this->_input_model->is_down(InputKey::CYCLE_SHOW_HITBOX)) {
@@ -421,6 +431,13 @@ void GameController::update_debug_stats() {
 
 void GameController::update_debug_graph() {
     this->_game_model->_graph_rect->remove_all_children();
+    Graph graph = this->_game_model->_active_screen->pathfinder().current_graph();
+
+    for (Edge edge: graph.edges()) {
+        SDL_GUI::Line *l = new SDL_GUI::Line(edge.begin().position(), edge.end().position());
+        this->_game_model->_graph_rect->add_child(l);
+    }
+
     Point from = this->_game_model->_character->position();
     for (Point to: this->_game_model->_character->path()) {
         SDL_GUI::Line *l = new SDL_GUI::Line(from.position(), to.position());

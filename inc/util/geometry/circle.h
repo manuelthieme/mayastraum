@@ -29,6 +29,10 @@ public:
 
     Point closest_point(Point point) const;
 
+    bool point_on_circle(Point point) const;
+
+    std::vector<Point> collision_points(Edge edge) const;
+
     void to_yaml(YAML::Emitter *output) const override;
     std::string to_string() const override;
 };

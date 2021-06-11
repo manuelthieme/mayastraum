@@ -165,17 +165,17 @@ void ScreenObject::move(Point movement) {
 
 
 bool ScreenObject::collides(Point point) const {
-    return this->_hitbox->collides(point - this->_position);
+    return this->_hitbox->collides(point - this->_position + this->_pivot);
 
 }
 
 bool ScreenObject::collides(Edge edge) const {
-    return this->_hitbox->collides(edge - this->_position);
+    return this->_hitbox->collides(edge - this->_position + this->_pivot);
 
 }
 
 Point ScreenObject::closest_point(Point point) const {
-    return this->_hitbox->closest_point(point);
+    return this->_hitbox->closest_point(point - this->_position + this->_pivot);
 }
 
 std::string ScreenObject::serialise() const {
