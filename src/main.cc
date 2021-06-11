@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[]) {
 
-    SDL_GUI::Application<GamePlugin, SDL_GUI::DefaultPlugin> app("Mayas Traum", argc, argv);
+    SDL_GUI::Application<SDL_GUI::DefaultPlugin, GamePlugin> app("Mayas Traum", argc, argv);
     app.run();
     return 0;
 }
